@@ -111,7 +111,7 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 	static int loc_context = 0;
 	static int serv = -1;
 	static int loc = -1;
-	static std::vector<Location> locations;
+	//static std::vector<Location> locations;
 	static Location location;
 
 	if (line == "server\t{" || line == "server{") {
@@ -120,8 +120,8 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 		++serv;
 		ServConfig s = ServConfig();
 		_servs.push_back(s);
-		locations.clear();
 		++brace;
+		loc = -1;
 	} else if (line.substr(0, line.find("\t")) == "location") {
 		if (!brace && serv != -1)
 			throw ParserException::InvalidData();
@@ -130,19 +130,25 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 		++brace;
 		++loc_context;
 		//location = Location();
-		Location l;
-		parseLocName(split_str(line, "\t"), l);
-		(serv < 0) ? main.addLocation(l) : _servs[serv].addLocation(l);
+		//Location l;
+		parseLocName(split_str(line, "\t"), location);
+		//(serv < 0) ? main.addLocation(location) : _servs[serv].addLocation(location);
+
 	} else {
 		if (line[0] == '}' && line.size() == 1) {
 			if (!brace)
 				throw ParserException::BraceExpected();
 			if (loc_context) {
-				locations.push_back(location);
+				//locations.push_back(location);
+				(serv < 0) ? main.addLocation(location) : _servs[serv].addLocation(location);
+				//std::cout<<location<<std::endl;
 				location = Location();
 				--loc_context;
-			} else
-				(serv < 0) ? main.setLocations(locations) : _servs[serv].setLocations(locations);
+			} //else //{
+				//for (int i = 0; i < locations.size(); ++i)
+				//	std::cout << "loc name" << locations[i].getName() << std::endl;
+				//locations.clear();
+			//}
 			--brace;
 		}
 		else {
@@ -153,8 +159,8 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 				throw ParserException::InvalidData();
 				return ;
 			}
-			if (loc_context) {
-				line_to_loc(v, _servs[serv].getLocation(loc));
+			if (loc_context) { //std::cout << "loc " << loc << std::endl;
+				line_to_loc(v, location);
 			}
 			else if (brace == 1)
 				line_to_serv(v, _servs[serv]);
@@ -375,7 +381,7 @@ std::ostream &operator<<(std::ostream &os, const Parser &parser)
 
 		std::vector<Location> locations = servs[i].getLocations();
 		for (int l = 0; l < locations.size(); ++l) {
-			os << "location " << l << std::endl << locations[i] << std::endl;
+			os << "location " << l << std::endl << locations[l] << std::endl;
 		}
 	}
 	return os;

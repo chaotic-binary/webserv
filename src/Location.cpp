@@ -103,10 +103,10 @@ const std::vector<e_methods> &Location::getMethods() const
 	return _methods;
 }
 
-const std::vector<Location> &Location::getLocations() const
+/*const std::vector<Location> &Location::getLocations() const
 {
 	return _locations;
-}
+}*/
 
 void Location::setName(const std::string &name)
 {
@@ -178,10 +178,10 @@ void Location::setMethods(const std::vector<std::string> &methods)
 	}
 }
 
-void Location::addLocation(const Location &loc)
+/*void Location::addLocation(const Location &loc)
 {
 	_locations.push_back(loc);
-}
+}*/
 
 std::ostream &operator<<(std::ostream &os, const Location &location)
 {

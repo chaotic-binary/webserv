@@ -51,7 +51,7 @@ public:
 	bool getUploadEnable() const;
 	const std::vector<std::string> &getCgiExtensions() const;
 	const std::vector<e_methods> &getMethods() const;
-	const std::vector<Location> &getLocations() const;
+	//const std::vector<Location> &getLocations() const;
 
 	class LocException: public std::exception {
 	public:
@@ -72,7 +72,7 @@ private:
 	bool						_uploadEnable;
 	std::vector<std::string>	_cgiExtensions;
 	std::vector<e_methods>		_methods;
-	std::vector<Location>		_locations;
+	//std::vector<Location>		_locations;
 };
 
 #endif //WEBSERV_LOCATION_HPP
