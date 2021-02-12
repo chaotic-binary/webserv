@@ -10,7 +10,7 @@
 class Parser
 {
 public:
-	Parser(char* file);
+	Parser(char *file);
 	Parser(const Parser &copy);
 	~Parser();
 
@@ -41,19 +41,28 @@ private:
 	std::vector<ServConfig> _servs;
 
 	void parse_line(std::string &line, int &brace, ServConfig &main);
-	void line_to_serv(std::vector<std::string> &v, ServConfig &serv);
-	void line_to_loc(std::vector<std::string> &v, Location &loc);
+	void addMainAndDefaults(const ServConfig &main);
+
+	static void line_to_serv(std::vector<std::string> &, ServConfig &);
+	static void line_to_loc(std::vector<std::string> &, Location &);
 
 	static void parseListen(const std::vector<std::string> &, ServConfig &);
 	static void parseErrorPages(const std::vector<std::string> &, ServConfig &);
 	static void parseServNames(const std::vector<std::string> &, ServConfig &);
 	static void parseServRoot(const std::vector<std::string> &, ServConfig &);
-	static void parseLocName(const std::vector<std::string> & args, Location & loc);
-	static void parseMaxBody(std::string &val, Location & loc);
+	static void parseLocName(const std::vector<std::string> &, Location &);
+	static void parseMaxBody(std::string &, Location &);
 
-	void addMainAndDefaults(const ServConfig &main);
+	static std::map<std::string, void (*) (const std::vector<std::string> &, ServConfig &)> servParser;
+	static std::map<std::string, void (Location::*) (const std::string &)> locParser;
+	static std::map<std::string, void (Location::*) (const std::vector<std::string> &)> locArrParser;
 
-	//static std::map<std::string, void (Parser::*) (const std::vector<std::string> &, ServConfig &)> servParser;
+	static void initServParser();
+	static void initLocParser();
+	static void initLocArrParser();
+
+	static void		trim_semicolon(std::string &);
+	static size_t 	to_num(const std::string &str);
 };
 
 //std::ostream &operator<<(std::ostream &os, const Parser &parser);

@@ -1,9 +1,9 @@
 #include "../include/Location.hpp"
 
 Location::Location() :
-		_autoindex(false),
-		_uploadEnable(false),
-		_maxBody(DEF_MAX_BODY)
+	_autoindex(false),
+	_uploadEnable(false),
+	_maxBody(DEF_MAX_BODY)
 {}
 
 Location &Location::operator=(const Location &copy)
@@ -77,11 +77,6 @@ const std::vector<e_methods> &Location::getMethods() const
 {
 	return _methods;
 }
-
-/*const std::vector<Location> &Location::getLocations() const
-{
-	return _locations;
-}*/
 
 void Location::setName(const std::string &name)
 {
@@ -166,12 +161,6 @@ void Location::setUploadEnableFromStr(const std::string &str)
 {
 	setUploadEnable(getBoolFromStr(str));
 }
-
-
-/*void Location::addLocation(const Location &loc)
-{
-	_locations.push_back(loc);
-}*/
 
 bool Location::getBoolFromStr(const std::string &str)
 {
