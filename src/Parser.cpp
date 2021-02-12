@@ -28,10 +28,11 @@ void	trim_str(std::string &str)
 	str.erase(str.find_last_not_of('\t') + 1);
 }
 
-void	check_semicolon(std::string &str)
+void	trim_semicolon(std::string &str)
 {
-	//if (str[str.size() - 1] != ';')
-	//	throw
+	if (str.find('#') != std::string::npos)
+		str.erase(str.find_last_of('#'));
+	str.erase(str.find_last_not_of('\t') + 1);
 	str.erase(str.find_last_not_of(';') + 1);
 	str.erase(str.find_last_not_of('\t') + 1);
 }
@@ -44,7 +45,7 @@ std::vector<std::string>	split_str(const std::string& str, const std::string& de
 	while (end != std::string::npos) {
 		start = str.find_first_not_of(delim, end);
 		end = str.find_first_of(delim, start);
-		if (end != std::string::npos || start != std::string::npos)
+		if (start != std::string::npos || end != std::string::npos)
 			res.push_back(str.substr(start, end - start));
 	}
 	return res;
@@ -52,16 +53,16 @@ std::vector<std::string>	split_str(const std::string& str, const std::string& de
 
 void	Parser::line_to_serv(std::vector<std::string> &v, ServConfig &serv)
 {
-	std::map<std::string, void (Parser::*) (const std::vector<std::string> &, ServConfig &)> parser;
-	parser["listen"] = &Parser::parseListen;
-	parser["server_name"] = &Parser::parseServNames;
-	parser["root"] = &Parser::parseServRoot;
-	parser["error_page"] = &Parser::parseErrorPages;
+	std::map<std::string, void (*) (const std::vector<std::string> &, ServConfig &)> servParser;
+	servParser["listen"] = &Parser::parseListen;
+	servParser["server_name"] = &Parser::parseServNames;
+	servParser["root"] = &Parser::parseServRoot;
+	servParser["error_page"] = &Parser::parseErrorPages;
 
-	std::map<std::string, void (Parser::*) (const std::vector<std::string> &, ServConfig &)>::iterator it;
-	if ((it = parser.find(v[0])) != parser.end()) {
+	std::map<std::string, void (*) (const std::vector<std::string> &, ServConfig &)>::iterator it;
+	if ((it = servParser.find(v[0])) != servParser.end()) {
 		//std::cout << "find func" << std::endl;//
-		(this->*it->second)(v, serv);
+		(*it->second)(v, serv);
 	}
 	else
 		throw ParserException::UnknownParam();
@@ -69,18 +70,20 @@ void	Parser::line_to_serv(std::vector<std::string> &v, ServConfig &serv)
 
 void	Parser::line_to_loc(std::vector<std::string> &v, Location &loc)
 {
-	std::map<std::string, void (Location::*) (const std::string &)> parser;
-	parser["root"] = &Location::setRoot;
-	parser["upload_path"] = &Location::setUploadPath;
-	parser["cgi_path"] = &Location::setCgiPath;
-	parser["index"] = &Location::setIndex;
+	std::map<std::string, void (Location::*) (const std::string &)> locParser;
+	locParser["root"] = &Location::setRoot;
+	locParser["upload_path"] = &Location::setUploadPath;
+	locParser["cgi_path"] = &Location::setCgiPath;
+	locParser["index"] = &Location::setIndex;
+	locParser["autoindex"] = &Location::setAutoindexFromStr;
+	locParser["upload_enable"] = &Location::setUploadEnableFromStr;
 
-	std::map<std::string, void (Location::*) (const std::vector<std::string> &)> arr_parser;
-	arr_parser["cgi_extension"] = &Location::setCgiExtensions;
-	arr_parser["method"] = &Location::setMethods;
+	std::map<std::string, void (Location::*) (const std::vector<std::string> &)> locArrParser;
+	locArrParser["cgi_extension"] = &Location::setCgiExtensions;
+	locArrParser["method"] = &Location::setMethodsFromStr;
 
 	std::map<std::string, void (Location::*) (const std::vector<std::string> &)>::iterator ita;
-	if ((ita = arr_parser.find(v[0])) != arr_parser.end()) {
+	if ((ita = locArrParser.find(v[0])) != locArrParser.end()) {
 		//std::cout << "find loc arr func" << std::endl;//
 		if (v.size() < 2)
 			throw ParserException::InvalidData();
@@ -91,15 +94,11 @@ void	Parser::line_to_loc(std::vector<std::string> &v, Location &loc)
 		if (v.size() != 2)
 			throw ParserException::InvalidData();
 		std::map<std::string, void (Location::*) (const std::string &)>::iterator it;
-		if ((it = parser.find(v[0])) != parser.end()) {
+		if ((it = locParser.find(v[0])) != locParser.end()) {
 			//std::cout << "find loc func" << std::endl;//
 			(loc.*it->second)(v[1]);
 		} else if (v[0] == "client_max_body_size")
 			parseMaxBody(v[1], loc);
-		else if (v[0] == "autoindex")
-			loc.setAutoindex(parseBool(v[1]));
-		else if (v[0] == "upload_enable")
-			loc.setUploadEnable(parseBool(v[1]));
 		else
 			throw ParserException::UnknownParam();
 	}
@@ -144,15 +143,11 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 				//std::cout<<location<<std::endl;
 				location = Location();
 				--loc_context;
-			} //else //{
-				//for (int i = 0; i < locations.size(); ++i)
-				//	std::cout << "loc name" << locations[i].getName() << std::endl;
-				//locations.clear();
-			//}
+			}
 			--brace;
 		}
 		else {
-			check_semicolon(line);
+			trim_semicolon(line);
 			std::vector<std::string> v = split_str(line, "\t");
 			//if (v.empty())//		return ;
 			if (v[1].empty()) {
@@ -165,10 +160,6 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 			else if (brace == 1)
 				line_to_serv(v, _servs[serv]);
 			else if (!brace && serv < 0) {
-				//if (!main_context) {
-				//	main_context = true;
-					//main.setPort(0);
-					//main.setHost("");}
 				line_to_serv(v,  main);
 			}
 			else
@@ -182,7 +173,6 @@ Parser::Parser(char* file)
 	std::ifstream ifs(file);
 	if (!ifs)
 		throw ParserException::CannotOpenFile();
-
 	std::string line;
 	int brace = 0;
 	ServConfig main;
@@ -282,16 +272,6 @@ void	Parser::parseLocName(const std::vector<std::string> &args, Location &loc)
 	loc.setName(args[1]);
 }
 
-bool Parser::parseBool(const std::string &val)
-{
-	if (val == "on")
-		return (true);
-	else if (val == "off")
-		return (false);
-	else
-		throw ParserException::InvalidData();
-}
-
 void Parser::parseMaxBody(std::string &val, Location &loc)
 {
 	size_t n = 1;
@@ -344,26 +324,6 @@ const std::vector<ServConfig> &Parser::getServs() const
 	return _servs;
 }
 
-const char*	Parser::ParserException::CannotOpenFile::what() const throw()
-{
-	return "Cannot open file";
-}
-
-const char	*Parser::ParserException::UnknownParam::what() const throw()
-{
-	return "Unknown parameter";
-}
-
-const char *Parser::ParserException::InvalidData::what() const throw()
-{
-	return "Invalid data format";
-}
-
-const char *Parser::ParserException::BraceExpected::what() const throw()
-{
-	return "Brace expected";
-}
-
 std::ostream &operator<<(std::ostream &os, const Parser &parser)
 {
 	std::vector<ServConfig> servs = parser.getServs();
@@ -387,3 +347,22 @@ std::ostream &operator<<(std::ostream &os, const Parser &parser)
 	return os;
 }
 
+const char *Parser::ParserException::BraceExpected::what() const throw()
+{
+	return "Brace expected";
+}
+
+const char*	Parser::ParserException::CannotOpenFile::what() const throw()
+{
+	return "Cannot open file";
+}
+
+const char	*Parser::ParserException::UnknownParam::what() const throw()
+{
+	return "Unknown parameter";
+}
+
+const char *Parser::ParserException::InvalidData::what() const throw()
+{
+	return "Invalid data format";
+}

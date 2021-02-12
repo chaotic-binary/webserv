@@ -37,9 +37,12 @@ public:
 	void setAutoindex(bool autoindex);
 	void setUploadEnable(bool uploadEnable);
 	void setCgiExtensions(const std::vector<std::string> &cgiExtensions);
-	void setMethods(const std::vector<std::string> &methods);
+	void setMethods(const std::vector<e_methods> &methods);
 
-	void addLocation(const Location &loc);
+	void setMethodsFromStr(const std::vector<std::string> &methods);
+	void setAutoindexFromStr(const std::string &str);
+	void setUploadEnableFromStr(const std::string &str);
+	//void addLocation(const Location &loc);
 
 	const std::string &getName() const;
 	const std::string &getRoot() const;
@@ -58,6 +61,9 @@ public:
 		class WrongMethod: public std::exception {
 			virtual const char* what() const throw();
 		};
+		class WrongOnOff: public std::exception {
+			virtual const char* what() const throw();
+		};
 		//virtual const char* what() const throw();
 	};
 
@@ -73,6 +79,8 @@ private:
 	std::vector<std::string>	_cgiExtensions;
 	std::vector<e_methods>		_methods;
 	//std::vector<Location>		_locations;
+
+	static bool getBoolFromStr(const std::string &str);
 };
 
 #endif //WEBSERV_LOCATION_HPP

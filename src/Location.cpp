@@ -1,30 +1,5 @@
 #include "../include/Location.hpp"
 
-std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v)
-{
-	for (int i = 0; i < v.size(); ++i)
-		os << "\t\t" << v[i] << std::endl;
-	return os;
-}
-
-std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v)
-{
-	std::map<e_methods, std::string> map;
-	map[GET] = "GET";
-	map[HEAD] = "HEAD";
-	map[POST] = "POST";
-	map[PUT] = "PUT";
-	map[DELETE] = "DELETE";
-	map[CONNECT] = "CONNECT";
-	map[OPTIONS] = "OPTIONS";
-	map[TRACE] = "TRACE";
-
-	for (int i = 0; i < v.size(); ++i) {
-		os << "\t\t" << map[v[i]] << std::endl;
-	}
-	return os;
-}
-
 Location::Location() :
 		_autoindex(false),
 		_uploadEnable(false),
@@ -153,10 +128,14 @@ void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions)
 	_cgiExtensions = cgiExtensions;
 }
 
-void Location::setMethods(const std::vector<std::string> &methods)
+void Location::setMethods(const std::vector<e_methods> &methods)
+{
+	_methods = methods;
+}
+
+void Location::setMethodsFromStr(const std::vector<std::string> &methods)
 {
 	for (int i = 0; i < methods.size(); ++i) {
-		//std::cout<< "!!!" << methods[i] << " ";
 		if (methods[i] == "GET")
 			_methods.push_back(GET);
 		else if (methods[i] == "HEAD")
@@ -178,10 +157,56 @@ void Location::setMethods(const std::vector<std::string> &methods)
 	}
 }
 
+void Location::setAutoindexFromStr(const std::string &str)
+{
+	setAutoindex(getBoolFromStr(str));
+}
+
+void Location::setUploadEnableFromStr(const std::string &str)
+{
+	setUploadEnable(getBoolFromStr(str));
+}
+
+
 /*void Location::addLocation(const Location &loc)
 {
 	_locations.push_back(loc);
 }*/
+
+bool Location::getBoolFromStr(const std::string &str)
+{
+	if (str == "on")
+		return (true);
+	else if (str == "off")
+		return (false);
+	else
+		throw LocException::WrongOnOff();
+}
+
+static std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v)
+{
+	for (int i = 0; i < v.size(); ++i)
+		os << "\t\t" << v[i] << std::endl;
+	return os;
+}
+
+static std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v)
+{
+	std::map<e_methods, std::string> map;
+	map[GET] = "GET";
+	map[HEAD] = "HEAD";
+	map[POST] = "POST";
+	map[PUT] = "PUT";
+	map[DELETE] = "DELETE";
+	map[CONNECT] = "CONNECT";
+	map[OPTIONS] = "OPTIONS";
+	map[TRACE] = "TRACE";
+
+	for (int i = 0; i < v.size(); ++i) {
+		os << "\t\t" << map[v[i]] << std::endl;
+	}
+	return os;
+}
 
 std::ostream &operator<<(std::ostream &os, const Location &location)
 {
@@ -205,8 +230,12 @@ std::ostream &operator<<(std::ostream &os, const Location &location)
 	return os;
 }
 
-
 const char *Location::LocException::WrongMethod::what() const throw()
 {
 	return "Wrong method";
+}
+
+const char *Location::LocException::WrongOnOff::what() const throw()
+{
+	return "Wrong value: \"on\" or \"off\" required";
 }

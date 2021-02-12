@@ -9,8 +9,7 @@ int main(int ac, char **av, char **env)
 	try {
 		Parser p = Parser(av[1]);
 		std::cout << p;
-	}
-	catch(const std::exception& e) {
+	} catch(const std::exception& e) {
 		std::cerr  << e.what() << std::endl;
 	}
 }
