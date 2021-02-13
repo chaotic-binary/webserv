@@ -4,8 +4,7 @@
 # include "ServConfig.hpp"
 # include <fstream>
 # include <sstream>
-# include <string>
-# include <ostream>
+# include "utils.hpp"
 
 class Parser
 {
@@ -24,15 +23,15 @@ public:
 		};
 		class UnknownParam: public std::logic_error {
 		private: UnknownParam();
-		public: UnknownParam(int line) : std::logic_error("Unknown parameter: line:" + std::to_string(line)){};
+		public: UnknownParam(int line) : std::logic_error("Unknown parameter: line:" + ft_to_str(line)){};
 		};
 		class InvalidData: public std::logic_error {
 		private: InvalidData();
-		public: InvalidData(int line) : std::logic_error("Invalid data format: line:" + std::to_string(line)){};
+		public: InvalidData(int line) : std::logic_error("Invalid data format: line:" + ft_to_str(line)){};
 		};
 		class BraceExpected: public std::logic_error {
 		private: BraceExpected();
-		public: BraceExpected(int line) : std::logic_error("Brace expected: line:" + std::to_string(line)){};
+		public: BraceExpected(int line) : std::logic_error("Brace expected: line:" + ft_to_str(line)){};
 		};
 		//virtual const char* what() const throw();
 	};
@@ -68,7 +67,5 @@ private:
 	static void		trim_semicolon(std::string &);
 	static size_t 	to_num(const std::string &str);
 };
-
-//std::ostream &operator<<(std::ostream &os, const Parser &parser);
 
 #endif //WEBSERV_PARSER_HPP

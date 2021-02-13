@@ -26,8 +26,6 @@ public:
 	~Location();
 	Location &operator=(const Location &copy);
 
-	friend std::ostream &operator<<(std::ostream &os, const Location &location);
-
 	void setName(const std::string &name);
 	void setRoot(const std::string &root);
 	void setIndex(const std::string &index);
@@ -42,7 +40,6 @@ public:
 	void setMethodsFromStr(const std::vector<std::string> &methods);
 	void setAutoindexFromStr(const std::string &str);
 	void setUploadEnableFromStr(const std::string &str);
-	//void addLocation(const Location &loc);
 
 	const std::string &getName() const;
 	const std::string &getRoot() const;
@@ -54,7 +51,9 @@ public:
 	bool getUploadEnable() const;
 	const std::vector<std::string> &getCgiExtensions() const;
 	const std::vector<e_methods> &getMethods() const;
-	//const std::vector<Location> &getLocations() const;
+	static const std::map<std::string, e_methods> &getMethodsParser();
+
+	static void initMethodsParser();
 
 	class LocException: public std::exception {
 	public:
@@ -67,6 +66,9 @@ public:
 		//virtual const char* what() const throw();
 	};
 
+	friend std::ostream &operator<<(std::ostream &os, const Location &location);
+	friend std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v);
+
 private:
 	std::string					_name;
 	std::string					_root;
@@ -78,9 +80,9 @@ private:
 	bool						_uploadEnable;
 	std::vector<std::string>	_cgiExtensions;
 	std::vector<e_methods>		_methods;
-	//std::vector<Location>		_locations;
 
 	static bool getBoolFromStr(const std::string &str);
+	static std::map< std::string, e_methods> methodsParser;
 };
 
 #endif //WEBSERV_LOCATION_HPP
