@@ -104,6 +104,7 @@ void Location::setUploadPath(const std::string &uploadPath) {
 
 void Location::setMaxBody(size_t maxBody) {
 	_maxBody = maxBody;
+	//TODO: check max min range?
 }
 
 void Location::setAutoindex(bool autoindex) {
@@ -120,6 +121,7 @@ void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions) {
 
 void Location::setMethods(const std::vector<e_methods> &methods) {
 	_methods = methods;
+	//TODO: set instead of vector?
 }
 
 void Location::setMethodsFromStr(const std::vector<std::string> &methods) {
