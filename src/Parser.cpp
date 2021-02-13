@@ -4,6 +4,7 @@
 std::map<std::string, void (*) (const std::vector<std::string> &, ServConfig &)> Parser::servParser;
 std::map<std::string, void (Location::*) (const std::string &)> Parser::locParser;
 std::map<std::string, void (Location::*) (const std::vector<std::string> &)> Parser::locArrParser;
+int Parser::line_num;
 
 void	Parser::initServParser()
 {
@@ -37,7 +38,7 @@ void	Parser::line_to_serv(std::vector<std::string> &v, ServConfig &serv)
 		(*it->second)(v, serv);
 	}
 	else
-		throw ParserException::UnknownParam();
+		throw ParserException::UnknownParam(line_num);
 }
 
 void	Parser::line_to_loc(std::vector<std::string> &v, Location &loc)
@@ -46,13 +47,13 @@ void	Parser::line_to_loc(std::vector<std::string> &v, Location &loc)
 	if ((ita = locArrParser.find(v[0])) != locArrParser.end()) {
 		//std::cout << "find loc arr func" << std::endl;//
 		if (v.size() < 2)
-			throw ParserException::InvalidData();
+			throw ParserException::InvalidData(line_num);
 		v.erase(v.begin());
 		(loc.*ita->second)(v);
 	}
 	else {
 		if (v.size() != 2)
-			throw ParserException::InvalidData();
+			throw ParserException::InvalidData(line_num);
 		std::map<std::string, void (Location::*) (const std::string &)>::iterator it;
 		if ((it = locParser.find(v[0])) != locParser.end()) {
 			//std::cout << "find loc func" << std::endl;//
@@ -60,7 +61,7 @@ void	Parser::line_to_loc(std::vector<std::string> &v, Location &loc)
 		} else if (v[0] == "client_max_body_size")
 			parseMaxBody(v[1], loc);
 		else
-			throw ParserException::UnknownParam();
+			throw ParserException::UnknownParam(line_num);
 	}
 }
 
@@ -73,7 +74,7 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 
 	if (line == "server\t{" || line == "server{") {
 		if (brace)
-			throw ParserException::BraceExpected();
+			throw ParserException::BraceExpected(line_num);
 		++serv;
 		ServConfig s = ServConfig();
 		_servs.push_back(s);
@@ -81,7 +82,7 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 //		loc = -1;
 	} else if (line.substr(0, line.find("\t")) == "location") {
 		if (!brace && serv != -1)
-			throw ParserException::InvalidData();
+			throw ParserException::InvalidData(line_num);
 //		if (!loc_context)
 //			++loc;
 		++brace;
@@ -92,7 +93,7 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 	} else {
 		if (line[0] == '}' && line.size() == 1) {
 			if (!brace)
-				throw ParserException::BraceExpected();
+				throw ParserException::BraceExpected(line_num);
 			if (loc_context) {
 				(serv < 0) ? main.addLocation(location) : _servs[serv].addLocation(location);
 				//std::cout<<location<<std::endl;
@@ -104,10 +105,8 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 		else {
 			trim_semicolon(line);
 			std::vector<std::string> v = split_str(line, '\t');
-			//if (v.empty())//		return ;
-			if (v[1].empty()) {
-				throw ParserException::InvalidData();
-				return ;
+			if (v.empty() || v[1].empty()) {
+				throw ParserException::InvalidData(line_num);
 			}
 			if (loc_context) { //std::cout << "loc " << loc << std::endl;
 				line_to_loc(v, location);
@@ -118,7 +117,7 @@ void	Parser::parse_line(std::string &line, int &brace, ServConfig &main)
 				line_to_serv(v,  main);
 			}
 			else
-				throw ParserException::InvalidData();
+				throw ParserException::InvalidData(line_num);
 		}
 	}
 }
@@ -133,9 +132,11 @@ Parser::Parser(char* file)
 	initLocArrParser();
 	std::string line;
 	int brace = 0;
+	line_num = 0;
 	ServConfig main;
 	while (std::getline(ifs, line)) {
 		//std::cout << line << std::endl << std::endl;
+		++line_num;
 		ws_to_tab(line);
 		trim_str(line);
 		if (!line.empty() && line[0] != '#')
@@ -143,7 +144,7 @@ Parser::Parser(char* file)
 	}
 	ifs.close();
 	if (brace)
-		throw ParserException::BraceExpected();
+		throw ParserException::BraceExpected(line_num);
 	addMainAndDefaults(main);
 }
 
@@ -164,38 +165,51 @@ Parser	&Parser::operator=(const Parser &copy)
 
 void	Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv)
 {
-	for (int i = 1; i < args.size(); ++i) { 	//std::cout << args[i] << "|" << std::endl;//
-		if (args[i].find(':') != args[i].npos) {
-			std::vector<std::string> w = split_str(args[1], ':');
-			//std::cout << "w0=" << w[0] << "|" << std::endl;//
-			//std::cout << "w1=" << w[1] << "|" << std::endl;//
-			serv.setHost(w[0]);
-			serv.setPort(to_num(w[1]));
+	if (args[1].find(':') != args[1].npos && args.size() == 2) {
+		std::vector<std::string> w = split_str(args[1], ':');
+		//std::cout << "w0=" << w[0] << "|" << std::endl;//
+		//std::cout << "w1=" << w[1] << "|" << std::endl;//
+		serv.setHost(w[0]);
+		serv.setPort(to_num(w[1]));
+	}
+	else {
+		if (args.size() > 3)
+			throw ParserException::InvalidData(line_num);
+		for (int i = 1; i < args.size(); ++i) { 	//std::cout << args[i] << "|" << std::endl;//
+			if (args[i].find('.') != args[i].npos || (args[i] == "localhost")) {
+				if (!serv.getHost().empty())
+					throw ParserException::InvalidData(line_num);
+				if (args[i] != "localhost")
+					serv.setHost(args[i]);
+				else
+					serv.setHost(LOCALHOST);
+			} else {
+				if (serv.getPort() != 0)
+					throw ParserException::InvalidData(line_num);
+				serv.setPort(to_num(args[i]));
+			}
 		}
-		else if (args[i].find('.') != args[i].npos)
-			serv.setHost(args[i]);
-		else if (args[i] != "localhost")
-			serv.setPort(to_num(args[i]));
-		//std::cout << "host:" <<  serv.getHost() << " port:" << serv.getPort() << std::endl;
 	}
 }
 
 void	Parser::parseServNames(const std::vector<std::string> & args, ServConfig & serv)
 {
-	std::vector<std::string>args_copy = args;
-	args_copy.erase(args_copy.begin());
-	serv.setNames(args_copy);
-	/*std::vector<std::string> names = serv.getNames();
-	for (int i = 0; i < names.size(); ++i) {
+	std::vector<std::string>names;
 
-		std::cout << names[i]  << "!" << std::endl;//
-	}*/
+	for (int i = 1; i < args.size(); ++i) {
+		//std::cout << names[i]  << "!" << std::endl;//
+		if (args[i] == "localhost")
+			names.push_back(LOCALHOST);
+		else
+			names.push_back(args[i]);
+	}
+	serv.setNames(names);
 }
 
 void	Parser::parseServRoot(const std::vector<std::string> & args, ServConfig & serv)
 {
 	if (args.size() != 2)
-		throw ParserException::InvalidData();
+		throw ParserException::InvalidData(line_num);
 	serv.setRoot(args[1]);
 }
 
@@ -205,7 +219,7 @@ void	Parser::parseErrorPages(const std::vector<std::string> & args, ServConfig &
 	size_t size = args.size();
 
 	if (size < 3)
-		throw ParserException::InvalidData();
+		throw ParserException::InvalidData(line_num);
 	for (int i = 1; i < size - 1; ++i) {
 		p.first = to_num(args[i]);
 		p.second = args[size - 1];
@@ -223,10 +237,10 @@ void	Parser::parseLocName(const std::vector<std::string> &args, Location &loc)
 {
 	size_t  size = args.size();
 
-	if (size != 3)
-		throw ParserException::InvalidData();
 	if (args[size - 1] != "{")
-		throw ParserException::BraceExpected();
+		throw ParserException::BraceExpected(line_num);
+	if (size != 3)
+		throw ParserException::InvalidData(line_num);
 	loc.setName(args[1]);
 }
 
@@ -247,14 +261,14 @@ void Parser::parseMaxBody(std::string &val, Location &loc)
 				n = 1073741824;
 				break;
 			default:
-				throw ParserException::InvalidData();
+				throw ParserException::InvalidData(line_num);
 				break;
 		}
 		val = val.substr(0, val.find_first_not_of("0123456789"));
 	}
 	//n *= to_num(val);
 	loc.setMaxBody(n * to_num(val));
-
+	//TODO: overflow manage
 	//std::cout << "maxbody = " << loc.getMaxBody() << std::endl; //
 }
 
@@ -288,12 +302,12 @@ void	Parser::trim_semicolon(std::string &str)
 
 size_t	Parser::to_num(const std::string &str) {
 	if (!isalldigits(str))
-		throw Parser::ParserException::InvalidData();
+		throw Parser::ParserException::InvalidData(line_num);
 
 	size_t n;
 	std::stringstream ss(str);
 	if (!(ss >> n))
-		throw Parser::ParserException::InvalidData();
+		throw Parser::ParserException::InvalidData(line_num);
 	return (n);
 }
 
@@ -310,7 +324,11 @@ std::ostream &operator<<(std::ostream &os, const Parser &parser)
 		os << "host: " << servs[i].getHost() << std::endl;
 		os << "port: " << servs[i].getPort() << std::endl;
 		os << "root: " << servs[i].getRoot() << std::endl;
-
+		os << "names: ";
+		std::vector<std::string> names = servs[i].getNames();
+		for (int k = 0; k < names.size(); ++k)
+			os << names[k] << " ";
+		os << std::endl;
 		os << "error pages:\n";
 		std::map<int, std::string> mymap = servs[i].getErrorPages();
 		std::map<int, std::string>::iterator it;
@@ -325,22 +343,7 @@ std::ostream &operator<<(std::ostream &os, const Parser &parser)
 	return os;
 }
 
-const char *Parser::ParserException::BraceExpected::what() const throw()
-{
-	return "Brace expected";
-}
-
 const char*	Parser::ParserException::CannotOpenFile::what() const throw()
 {
 	return "Cannot open file";
-}
-
-const char	*Parser::ParserException::UnknownParam::what() const throw()
-{
-	return "Unknown parameter";
-}
-
-const char *Parser::ParserException::InvalidData::what() const throw()
-{
-	return "Invalid data format";
 }

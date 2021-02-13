@@ -1,4 +1,4 @@
-#include "../include/ServConfig.hpp"
+#include "ServConfig.hpp"
 
 ServConfig::ServConfig() :
 	_port(0)

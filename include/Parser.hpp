@@ -22,14 +22,17 @@ public:
 		class CannotOpenFile: public std::exception {
 			virtual const char* what() const throw();
 		};
-		class UnknownParam: public std::exception {
-			virtual const char* what() const throw();
+		class UnknownParam: public std::logic_error {
+		private: UnknownParam();
+		public: UnknownParam(int line) : std::logic_error("Unknown parameter: line:" + std::to_string(line)){};
 		};
-		class InvalidData: public std::exception {
-			virtual const char* what() const throw();
+		class InvalidData: public std::logic_error {
+		private: InvalidData();
+		public: InvalidData(int line) : std::logic_error("Invalid data format: line:" + std::to_string(line)){};
 		};
-		class BraceExpected: public std::exception {
-			virtual const char* what() const throw();
+		class BraceExpected: public std::logic_error {
+		private: BraceExpected();
+		public: BraceExpected(int line) : std::logic_error("Brace expected: line:" + std::to_string(line)){};
 		};
 		//virtual const char* what() const throw();
 	};
@@ -56,6 +59,7 @@ private:
 	static std::map<std::string, void (*) (const std::vector<std::string> &, ServConfig &)> servParser;
 	static std::map<std::string, void (Location::*) (const std::string &)> locParser;
 	static std::map<std::string, void (Location::*) (const std::vector<std::string> &)> locArrParser;
+	static int line_num;
 
 	static void initServParser();
 	static void initLocParser();
