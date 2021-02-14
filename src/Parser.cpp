@@ -159,9 +159,7 @@ Parser &Parser::operator=(const Parser &copy) {
 void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv) {
 	if (args[1].find(':') != args[1].npos && args.size() == 2) {
 		std::vector<std::string> v = split_str(args[1], ':');
-		//std::cout << "w0=" << v[0] << "|" << std::endl;//
-		//std::cout << "w1=" << v[1] << "|" << std::endl;//
-		serv.setHost(v[0]);
+		parseHost(v[0], serv);
 		serv.setPort(to_num(v[1]));
 	} else {
 		if (args.size() > 3)
@@ -170,10 +168,7 @@ void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv)
 			if (args[i].find('.') != args[i].npos || (args[i] == "localhost")) {
 				if (!serv.getHost().empty())
 					throw ParserException::InvalidData(line_num);
-				if (args[i] != "localhost")
-					serv.setHost(args[i]);
-				else
-					serv.setHost(LOCALHOST);
+				parseHost(args[i], serv);
 			} else {
 				if (serv.getPort() != 0)
 					throw ParserException::InvalidData(line_num);
@@ -181,6 +176,15 @@ void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv)
 			}
 		}
 	}
+}
+
+void Parser::parseHost(const std::string &s, ServConfig &serv) {
+	if (s.find_first_not_of("0123456789.") == std::string::npos)
+		serv.setHost(s);
+	else if (s == "localhost")
+		serv.setHost(LOCALHOST);
+	else
+		throw ParserException::InvalidData(line_num);
 }
 
 void Parser::parseServNames(const std::vector<std::string> &args, ServConfig &serv) {

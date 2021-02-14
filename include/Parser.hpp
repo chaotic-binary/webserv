@@ -49,6 +49,7 @@ private:
 	static void line_to_loc(std::vector<std::string> &, Location &);
 
 	static void parseListen(const std::vector<std::string> &, ServConfig &);
+	static void parseHost(const std::string &, ServConfig &);
 	static void parseErrorPages(const std::vector<std::string> &, ServConfig &);
 	static void parseServNames(const std::vector<std::string> &, ServConfig &);
 	static void parseServRoot(const std::vector<std::string> &, ServConfig &);
