@@ -128,7 +128,7 @@ Parser::Parser(char *file) {
 	int brace = 0;
 	line_num = 0;
 	ServConfig main;
-	while (std::getline(ifs, line)) {
+	while (ft_getline(ifs, line)) {
 		//std::cout << line << std::endl << std::endl;
 		++line_num;
 		ws_to_tab(line);
@@ -158,11 +158,11 @@ Parser &Parser::operator=(const Parser &copy) {
 
 void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv) {
 	if (args[1].find(':') != args[1].npos && args.size() == 2) {
-		std::vector<std::string> w = split_str(args[1], ':');
-		//std::cout << "w0=" << w[0] << "|" << std::endl;//
-		//std::cout << "w1=" << w[1] << "|" << std::endl;//
-		serv.setHost(w[0]);
-		serv.setPort(to_num(w[1]));
+		std::vector<std::string> v = split_str(args[1], ':');
+		//std::cout << "w0=" << v[0] << "|" << std::endl;//
+		//std::cout << "w1=" << v[1] << "|" << std::endl;//
+		serv.setHost(v[0]);
+		serv.setPort(to_num(v[1]));
 	} else {
 		if (args.size() > 3)
 			throw ParserException::InvalidData(line_num);

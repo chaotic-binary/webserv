@@ -16,6 +16,14 @@ void trim_str(std::string &str) {
 	str.erase(str.find_last_not_of('\t') + 1);
 }
 
+std::istream &ft_getline(std::istream &ifs, std::string &line) {
+	char ch;
+	line.clear();
+	while (ifs.get(ch) && ch != '\n')
+		line.push_back(ch);
+	return ifs;
+}
+
 std::vector<std::string> split_str(const std::string &str, const char delim) {
 	size_t start = 0;
 	size_t end = 0;
