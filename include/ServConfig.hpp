@@ -1,5 +1,4 @@
-#ifndef WEBSERV_SERVCONFIG_HPP
-#define WEBSERV_SERVCONFIG_HPP
+#pragma once
 
 # include "../include/Location.hpp"
 
@@ -40,4 +39,4 @@ private:
 	std::vector<Location>			_locations;
 	std::map<int, std::string>		_errorPages;
 };
-#endif //WEBSERV_SERVCONFIG_HPP
+

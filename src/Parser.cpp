@@ -68,7 +68,7 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 		if (line != "server{") {
 			if (line[line.size() - 1] != '{' || (brace))
 				throw ParserException::BraceExpected(line_num);
-			std::vector<std::string> v = split_str(line, '\t');
+			std::vector<std::string> v = ft::split(line, '\t');
 			if (v.size() != 2)
 				throw ParserException::InvalidData(line_num);
 		}
@@ -84,7 +84,7 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 //			++loc;
 		++brace;
 		++loc_context;
-		parseLocName(split_str(line, '\t'), location);
+		parseLocName(ft::split(line, '\t'), location);
 		//(serv < 0) ? main.addLocation(location) : _servs[serv].addLocation(location);
 
 	} else {
@@ -100,7 +100,7 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 			--brace;
 		} else {
 			trim_semicolon(line);
-			std::vector<std::string> v = split_str(line, '\t');
+			std::vector<std::string> v = ft::split(line, '\t');
 			if (v.empty() || v[1].empty()) {
 				throw ParserException::InvalidData(line_num);
 			}
@@ -128,11 +128,11 @@ Parser::Parser(char *file) {
 	int brace = 0;
 	line_num = 0;
 	ServConfig main;
-	while (ft_getline(ifs, line)) {
+	while (ft::getline(ifs, line)) {
 		//std::cout << line << std::endl << std::endl;
 		++line_num;
-		ws_to_tab(line);
-		trim_str(line);
+		ft::ws_to_tab(line);
+		ft::trim(line);
 		if (!line.empty() && line[0] != '#')
 			parse_line(line, brace, main);
 	}
@@ -158,7 +158,7 @@ Parser &Parser::operator=(const Parser &copy) {
 
 void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv) {
 	if (args[1].find(':') != args[1].npos && args.size() == 2) {
-		std::vector<std::string> v = split_str(args[1], ':');
+		std::vector<std::string> v = ft::split(args[1], ':');
 		parseHost(v[0], serv);
 		serv.setPort(to_num(v[1]));
 	} else {
@@ -289,7 +289,7 @@ void Parser::trim_semicolon(std::string &str) {
 }
 
 size_t Parser::to_num(const std::string &str) {
-	if (!isalldigits(str))
+	if (!ft::isalldigits(str))
 		throw Parser::ParserException::InvalidData(line_num);
 
 	size_t n;

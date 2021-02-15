@@ -1,5 +1,4 @@
-#ifndef WEBSERV_LOCATION_HPP
-#define WEBSERV_LOCATION_HPP
+#pragma once
 
 # include <iostream>
 # include <vector>
@@ -85,4 +84,3 @@ private:
 	static std::map< std::string, e_methods> methodsParser;
 };
 
-#endif //WEBSERV_LOCATION_HPP

@@ -1,22 +1,22 @@
 #include <sstream>
-#include "../include/utils.hpp"
+#include "utils.hpp"
 
-bool isalldigits(const std::string &str) {
+bool ft::isalldigits(const std::string &str) {
 	return (str.find_first_not_of("0123456789") == std::string::npos);
 }
 
-void ws_to_tab(std::string &str) {
+void ft::ws_to_tab(std::string &str) {
 	for (int i = 0; i < str.size(); ++i)
 		if (str[i] == ' ')
 			str[i] = '\t';
 }
 
-void trim_str(std::string &str) {
+void ft::trim(std::string &str) {
 	str.erase(0, str.find_first_not_of('\t'));
 	str.erase(str.find_last_not_of('\t') + 1);
 }
 
-std::istream &ft_getline(std::istream &ifs, std::string &line) {
+std::istream &ft::getline(std::istream &ifs, std::string &line) {
 	char ch;
 	line.clear();
 	while (ifs.get(ch) && ch != '\n')
@@ -24,7 +24,7 @@ std::istream &ft_getline(std::istream &ifs, std::string &line) {
 	return ifs;
 }
 
-std::vector<std::string> split_str(const std::string &str, const char delim) {
+std::vector<std::string> ft::split(const std::string &str, const char delim) {
 	size_t start = 0;
 	size_t end = 0;
 	std::vector<std::string> res;

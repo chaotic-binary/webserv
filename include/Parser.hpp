@@ -1,5 +1,4 @@
-#ifndef WEBSERV_PARSER_HPP
-#define WEBSERV_PARSER_HPP
+#pragma once
 
 # include "ServConfig.hpp"
 # include <fstream>
@@ -23,15 +22,15 @@ public:
 		};
 		class UnknownParam: public std::logic_error {
 		private: UnknownParam();
-		public: UnknownParam(int line) : std::logic_error("Unknown parameter: line:" + ft_to_str(line)){};
+		public: UnknownParam(int line) : std::logic_error("Unknown parameter: line:" + ft::to_str(line)){};
 		};
 		class InvalidData: public std::logic_error {
 		private: InvalidData();
-		public: InvalidData(int line) : std::logic_error("Invalid data format: line:" + ft_to_str(line)){};
+		public: InvalidData(int line) : std::logic_error("Invalid data format: line:" + ft::to_str(line)){};
 		};
 		class BraceExpected: public std::logic_error {
 		private: BraceExpected();
-		public: BraceExpected(int line) : std::logic_error("Brace expected: line:" + ft_to_str(line)){};
+		public: BraceExpected(int line) : std::logic_error("Brace expected: line:" + ft::to_str(line)){};
 		};
 		//virtual const char* what() const throw();
 	};
@@ -69,4 +68,3 @@ private:
 	static size_t 	to_num(const std::string &str);
 };
 
-#endif //WEBSERV_PARSER_HPP
