@@ -1,9 +1,9 @@
 #include "../include/Location.hpp"
 
 Location::Location() :
+		_maxBody(DEF_MAX_BODY),
 		_autoindex(false),
-		_uploadEnable(false),
-		_maxBody(DEF_MAX_BODY) { }
+		_uploadEnable(false) { }
 
 Location::Location(const Location &copy) {
 	*this = copy;
@@ -125,7 +125,7 @@ void Location::setMethods(const std::vector<e_methods> &methods) {
 }
 
 void Location::setMethodsFromStr(const std::vector<std::string> &methods) {
-	for (int i = 0; i < methods.size(); ++i) {
+	for (size_t i = 0; i < methods.size(); ++i) {
 		std::map<std::string, e_methods>::const_iterator it;
 		if ((it = methodsParser.find(methods[i])) != methodsParser.end())
 			_methods.push_back(methodsParser[methods[i]]);
@@ -152,13 +152,13 @@ bool Location::getBoolFromStr(const std::string &str) {
 }
 
 static std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v) {
-	for (int i = 0; i < v.size(); ++i)
+	for (size_t i = 0; i < v.size(); ++i)
 		os << "\t\t" << v[i] << std::endl;
 	return os;
 }
 
 std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v) {
-	for (int i = 0; i < v.size(); ++i) {
+	for (size_t i = 0; i < v.size(); ++i) {
 		std::map<std::string, e_methods>::const_iterator it;
 		for ((it = Location::getMethodsParser().begin()); it != Location::getMethodsParser().end(); ++it) {
 			if (it->second == v[i])

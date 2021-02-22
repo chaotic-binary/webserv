@@ -6,7 +6,7 @@ bool ft::isalldigits(const std::string &str) {
 }
 
 void ft::ws_to_tab(std::string &str) {
-	for (int i = 0; i < str.size(); ++i)
+	for (size_t i = 0; i < str.size(); ++i)
 		if (str[i] == ' ')
 			str[i] = '\t';
 }

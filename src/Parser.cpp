@@ -164,7 +164,7 @@ void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv)
 	} else {
 		if (args.size() > 3)
 			throw ParserException::InvalidData(line_num);
-		for (int i = 1; i < args.size(); ++i) {    //std::cout << args[i] << "|" << std::endl;//
+		for (size_t i = 1; i < args.size(); ++i) {    //std::cout << args[i] << "|" << std::endl;//
 			if (args[i].find('.') != args[i].npos || (args[i] == "localhost")) {
 				if (!serv.getHost().empty())
 					throw ParserException::InvalidData(line_num);
@@ -190,7 +190,7 @@ void Parser::parseHost(const std::string &s, ServConfig &serv) {
 void Parser::parseServNames(const std::vector<std::string> &args, ServConfig &serv) {
 	std::vector<std::string> names;
 
-	for (int i = 1; i < args.size(); ++i) {
+	for (size_t i = 1; i < args.size(); ++i) {
 		//std::cout << names[i]  << "!" << std::endl;//
 		if (args[i] == "localhost")
 			names.push_back(LOCALHOST);
@@ -212,7 +212,7 @@ void Parser::parseErrorPages(const std::vector<std::string> &args, ServConfig &s
 
 	if (size < 3)
 		throw ParserException::InvalidData(line_num);
-	for (int i = 1; i < size - 1; ++i) {
+	for (size_t i = 1; i < size - 1; ++i) {
 		p.first = to_num(args[i]);
 		p.second = args[size - 1];
 		serv.addErrorPage(p);
@@ -263,14 +263,14 @@ void Parser::parseMaxBody(std::string &val, Location &loc) {
 }
 
 void Parser::addMainAndDefaults(const ServConfig &main) {
-	for (int i = 0; i < _servs.size(); ++i) {
+	for (size_t i = 0; i < _servs.size(); ++i) {
 		if (_servs[i].getRoot().empty())
 			_servs[i].setRoot(main.getRoot());
 		if (_servs[i].getErrorPages().empty())
 			_servs[i].setErrorPages(main.getErrorPages());
 		if (!main.getLocations().empty()) {
 			std::vector<Location> locs = main.getLocations();
-			for (int l = 0; l < locs.size(); ++l)
+			for (size_t l = 0; l < locs.size(); ++l)
 				_servs[i].addLocation(locs[l]);
 		}
 		if (!_servs[i].getPort())
@@ -305,14 +305,14 @@ const std::vector<ServConfig> &Parser::getServs() const {
 
 std::ostream &operator<<(std::ostream &os, const Parser &parser) {
 	std::vector<ServConfig> servs = parser.getServs();
-	for (int i = 0; i < servs.size(); ++i) {
+	for (size_t i = 0; i < servs.size(); ++i) {
 		os << "SERV[" << i << "]:\n";
 		os << "host: " << servs[i].getHost() << std::endl;
 		os << "port: " << servs[i].getPort() << std::endl;
 		os << "root: " << servs[i].getRoot() << std::endl;
 		os << "names: ";
 		std::vector<std::string> names = servs[i].getNames();
-		for (int k = 0; k < names.size(); ++k)
+		for (size_t k = 0; k < names.size(); ++k)
 			os << names[k] << " ";
 		os << std::endl;
 		os << "error pages:\n";
@@ -322,7 +322,7 @@ std::ostream &operator<<(std::ostream &os, const Parser &parser) {
 			std::cout << it->first << " => " << it->second << '\n';
 
 		std::vector<Location> locations = servs[i].getLocations();
-		for (int l = 0; l < locations.size(); ++l) {
+		for (size_t l = 0; l < locations.size(); ++l) {
 			os << "location " << l << std::endl << locations[l] << std::endl;
 		}
 	}
