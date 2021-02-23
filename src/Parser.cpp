@@ -159,12 +159,14 @@ Parser &Parser::operator=(const Parser &copy) {
 void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv) {
 	if (args[1].find(':') != args[1].npos && args.size() == 2) {
 		std::vector<std::string> v = ft::split(args[1], ':');
+		if (v.size() != 2)
+			throw ParserException::InvalidData(line_num);
 		parseHost(v[0], serv);
 		serv.setPort(to_num(v[1]));
 	} else {
 		if (args.size() > 3)
 			throw ParserException::InvalidData(line_num);
-		for (size_t i = 1; i < args.size(); ++i) {    //std::cout << args[i] << "|" << std::endl;//
+		for (size_t i = 1; i < args.size(); ++i) {
 			if (args[i].find('.') != args[i].npos || (args[i] == "localhost")) {
 				if (!serv.getHost().empty())
 					throw ParserException::InvalidData(line_num);
@@ -179,19 +181,18 @@ void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv)
 }
 
 void Parser::parseHost(const std::string &s, ServConfig &serv) {
-	if (s.find_first_not_of("0123456789.") == std::string::npos)
-		serv.setHost(s);
-	else if (s == "localhost")
+	if (s == "localhost")
 		serv.setHost(LOCALHOST);
-	else
+	else if (s.find(':') != std::string::npos)
 		throw ParserException::InvalidData(line_num);
+	else
+		serv.setHost(s);
 }
 
 void Parser::parseServNames(const std::vector<std::string> &args, ServConfig &serv) {
 	std::vector<std::string> names;
 
 	for (size_t i = 1; i < args.size(); ++i) {
-		//std::cout << names[i]  << "!" << std::endl;//
 		if (args[i] == "localhost")
 			names.push_back(LOCALHOST);
 		else
@@ -256,10 +257,8 @@ void Parser::parseMaxBody(std::string &val, Location &loc) {
 		}
 		val = val.substr(0, val.find_first_not_of("0123456789"));
 	}
-	//n *= to_num(val);
 	loc.setMaxBody(n * to_num(val));
 	//TODO: overflow manage
-	//std::cout << "maxbody = " << loc.getMaxBody() << std::endl; //
 }
 
 void Parser::addMainAndDefaults(const ServConfig &main) {
