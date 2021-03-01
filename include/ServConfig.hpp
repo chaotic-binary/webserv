@@ -4,8 +4,7 @@
 
 #define LOCALHOST "127.0.0.1"
 
-class ServConfig
-{
+class ServConfig {
 public:
 	ServConfig();
 	ServConfig(const ServConfig &copy);

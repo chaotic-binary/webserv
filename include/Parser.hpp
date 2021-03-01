@@ -5,8 +5,7 @@
 # include <sstream>
 # include "utils.hpp"
 
-class Parser
-{
+class Parser {
 public:
 	Parser(char *file);
 	Parser(const Parser &copy);

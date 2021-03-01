@@ -17,8 +17,7 @@ enum e_methods {
 	TRACE
 };
 
-class Location
-{
+class Location {
 public:
 	Location();
 	Location(const Location &copy);
@@ -81,6 +80,6 @@ private:
 	std::vector<e_methods>		_methods;
 
 	static bool getBoolFromStr(const std::string &str);
-	static std::map< std::string, e_methods> methodsParser;
+	static std::map<std::string, e_methods> methodsParser;
 };
 
