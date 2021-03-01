@@ -82,7 +82,7 @@ const std::map<int, std::string> &ServConfig::getErrorPages() const {
 	return _errorPages;
 }
 
-Location &ServConfig::getLocation(int i) {
+/*Location &ServConfig::getLocation(int i) {
 	return _locations[i];
-}
+}*/
 
