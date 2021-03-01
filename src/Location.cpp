@@ -12,7 +12,7 @@ Location::Location(const Location &copy) {
 Location::~Location() { }
 
 Location &Location::operator=(const Location &copy) {
-	this->_name = copy._name;
+	this->_path = copy._path;
 	this->_root = copy._root;
 	this->_index = copy._index;
 	this->_cgiPath = copy._cgiPath;
@@ -39,7 +39,7 @@ void Location::initMethodsParser() {
 }
 
 const std::string &Location::getName() const {
-	return _name;
+	return _path;
 }
 
 const std::string &Location::getRoot() const {
@@ -83,7 +83,7 @@ const std::map<std::string, e_methods> &Location::getMethodsParser() {
 }
 
 void Location::setName(const std::string &name) {
-	_name = name;
+	_path = name;
 }
 
 void Location::setRoot(const std::string &root) {
@@ -172,8 +172,8 @@ std::ostream &operator<<(std::ostream &os, const Location &location) {
 	os << "\tname: " << location.getName() << std::endl;
 	os << "\troot: " << location.getRoot() << std::endl;
 	os << "\tindex: " << location.getIndex() << std::endl;
-	os << "\tcgi path: " << location.getCgiPath() << std::endl;
-	os << "\tupload path: " << location.getUploadPath() << std::endl;
+	os << "\tcgi _path: " << location.getCgiPath() << std::endl;
+	os << "\tupload _path: " << location.getUploadPath() << std::endl;
 	os << "\tmax body: " << location.getMaxBody() << std::endl;
 	os << "\tautoindex: " << (location.getAutoindex() ? "on" : "off") << std::endl;
 	os << "\tupload enable: " << (location.getUploadEnable() ? "on" : "off") << std::endl;

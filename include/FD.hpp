@@ -1,8 +1,11 @@
 #pragma once
-#include <libc.h>
 
-class FD
-{
+# include <libc.h>
+//# include <iostream>
+# include <sstream>
+#include <unistd.h>
+
+class FD : public std::stringstream {
 private:
 	FD();
 	FD(FD &copy);
@@ -11,8 +14,21 @@ private:
 	int _fd;
 
 public:
-	FD(int fd);
-	~FD();
+	FD(int fd)
+	{
+		char buf[1024];
+		std::string tmp;
+		int ret;
+		while((ret = ::read(fd, buf, 1024)))
+		{
+			buf[ret] = '\0';
+			tmp += buf;
+		}
+		//this->re
+		//TODO::???
+	}
+
+	virtual ~FD();
 	bool operator==(const FD &rhs) const;
 	bool operator!=(const FD &rhs) const;
 };

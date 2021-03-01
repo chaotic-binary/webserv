@@ -28,7 +28,7 @@ public:
 	const std::vector<Location> &getLocations() const;
 	const std::map<int, std::string> &getErrorPages() const;
 
-	Location &getLocation(int i);
+	//Location &getLocation(int i);
 
 private:
 	std::vector<std::string>		_names;
