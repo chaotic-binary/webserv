@@ -22,7 +22,7 @@ int main(int ac, char **av)
 
 		server.checkClientsBefore(readFds, writeFds, max_d);
 		int ret = server.Select(readFds, writeFds, max_d);
-		std::cout << "tut1" << std::endl;
+		std::cout << "wait select" << std::endl;
 		if ( ret == -1 )
 		{
 			std::cout << "error: select. errno: " << strerror(errno) << std::endl;

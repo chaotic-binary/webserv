@@ -75,12 +75,12 @@ void Server::receive(int fd)
 		std::cout << "error: connection. errno: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
+	std::cout << this->_buffer << std::endl;
 	if (ret < 2048)
 	{
 		this->toSend(fd);// temporarily
 		close(fd); // temporarily
 	}
-	std::cout << this->_buffer << std::endl;
 }
 
 void Server::toSend(int& fd)
@@ -145,6 +145,13 @@ int Server::getMaxSockFd()
 			maxFd = this->_servers[i].getSockFd();
 		}
 	}
+	for (size_t i = 0; i < this->_servers.size(); ++i)
+	{
+		if (maxFd < this->_servers[i].getSockFd())
+		{
+			maxFd = this->_servers[i].getSockFd();
+		}
+	}
 	if (maxFd == -1)
 	{
 		std::cerr << "error: get Max Fd" << std::endl;
@@ -164,6 +171,14 @@ void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds, int &max_d)
 		if (max_d < this->_clientsFd[i])
 		{
 			max_d = this->_clientsFd[i];
+		}
+	}
+	for (size_t i = 0; i < this->_servers.size(); ++i)
+	{
+		FD_SET(this->_servers[i].getSockFd(), &readFds);
+		if (max_d < this->_servers[i].getSockFd())
+		{
+			max_d = this->_servers[i].getSockFd();
 		}
 	}
 }
