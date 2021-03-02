@@ -11,11 +11,14 @@
 # **************************************************************************** #
 
 SERVER_NAME = serverV1
-SERVER_SRC = ../src/Server.cpp testServer
+SERVER_SRC = ../src/Server.cpp testServer.cpp ../src/Parser.cpp \
+			../src/ServConfig.cpp ../src/Location.cpp \
+			../src/utils.cpp ../src/FD.cpp
+
 SERVER_0SRC = $(SERVER_SRC:.cpp=.o)
 INCLUDES = ../include
 
-FLAGS =		clang++ -I$(INCLUDES) -Wall -Wextra -Werror
+FLAGS =		clang++ -I$(INCLUDES) #-Wall -Wextra -Werror
 
 all:		$(SERVER_NAME)
 

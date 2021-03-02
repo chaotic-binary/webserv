@@ -11,24 +11,26 @@
 # **************************************************************************** #
 
 all:
-			#make -C test
+			make -C test
 			make -C Client
-			#mv Server/serverV1 ./
+			mv test/serverV1 ./
 			mv Client/clientV1 ./
 
 clean:
-			#make -C Server clean
+			make -C test clean
 			make -C Client clean
 			rm -rf  *.o
 
 fclean:
-			#make -C Server fclean
+			make -C test fclean
 			make -C Client fclean
 			rm -rf serverV1 clientV1 a.out
 
 free: fclean
 			rm -rf *.o src/*.o
 
+run: all
+			./serverV1 config/test.conf
 s:
 			wc *.cpp *.h *.hpp
 

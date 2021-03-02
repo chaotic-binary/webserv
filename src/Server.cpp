@@ -5,11 +5,10 @@
 #include "Server.hpp"
 
 Server::Server(char *config)
+: _servers(Parser(config).getServs()), _amountServers(_servers.size())
 {
 	std::cout << "parser config" << std::endl;
-	Parser parser(config);
-	this->_servers = parser.getServs();
-	for (size_t i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_amountServers; ++i)
 	{
 		sockaddr_in tmp;
 
@@ -22,12 +21,13 @@ Server::Server(char *config)
 }
 
 Server::Server(const std::string &ip, int port)
+: _amountServers(1)
 {}
 
 Server::Server(const std::vector<ServConfig>& servers)
-: _servers(servers)
+: _servers(servers), _amountServers(servers.size())
 {
-	for (size_t i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_amountServers; ++i)
 	{
 		sockaddr_in tmp;
 
@@ -41,7 +41,7 @@ Server::Server(const std::vector<ServConfig>& servers)
 
 void Server::initSockets()
 {
-	for (size_t i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_amountServers; ++i)
 	{
 		this->_servers[i].setSockFd(socket(AF_INET, SOCK_STREAM, 0));
 		if (this->_servers[i].getSockFd() == -1)
@@ -138,14 +138,14 @@ void Server::newClient(int indexServer)
 int Server::getMaxSockFd()
 {
 	int maxFd = -1;
-	for (size_t i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_amountServers; ++i)
 	{
 		if (this->_servers[i].getSockFd() > maxFd)
 		{
 			maxFd = this->_servers[i].getSockFd();
 		}
 	}
-	for (size_t i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_amountServers; ++i)
 	{
 		if (maxFd < this->_servers[i].getSockFd())
 		{
@@ -173,7 +173,7 @@ void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds, int &max_d)
 			max_d = this->_clientsFd[i];
 		}
 	}
-	for (size_t i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_amountServers; ++i)
 	{
 		FD_SET(this->_servers[i].getSockFd(), &readFds);
 		if (max_d < this->_servers[i].getSockFd())
@@ -217,7 +217,7 @@ int Server::Select(fd_set &readFds, fd_set &writeFds, int &max_d) const
 
 void Server::checkSockets(fd_set &readFds, fd_set &writeFds, int &max_d)
 {
-	for (size_t i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_amountServers; ++i)
 	{
 		if (FD_ISSET(this->_servers[i].getSockFd(), &readFds))
 		{
