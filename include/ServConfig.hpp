@@ -1,6 +1,7 @@
 #pragma once
 
-# include "../include/Location.hpp"
+# include "Location.hpp"
+# include "includes.h"
 
 #define LOCALHOST "127.0.0.1"
 
@@ -17,6 +18,8 @@ public:
 	void setRoot(const std::string &root);
 	void setLocations(const std::vector<Location> &locations);
 	void setErrorPages(const std::map<int, std::string> &errorPages);
+	void setSockFd(int sockFd);
+	void setSockAddr(const sockaddr_in &sockAddr);
 
 	void addErrorPage(const std::pair <int, std::string> &);
 	void addLocation(const Location &loc);
@@ -31,11 +34,14 @@ public:
 	//Location &getLocation(int i);
 
 private:
-	std::vector<std::string>		_names;
-	std::string						_host;
-	size_t							_port;
-	std::string						_root;
-	std::vector<Location>			_locations;
-	std::map<int, std::string>		_errorPages;
+	std::vector<std::string>	_names;
+	std::string					_host;
+	size_t						_port;
+	std::string					_root;
+	std::vector<Location>		_locations;
+	std::map<int, std::string>	_errorPages;
+
+	int							_sockFd;
+	sockaddr_in 				_sockAddr;
 };
 

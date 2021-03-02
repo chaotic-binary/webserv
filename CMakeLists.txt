@@ -13,3 +13,8 @@ add_executable(webserv
         src/utils.cpp include/utils.hpp
         src/FD.cpp include/FD.hpp
         )
+
+add_executable(test_server
+        src/Server.cpp
+        test/testServer.cpp
+        )

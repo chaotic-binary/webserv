@@ -82,6 +82,16 @@ const std::map<int, std::string> &ServConfig::getErrorPages() const {
 	return _errorPages;
 }
 
+void ServConfig::setSockFd(int sockFd)
+{
+	_sockFd = sockFd;
+}
+
+void ServConfig::setSockAddr(const sockaddr_in &sockAddr)
+{
+	_sockAddr = sockAddr;
+}
+
 /*Location &ServConfig::getLocation(int i) {
 	return _locations[i];
 }*/

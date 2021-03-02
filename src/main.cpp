@@ -1,4 +1,4 @@
-#include "../include/Parser.hpp"
+#include "Parser.hpp"
 
 int main(int ac, char **av, char **env) {
 	if (ac != 2) {
