@@ -13,14 +13,14 @@ public:
 	Server(char *);
 	Server(const std::vector<ServConfig>& servers);
 	Server(const std::string& ip, int port);
-	int getSocket();
+	void initSockets();
 
 	void checkClientsBefore(fd_set& readFds, fd_set& writeFds, int& max_d);
 	void checkClientsAfter(fd_set& readFds, fd_set& writeFds, int& max_d);
 
 	int Select(fd_set& readFds, fd_set& writeFds, int& max_d) const;
 	int getSockFd() const;
-	void newClient();
+	void newClient(int &sockFd, sockaddr_in& sockAddr);
 
 	void toSend(int&);
 	void receive(int);

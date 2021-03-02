@@ -8,10 +8,9 @@ volatile bool loop = true;
 int main(int ac, char **av)
 {
 	Server server(Parser(av[1]).getServs());
-
 //	Server serverTestParser(av[1]);
 //	Server server("127.0.0.1", 8000);
-	int max_d = server.getSocket();
+	int max_d = 1654641;
 
 	while (loop)
 	{
@@ -35,10 +34,10 @@ int main(int ac, char **av)
 		if (FD_ISSET(server.getSockFd(), &readFds))
 		{
 			std::cout << "tut2" << std::endl;
-			server.newClient();
+//			server.newClient();
 		}
 		server.checkClientsAfter(readFds, writeFds, max_d);
 	}
-	close(server.getSocket());
+//	close(server.initSockets());
 	return (0);
 }

@@ -39,31 +39,31 @@ Server::Server(const std::vector<ServConfig>& servers)
 	}
 }
 
-int Server::getSocket()
+void Server::initSockets()
 {
-	this->_sockFd = socket(AF_INET, SOCK_STREAM, 0);
-	if (this->_sockFd == -1)
+	for (int i = 0; i < this->_servers.size(); ++i)
 	{
-		std::cout << "error: create socket, errno: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
+		this->_servers[i].setSockFd(socket(AF_INET, SOCK_STREAM, 0));
+		if (this->_servers[i].getSockFd() == -1)
+		{
+			std::cerr << "error: create socket, errno: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		int opt = 1;
+		if (setsockopt(this->_servers[i].getSockFd(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
+			std::cerr << "error: setsockopt, errno: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		if (bind(this->_servers[i].getSockFd(), (struct sockaddr *) &this->_servers[i].getSockAddr(), sizeof(sockaddr)) == -1) {
+			std::cerr << "error: bind, maybe port busy, errno: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		if (listen(this->_servers[i].getSockFd(), 10) < 0)
+		{
+			std::cerr << "error: listen on socket. errno: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
 	}
-	int opt = 1;
-	if (setsockopt(this->_sockFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
-	{
-		std::cout << "error: setsockopt, errno: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	if (bind(this->_sockFd, (struct sockaddr *) &this->_sockAddr, sizeof(sockaddr)) == -1)
-	{
-		std::cout << "error: bind, maybe port busy, errno: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	if (listen(this->_sockFd, 10) < 0)
-	{
-		std::cout << "error: listen on socket. errno: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	return (this->_sockFd);
 }
 
 void Server::receive(int fd)
@@ -116,11 +116,11 @@ void Server::toSend(int& fd)
 	fd = -1;
 }
 
-void Server::newClient()
+void Server::newClient(int &sockFd, sockaddr_in& sockAddr)
 {
 	int addrlen = sizeof(sockaddr);
 
-	int connection = accept(this->_sockFd, (struct sockaddr *) &this->_sockAddr, (socklen_t *) &addrlen);
+	int connection = accept(sockFd, (struct sockaddr *) &sockAddr, (socklen_t *) &addrlen);
 	if (connection == -1)
 	{
 		std::cout << "error: connection. errno: " << strerror(errno) << std::endl;
@@ -131,7 +131,8 @@ void Server::newClient()
 }
 
 int Server::getSockFd() const {
-	return (this->_sockFd);
+	//TODO:: ?
+	return (-1);
 }
 void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds, int &max_d)
 {

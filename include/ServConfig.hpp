@@ -24,22 +24,24 @@ public:
 	void addErrorPage(const std::pair <int, std::string> &);
 	void addLocation(const Location &loc);
 
-	const std::vector<std::string> &getNames() const;
-	const std::string &getHost() const;
-	size_t getPort() const;
-	const std::string &getRoot() const;
-	const std::vector<Location> &getLocations() const;
-	const std::map<int, std::string> &getErrorPages() const;
+	const std::vector<std::string>		&getNames() const;
+	const std::string					&getHost() const;
+	size_t								getPort() const;
+	const std::string					&getRoot() const;
+	const std::vector<Location>			&getLocations() const;
+	const std::map<int, std::string>	&getErrorPages() const;
+	int									&getSockFd();
+	sockaddr_in							&getSockAddr();
 
 	//Location &getLocation(int i);
 
 private:
-	std::vector<std::string>	_names;
-	std::string					_host;
-	size_t						_port;
-	std::string					_root;
-	std::vector<Location>		_locations;
-	std::map<int, std::string>	_errorPages;
+	std::vector<std::string>			_names;
+	std::string							_host;
+	size_t								_port;
+	std::string							_root;
+	std::vector<Location>				_locations;
+	std::map<int, std::string>			_errorPages;
 
 	int							_sockFd;
 	sockaddr_in 				_sockAddr;

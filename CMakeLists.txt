@@ -16,5 +16,10 @@ add_executable(webserv
 
 add_executable(test_server
         src/Server.cpp
+        src/Parser.cpp
+        src/ServConfig.cpp
+        src/Location.cpp
+        src/utils.cpp
+        src/FD.cpp
         test/testServer.cpp
         )
