@@ -17,10 +17,11 @@ public:
 
 	void checkClientsBefore(fd_set& readFds, fd_set& writeFds, int& max_d);
 	void checkClientsAfter(fd_set& readFds, fd_set& writeFds, int& max_d);
+	void checkSockets(fd_set& readFds, fd_set& writeFds, int& max_d);
 
 	int Select(fd_set& readFds, fd_set& writeFds, int& max_d) const;
-	int getSockFd() const;
-	void newClient(int &sockFd, sockaddr_in& sockAddr);
+	int getMaxSockFd();
+	void newClient(int indexServer);
 
 	void toSend(int&);
 	void receive(int);

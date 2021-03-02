@@ -9,7 +9,7 @@ Server::Server(char *config)
 	std::cout << "parser config" << std::endl;
 	Parser parser(config);
 	this->_servers = parser.getServs();
-	for (int i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_servers.size(); ++i)
 	{
 		sockaddr_in tmp;
 
@@ -27,7 +27,7 @@ Server::Server(const std::string &ip, int port)
 Server::Server(const std::vector<ServConfig>& servers)
 : _servers(servers)
 {
-	for (int i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_servers.size(); ++i)
 	{
 		sockaddr_in tmp;
 
@@ -41,7 +41,7 @@ Server::Server(const std::vector<ServConfig>& servers)
 
 void Server::initSockets()
 {
-	for (int i = 0; i < this->_servers.size(); ++i)
+	for (size_t i = 0; i < this->_servers.size(); ++i)
 	{
 		this->_servers[i].setSockFd(socket(AF_INET, SOCK_STREAM, 0));
 		if (this->_servers[i].getSockFd() == -1)
@@ -75,9 +75,12 @@ void Server::receive(int fd)
 		std::cout << "error: connection. errno: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
-/*	if (ret < 2048)
-
-	std::cout << this->_buffer << std::endl;*/
+	if (ret < 2048)
+	{
+		this->toSend(fd);// temporarily
+		close(fd); // temporarily
+	}
+	std::cout << this->_buffer << std::endl;
 }
 
 void Server::toSend(int& fd)
@@ -116,11 +119,13 @@ void Server::toSend(int& fd)
 	fd = -1;
 }
 
-void Server::newClient(int &sockFd, sockaddr_in& sockAddr)
+void Server::newClient(int indexServer)
 {
 	int addrlen = sizeof(sockaddr);
 
-	int connection = accept(sockFd, (struct sockaddr *) &sockAddr, (socklen_t *) &addrlen);
+	int connection = accept(this->_servers[indexServer].getSockFd(),
+							(struct sockaddr *) &this->_servers[indexServer].getSockAddr(),
+							(socklen_t *) &addrlen);
 	if (connection == -1)
 	{
 		std::cout << "error: connection. errno: " << strerror(errno) << std::endl;
@@ -130,18 +135,28 @@ void Server::newClient(int &sockFd, sockaddr_in& sockAddr)
 	fcntl(connection, F_SETFL, O_NONBLOCK);
 }
 
-int Server::getSockFd() const {
-	//TODO:: ?
-	return (-1);
+int Server::getMaxSockFd()
+{
+	int maxFd = -1;
+	for (size_t i = 0; i < this->_servers.size(); ++i)
+	{
+		if (this->_servers[i].getSockFd() > maxFd)
+		{
+			maxFd = this->_servers[i].getSockFd();
+		}
+	}
+	if (maxFd == -1)
+	{
+		std::cerr << "error: get Max Fd" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	return (maxFd);
 }
 void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds, int &max_d)
 {
-	for (int i = 0; i < this->_clientsFd.size(); ++i)
+	for (size_t i = 0; i < this->_clientsFd.size(); ++i)
 	{
-		if (this->_clientsFd[i] != -1)
-		{
-			FD_SET(this->_clientsFd[i], &readFds);
-		}
+		FD_SET(this->_clientsFd[i], &readFds);
 		/*if (data)
 		{
 			FD_SET(this->_clientsFd[i], &writeFds);
@@ -155,18 +170,25 @@ void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds, int &max_d)
 
 void Server::checkClientsAfter(fd_set &readFds, fd_set &writeFds, int &max_d)
 {
-	for (int i = 0; i < this->_clientsFd.size(); ++i)
+	std::vector<int>::iterator pos = this->_clientsFd.begin();
+	for (size_t i = 0; i < this->_clientsFd.size(); ++i)
 	{
 		if (FD_ISSET(this->_clientsFd[i], &readFds))
 		{
 			this->receive(this->_clientsFd[i]);
+			//temporarily part
+			{
+				if (this->_clientsFd[i] == max_d) {
+					max_d = getMaxSockFd();
+				}
+				this->_clientsFd.erase(pos + i);
+			}
 		}
 		if (FD_ISSET(this->_clientsFd[i], &writeFds))
 		{
 			this->toSend(this->_clientsFd[i]);
 		}
 	}
-	std::cout << "vyh" << std::endl;
 }
 
 int Server::Select(fd_set &readFds, fd_set &writeFds, int &max_d) const
@@ -175,6 +197,17 @@ int Server::Select(fd_set &readFds, fd_set &writeFds, int &max_d) const
 	tv.tv_sec = 10;
 	tv.tv_usec = 0;
 
-	return (select(max_d + 1, &readFds, &writeFds, NULL, &tv ));
+	return (select(max_d + 1, &readFds, &writeFds, NULL, &tv));
+}
+
+void Server::checkSockets(fd_set &readFds, fd_set &writeFds, int &max_d)
+{
+	for (size_t i = 0; i < this->_servers.size(); ++i)
+	{
+		if (FD_ISSET(this->_servers[i].getSockFd(), &readFds))
+		{
+			this->newClient(i);
+		}
+	}
 }
 
