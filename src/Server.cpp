@@ -254,5 +254,11 @@ void Server::initHeaders(const std::string& headers)
 	}
 	tmp.clear();
 	ss.clear();
+	this->sendCgi();
+}
+
+void Server::sendCgi()
+{
+	Cgi cgi(this->_headers);
 }
 

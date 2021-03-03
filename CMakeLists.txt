@@ -21,5 +21,10 @@ add_executable(test_server
         src/Location.cpp
         src/utils.cpp
         src/FD.cpp
+        src/Cgi.cpp
         test/testServer.cpp
+        )
+
+add_executable(test
+        test/test.cpp
         )

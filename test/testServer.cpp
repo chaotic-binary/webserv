@@ -5,7 +5,7 @@
 #include "Server.hpp"
 volatile bool loop = true;
 
-int main(int ac, char **av)
+int main(int ac, char **av, char **env)
 {
 	Server server(Parser(av[1]).getServs());
 	server.initSockets();

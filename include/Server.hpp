@@ -7,6 +7,7 @@
 
 #include "includes.h"
 #include "Parser.hpp"
+#include "Cgi.hpp"
 
 class Server {
 public:
@@ -27,6 +28,8 @@ public:
 
 	void												toSend(int&);
 	void												receive(int);
+
+	void												sendCgi();
 
 private:
 	std::vector<ServConfig>								_servers;
