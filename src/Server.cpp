@@ -69,18 +69,27 @@ void Server::initSockets()
 void Server::receive(int fd)
 {
 	std::cout << "revs" << std::endl;
-	int ret = recv(fd, this->_buffer, 2048, MSG_PEEK);
-	if (ret == -1)
+	int ret;
+	std::string headers;
+
+//	while ((ret = recv(fd, this->_buffer, 2048, MSG_PEEK)) > 0)
+	while ((ret = read(fd, this->_buffer, 2048)) > 0)
 	{
-		std::cout << "error: connection. errno: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
+		this->_buffer[ret] = 0x0;
+		headers += this->_buffer;
 	}
-	std::cout << this->_buffer << std::endl;
-	if (ret < 2048)
+/*	if (ret == -1)
 	{
 		this->toSend(fd);// temporarily
-		close(fd); // temporarily
-	}
+		std::cout << "error: read. errno: " << strerror(errno) << std::endl; // FORBIDDEN TO USE!!!!!!!!!!!!!
+		exit(EXIT_FAILURE);
+	}*/
+	std::cout << headers << std::endl;
+
+	this->initHeaders(headers);
+
+	this->toSend(fd);// temporarily
+	close(fd); // temporarily
 }
 
 void Server::toSend(int& fd)
@@ -224,5 +233,26 @@ void Server::checkSockets(fd_set &readFds, fd_set &writeFds, int &max_d)
 			this->newClient(i);
 		}
 	}
+}
+
+void Server::initHeaders(const std::string& headers)
+{
+	std::stringstream ss, tmp;
+	ss << headers;
+	std::string header, arg;
+
+	while (std::getline(ss, arg))
+	{
+		tmp.clear();
+		tmp << arg;
+		tmp >> header;
+
+		while (tmp >> arg)
+		{
+			this->_headers[header].push_back(arg);
+		}
+	}
+	tmp.clear();
+	ss.clear();
 }
 
