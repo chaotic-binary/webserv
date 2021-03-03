@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 98)
 #set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 include_directories(include)
 
-add_executable(webserv
+add_executable(test_parser
         src/main.cpp
         src/ServConfig.cpp include/ServConfig.hpp
         src/Parser.cpp include/Parser.hpp
@@ -22,7 +22,8 @@ add_executable(test_server
         src/utils.cpp
         src/FD.cpp
         src/Cgi.cpp
-        test/testServer.cpp)
+        test/testServer.cpp
+        src/Request.cpp include/Request.h)
 #        src/Client.cpp src/Client.h)
 
 add_executable(test
