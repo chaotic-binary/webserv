@@ -92,16 +92,19 @@ void ServConfig::setSockAddr(const sockaddr_in &sockAddr)
 	_sockAddr = sockAddr;
 }
 
-int &ServConfig::getSockFd()
+int ServConfig::getSockFd() const
 {
 	return (this->_sockFd);
 }
 
+sockaddr_in ServConfig::getSockAddr() const
+{
+	return (this->_sockAddr);
+}
 sockaddr_in &ServConfig::getSockAddr()
 {
 	return (this->_sockAddr);
 }
-
 /*Location &ServConfig::getLocation(int i) {
 	return _locations[i];
 }*/

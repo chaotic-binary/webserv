@@ -30,7 +30,8 @@ public:
 	const std::string					&getRoot() const;
 	const std::vector<Location>			&getLocations() const;
 	const std::map<int, std::string>	&getErrorPages() const;
-	int									&getSockFd();
+	int									getSockFd() const;
+	sockaddr_in							getSockAddr() const;
 	sockaddr_in							&getSockAddr();
 
 	//Location &getLocation(int i);

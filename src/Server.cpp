@@ -84,10 +84,12 @@ void Server::receive(int fd)
 		std::cout << "error: read. errno: " << strerror(errno) << std::endl; // FORBIDDEN TO USE!!!!!!!!!!!!!
 		exit(EXIT_FAILURE);
 	}*/
+	//AReqest * req = get_request();
+
+//	req.apply();
 	std::cout << headers << std::endl;
 
 	this->initHeaders(headers);
-
 	this->toSend(fd);// temporarily
 	close(fd); // temporarily
 }
@@ -135,6 +137,7 @@ void Server::newClient(int indexServer)
 	int connection = accept(this->_servers[indexServer].getSockFd(),
 							(struct sockaddr *) &this->_servers[indexServer].getSockAddr(),
 							(socklen_t *) &addrlen);
+
 	if (connection == -1)
 	{
 		std::cout << "error: connection. errno: " << strerror(errno) << std::endl;
@@ -144,23 +147,15 @@ void Server::newClient(int indexServer)
 	fcntl(connection, F_SETFL, O_NONBLOCK);
 }
 
-int Server::getMaxSockFd()
+int Server::getMaxSockFd() const
 {
 	int maxFd = -1;
 	for (size_t i = 0; i < this->_amountServers; ++i)
-	{
-		if (this->_servers[i].getSockFd() > maxFd)
-		{
-			maxFd = this->_servers[i].getSockFd();
-		}
-	}
-	for (size_t i = 0; i < this->_amountServers; ++i)
-	{
-		if (maxFd < this->_servers[i].getSockFd())
-		{
-			maxFd = this->_servers[i].getSockFd();
-		}
-	}
+		maxFd = std::max(_servers[i].getSockFd(), maxFd);
+
+	for (size_t i = 0; i <_clientsFd.size(); ++i)
+		maxFd = std::max(_clientsFd[i], maxFd);
+
 	if (maxFd == -1)
 	{
 		std::cerr << "error: get Max Fd" << std::endl;
@@ -168,44 +163,28 @@ int Server::getMaxSockFd()
 	}
 	return (maxFd);
 }
-void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds, int &max_d)
+void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds)
 {
 	for (size_t i = 0; i < this->_clientsFd.size(); ++i)
 	{
 		FD_SET(this->_clientsFd[i], &readFds);
-		/*if (data)
-		{
-			FD_SET(this->_clientsFd[i], &writeFds);
-		}*/
-		if (max_d < this->_clientsFd[i])
-		{
-			max_d = this->_clientsFd[i];
-		}
 	}
-	for (size_t i = 0; i < this->_amountServers; ++i)
+	for (size_t i = 0; i < _servers.size(); ++i)
 	{
-		FD_SET(this->_servers[i].getSockFd(), &readFds);
-		if (max_d < this->_servers[i].getSockFd())
-		{
-			max_d = this->_servers[i].getSockFd();
-		}
+		FD_SET(_servers[i].getSockFd(), &readFds);
 	}
 }
 
-void Server::checkClientsAfter(fd_set &readFds, fd_set &writeFds, int &max_d)
+void Server::checkClientsAfter(fd_set &readFds, fd_set &writeFds)
 {
 	std::vector<int>::iterator pos = this->_clientsFd.begin();
-	for (size_t i = 0; i < this->_clientsFd.size(); ++i)
-	{
-		if (FD_ISSET(this->_clientsFd[i], &readFds))
-		{
+
+	for (size_t i = 0; i < this->_clientsFd.size(); ++i) {
+		if (FD_ISSET(this->_clientsFd[i], &readFds)) {
 			this->receive(this->_clientsFd[i]);
 			//temporarily part
 			{
-				if (this->_clientsFd[i] == max_d) {
-					max_d = getMaxSockFd();
-				}
-				this->_clientsFd.erase(pos + i);
+				this->_clientsFd.erase(pos + i); //TODO: remove index error
 			}
 		}
 		if (FD_ISSET(this->_clientsFd[i], &writeFds))
@@ -215,16 +194,16 @@ void Server::checkClientsAfter(fd_set &readFds, fd_set &writeFds, int &max_d)
 	}
 }
 
-int Server::Select(fd_set &readFds, fd_set &writeFds, int &max_d) const
+int Server::Select(fd_set &readFds, fd_set &writeFds) const
 {
 	struct timeval tv;
 	tv.tv_sec = 10;
 	tv.tv_usec = 0;
 
-	return (select(max_d + 1, &readFds, &writeFds, NULL, &tv));
+	return (select(getMaxSockFd() + 1, &readFds, &writeFds, NULL, &tv));
 }
 
-void Server::checkSockets(fd_set &readFds, fd_set &writeFds, int &max_d)
+void Server::checkSockets(fd_set &readFds, fd_set &writeFds)
 {
 	for (size_t i = 0; i < this->_amountServers; ++i)
 	{
@@ -237,8 +216,8 @@ void Server::checkSockets(fd_set &readFds, fd_set &writeFds, int &max_d)
 
 void Server::initHeaders(const std::string& headers)
 {
-	std::stringstream ss, tmp;
-	ss << headers;
+	std::stringstream ss(headers);
+	std::stringstream tmp;
 	std::string header, arg;
 
 	while (std::getline(ss, arg))
@@ -248,9 +227,7 @@ void Server::initHeaders(const std::string& headers)
 		tmp >> header;
 
 		while (tmp >> arg)
-		{
 			this->_headers[header].push_back(arg);
-		}
 	}
 	tmp.clear();
 	ss.clear();
