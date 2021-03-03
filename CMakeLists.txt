@@ -26,4 +26,5 @@ add_executable(test_server
 #        src/Client.cpp src/Client.h)
 
 add_executable(test
-        test/test.cpp)
+        test/test.cpp
+        src/Request.cpp include/Request.h)

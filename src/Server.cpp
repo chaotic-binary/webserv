@@ -3,6 +3,7 @@
 //
 
 #include "Server.hpp"
+#include "Request.h"
 
 Server::Server(char *config)
 : _servers(Parser(config).getServs()), _amountServers(_servers.size())
@@ -45,24 +46,14 @@ void Server::initSockets()
 	{
 		this->_servers[i].setSockFd(socket(AF_INET, SOCK_STREAM, 0));
 		if (this->_servers[i].getSockFd() == -1)
-		{
-			std::cerr << "error: create socket, errno: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
+			throw Error("create socket");
 		int opt = 1;
-		if (setsockopt(this->_servers[i].getSockFd(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
-			std::cerr << "error: setsockopt, errno: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
-		if (bind(this->_servers[i].getSockFd(), (struct sockaddr *) &this->_servers[i].getSockAddr(), sizeof(sockaddr)) == -1) {
-			std::cerr << "error: bind, maybe port busy, errno: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
+		if (setsockopt(this->_servers[i].getSockFd(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+			throw Error("setsockopt");
+		if (bind(this->_servers[i].getSockFd(), (struct sockaddr *) &this->_servers[i].getSockAddr(), sizeof(sockaddr)) == -1)
+			throw Error("bind, maybe port busy");
 		if (listen(this->_servers[i].getSockFd(), 10) < 0)
-		{
-			std::cerr << "error: listen on socket. errno: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
+			throw Error("listen on socket");
 	}
 }
 
@@ -84,12 +75,14 @@ void Server::receive(int fd)
 		std::cout << "error: read. errno: " << strerror(errno) << std::endl; // FORBIDDEN TO USE!!!!!!!!!!!!!
 		exit(EXIT_FAILURE);
 	}*/
-	//AReqest * req = get_request();
-
-//	req.apply();
 	std::cout << headers << std::endl;
 
-	this->initHeaders(headers);
+	Request request(headers);
+	std::cout << "<REQUEST\n" << request << std::endl;
+	std::cout << "REQUEST>\n"; //test
+	this->sendCgi(request);
+	//this->initHeaders(headers);
+
 	this->toSend(fd);// temporarily
 	close(fd); // temporarily
 }
@@ -122,10 +115,7 @@ void Server::toSend(int& fd)
 	// write
 	int ret = send(fd, response.str().c_str(), response.str().length(), 0);
 	if (ret == -1)
-	{
-		std::cout << "error: send message. errno: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw Error("send message");
 	close(fd);
 	fd = -1;
 }
@@ -137,12 +127,8 @@ void Server::newClient(int indexServer)
 	int connection = accept(this->_servers[indexServer].getSockFd(),
 							(struct sockaddr *) &this->_servers[indexServer].getSockAddr(),
 							(socklen_t *) &addrlen);
-
 	if (connection == -1)
-	{
-		std::cout << "error: connection. errno: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw Error("connection");
 	this->_clientsFd.push_back(connection);
 	fcntl(connection, F_SETFL, O_NONBLOCK);
 }
@@ -157,10 +143,7 @@ int Server::getMaxSockFd() const
 		maxFd = std::max(_clientsFd[i], maxFd);
 
 	if (maxFd == -1)
-	{
-		std::cerr << "error: get Max Fd" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw Error("get Max Fd");
 	return (maxFd);
 }
 void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds)
@@ -213,7 +196,7 @@ void Server::checkSockets(fd_set &readFds, fd_set &writeFds)
 		}
 	}
 }
-
+/*
 void Server::initHeaders(const std::string& headers)
 {
 	std::stringstream ss(headers);
@@ -233,9 +216,9 @@ void Server::initHeaders(const std::string& headers)
 	ss.clear();
 	this->sendCgi();
 }
-
-void Server::sendCgi()
+*/
+void Server::sendCgi(const Request &request)
 {
-	Cgi cgi(this->_headers);
+	Cgi cgi(request);
 }
 

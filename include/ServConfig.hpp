@@ -34,8 +34,6 @@ public:
 	sockaddr_in							getSockAddr() const;
 	sockaddr_in							&getSockAddr();
 
-	//Location &getLocation(int i);
-
 private:
 	std::vector<std::string>			_names;
 	std::string							_host;

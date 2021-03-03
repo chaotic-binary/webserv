@@ -16,7 +16,7 @@ public:
 	Server(const std::string& ip, int port);
 
 	void												initSockets();
-	void												initHeaders(const std::string& headers);
+	//void												initHeaders(const std::string& headers);
 
 	void												checkClientsBefore(fd_set& readFds, fd_set& writeFds);
 	void												checkClientsAfter(fd_set& readFds, fd_set& writeFds);
@@ -29,14 +29,19 @@ public:
 	void												toSend(int&);
 	void												receive(int);
 
-	void												sendCgi();
+	void												sendCgi(const Request &request);
+
+	class Error: public std::logic_error {
+	private: Error();
+	public: Error(std::string s) : std::logic_error("Error: " + s + ": " + strerror(errno)) {};
+	};
 
 private:
 	std::vector<ServConfig>								_servers;
 	const size_t										_amountServers;
 	std::vector<int>									_clientsFd;
 	char												_buffer[2048];
-	std::map<std::string, std::vector<std::string> >	_headers;
+	//std::map<std::string, std::vector<std::string> >	_headers;
 };
 
 #endif //SERVER_HPP

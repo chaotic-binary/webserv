@@ -23,10 +23,12 @@ int main(int ac, char **av, char **env)
 		int ret = server.Select(readFds, writeFds);
 		std::cout << "wait select" << std::endl;
 		if ( ret == -1 )
-		{
+			throw Server::Error("select");
+		/*{
+
 			std::cout << "error: select. errno: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
-		}
+		}*/
 		/*if ( ret == 0 )
 		{
 			continue ;
