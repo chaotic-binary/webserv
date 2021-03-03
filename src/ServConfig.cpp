@@ -101,8 +101,3 @@ sockaddr_in &ServConfig::getSockAddr()
 {
 	return (this->_sockAddr);
 }
-
-/*Location &ServConfig::getLocation(int i) {
-	return _locations[i];
-}*/
-

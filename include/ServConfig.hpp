@@ -33,8 +33,6 @@ public:
 	int									&getSockFd();
 	sockaddr_in							&getSockAddr();
 
-	//Location &getLocation(int i);
-
 private:
 	std::vector<std::string>			_names;
 	std::string							_host;

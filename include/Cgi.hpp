@@ -6,15 +6,16 @@
 #define CGI_HPP
 
 #include "includes.h"
+#include "Request.h"
 
 class Cgi {
 public:
-	Cgi(const std::map<std::string, std::vector<std::string> >& headers);
+	Cgi(const Request &);
 
 //	char *initEnv(const std::map<std::string, std::vector<std::string> > &headers, int header);
 
 	char*	getServerName();
-	char*	getRequestUri(const std::map<std::string, std::vector<std::string> > &headers);
+	char*	getRequestUri(const std::string &);
 private:
 	char	*env[18];
 };

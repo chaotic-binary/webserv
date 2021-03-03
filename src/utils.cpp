@@ -15,6 +15,13 @@ void ft::trim(std::string &str) {
 	str.erase(0, str.find_first_not_of('\t'));
 	str.erase(str.find_last_not_of('\t') + 1);
 }
+#include <iostream>
+void ft::cut_char_from_end(std::string &str, const std::string &charset) {
+	std::string::iterator it = --str.end();
+	for (size_t i = 0; i < charset.size(); ++i)
+		if (*it == charset[i])
+			str.erase(it);
+}
 
 std::istream &ft::getline(std::istream &ifs, std::string &line) {
 	char ch;

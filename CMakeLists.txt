@@ -23,8 +23,9 @@ add_executable(test_server
         src/FD.cpp
         src/Cgi.cpp
         test/testServer.cpp
+        src/Request.cpp include/Request.h
         )
 
 add_executable(test
         test/test.cpp
-        )
+        src/Request.cpp include/Request.h)
