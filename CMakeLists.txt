@@ -22,9 +22,11 @@ add_executable(test_server
         src/utils.cpp
         src/FD.cpp
         src/Cgi.cpp
-        test/testServer.cpp)
+        test/testServer.cpp
+        src/Request.cpp
+        )
 #        src/Client.cpp src/Client.h)
 
 add_executable(test
         test/test.cpp
-        src/Request.cpp include/Request.h)
+        )
