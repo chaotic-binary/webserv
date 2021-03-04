@@ -78,12 +78,13 @@ void Server::receive(int fd)
 	std::cout << headers << std::endl;
 
 	Request request(headers);
+	methodGet(fd, request.getReqTarget(), this->_servers[3]);
 	std::cout << "<REQUEST\n" << request << std::endl;
 	std::cout << "REQUEST>\n"; //test
-	this->sendCgi(request);
+//	this->sendCgi(request);
 	//this->initHeaders(headers);
 
-	this->toSend(fd);// temporarily
+//	this->toSend(fd);// temporarily
 	close(fd); // temporarily
 }
 
