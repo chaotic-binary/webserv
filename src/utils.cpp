@@ -44,3 +44,12 @@ std::vector<std::string> ft::split(const std::string &str, const char delim) {
 	}
 	return res;
 }
+
+size_t ft::to_num(const std::string &str)
+{
+	size_t n;
+	std::stringstream ss(str);
+	if (!(ss >> n))
+		throw std::runtime_error("Invalid conversion to number");
+	return (n);
+}

@@ -57,6 +57,35 @@ void Server::initSockets()
 	}
 }
 
+bool isFinished(const std::string &s)
+{
+	static int		bodyPresent = 0;
+	static size_t	contentLength = 0;
+	size_t	i;
+
+	if ((i = s.find("Content-Length:")) != s.npos)
+	{
+		bodyPresent = 1;
+		if ((i = i + 16) < s.size())
+			contentLength = ft::to_num(&s[i]);
+	}
+	if (s.find("Transfer-Encoding: chunked") != s.npos)
+		bodyPresent = 2;
+	if ((i = s.find("\r\n\r\n")))
+	{
+		if (!bodyPresent)
+			return true;
+		if (bodyPresent == 1)
+		{
+			if (s.size() - i == contentLength + 4)
+				return true;
+		}
+		if (bodyPresent == 2 && i < s.size() && s.find("0\r\n\r\n", i) != s.npos)
+			return true;
+	}
+	return false;
+}
+
 void Server::receive(int fd)
 {
 	std::cout << "revs" << std::endl;
@@ -64,9 +93,11 @@ void Server::receive(int fd)
 	std::string headers;
 
 //	while ((ret = recv(fd, this->_buffer, 2048, MSG_PEEK)) > 0)
+	//size_t begin = 0;
 	while ((ret = read(fd, this->_buffer, 2048)) > 0)
 	{
 		this->_buffer[ret] = 0x0;
+		//begin = ret;
 		headers += this->_buffer;
 	}
 /*	if (ret == -1)
@@ -77,48 +108,23 @@ void Server::receive(int fd)
 	}*/
 	std::cout << headers << std::endl;
 
-	Request request(headers);
-	methodGet(fd, request.getReqTarget(), this->_servers[3]);
-	std::cout << "<REQUEST\n" << request << std::endl;
-	std::cout << "REQUEST>\n"; //test
-//	this->sendCgi(request);
-	//this->initHeaders(headers);
+	if (isFinished(headers))
+	{
+		Request request(headers);
+		std::cout << "<REQUEST\n" << request << std::endl;
+		std::cout << "REQUEST>\n"; //test
+		//if (request.getMethod() == POST)
+			//this->sendCgi(request);
+		//if (request.getMethod() == GET)
+		methodGet(fd, request.getReqTarget(), this->_servers[3]);
+		close(fd); // temporarily
+	}
 
-//	this->toSend(fd);// temporarily
-	close(fd); // temporarily
 }
 
 void Server::toSend(int& fd)
 {
-	std::cout << "tossern" << std::endl;
-	// for test
-	char msg[] = "hello from server\n";
 
-	std::stringstream response_body;
-	response_body << "<title>Test C++ HTTP Server</title>\n"
-				  << "<h1>Test page</h1>\n"
-				  << "<p>This is body of the test page...</p>\n"
-				  << "<h2>Request headers</h2>\n"
-				  << "<pre>" << msg << "</pre>\n"
-				  << "<em><small>Test C++ Http Server</small></em>\n";
-
-	// Формируем весь ответ вместе с заголовками
-	std::stringstream response;
-	response << "HTTP/1.1 200 OK\r\n"
-			 << "Version: HTTP/1.1\r\n"
-			 << "Content-Type: text/html; charset=utf-8\r\n"
-			 << "Content-Length: " << response_body.str().length()
-			 << "\r\n\r\n"
-			 << response_body.str();
-	// for test
-	bzero(this->_buffer, 2048);
-	// Send a message to the connection
-	// write
-	int ret = send(fd, response.str().c_str(), response.str().length(), 0);
-	if (ret == -1)
-		throw Error("send message");
-	close(fd);
-	fd = -1;
 }
 
 void Server::newClient(int indexServer)
@@ -197,27 +203,7 @@ void Server::checkSockets(fd_set &readFds, fd_set &writeFds)
 		}
 	}
 }
-/*
-void Server::initHeaders(const std::string& headers)
-{
-	std::stringstream ss(headers);
-	std::stringstream tmp;
-	std::string header, arg;
 
-	while (std::getline(ss, arg))
-	{
-		tmp.clear();
-		tmp << arg;
-		tmp >> header;
-
-		while (tmp >> arg)
-			this->_headers[header].push_back(arg);
-	}
-	tmp.clear();
-	ss.clear();
-	this->sendCgi();
-}
-*/
 void Server::sendCgi(const Request &request)
 {
 	Cgi cgi(request);

@@ -290,12 +290,11 @@ void Parser::trim_semicolon(std::string &str) {
 size_t Parser::to_num(const std::string &str) {
 	if (!ft::isalldigits(str))
 		throw Parser::ParserException::InvalidData(line_num);
-
-	size_t n;
-	std::stringstream ss(str);
-	if (!(ss >> n))
+	try {
+		return (ft::to_num(str));
+	} catch (std::exception &e) {
 		throw Parser::ParserException::InvalidData(line_num);
-	return (n);
+	}
 }
 
 const std::vector<ServConfig> &Parser::getServs() const {

@@ -11,7 +11,6 @@ int main(int ac, char **av, char **env)
 	server.initSockets();
 //	Server serverTestParser(av[1]);
 //	Server server("127.0.0.1", 8000);
-
 	while (loop)
 	{
 		fd_set readFds, writeFds;
