@@ -24,7 +24,7 @@ add_executable(test_server
         src/Cgi.cpp
         test/testServer.cpp
         src/Request.cpp
-        )
+        src/MethodGet.cpp src/Response.cpp src/Response.hpp)
 #        src/Client.cpp src/Client.h)
 
 add_executable(test

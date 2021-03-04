@@ -69,6 +69,10 @@ public:
 
 private:
 	std::string					_path;
+public:
+	const std::string &getPath() const;
+
+private:
 	std::string					_root;
 	std::string					_index;
 	std::string					_cgiPath;

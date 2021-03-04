@@ -184,6 +184,10 @@ std::ostream &operator<<(std::ostream &os, const Location &location) {
 	return os;
 }
 
+const std::string &Location::getPath() const {
+	return _path;
+}
+
 const char *Location::LocException::WrongMethod::what() const throw() {
 	return "Wrong method";
 }

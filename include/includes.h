@@ -1,6 +1,7 @@
 //
 // Created by Mahmud Jego on 3/2/21.
 //
+#pragma once
 
 #ifndef INCLUDES_H
 #define INCLUDES_H
@@ -24,6 +25,7 @@
 # include <list>
 
 #include "defines.h"
+#include "ServConfig.hpp"
 
 enum eEnvCgi {
 	AUTH_TYPE,
@@ -44,5 +46,7 @@ enum eEnvCgi {
 	SERVER_PROTOCOL,
 	SERVER_SOFTWARE
 };
+
+void methodGet(int fd, const std::string& path, const ServConfig& config);
 
 #endif //INCLUDES_H
