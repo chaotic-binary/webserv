@@ -46,19 +46,11 @@ void Client::receive() {
 	if (status_ != READY_TO_READ)
 		return;
 	try {
-		//int ret;
-		//char buffer[2049];
-		//std::string raw_request;
-		//TODO: MOVE TO REQUEST
-		//while ((ret = read(fd_, buffer, 2048)) > 0) {
-		//	buffer[ret] = 0x0;
-		//	raw_request += buffer;
-		//}
-		if (!req_.receive())
-			status_ = CLOSE_CONNECTION;
-		else
-			status_ = READY_TO_SEND;
-		//req_ = Request(raw_request);
+			if (req_.receive())
+				status_ = READY_TO_SEND;
+			else
+				status_ = CLOSE_CONNECTION;
+		//TODO::???
 		std::cout << "<REQUEST\n" << req_ << std::endl;
 		std::cout << "REQUEST>\n"; //test
 	}
@@ -66,7 +58,7 @@ void Client::receive() {
 		std::cout << "TODO: handle the half msg!!!" << std::endl;
 	}
 }
-Client::Client(const ServConfig &serv, int fd) : serv_(serv), fd_(fd), status_(READY_TO_READ), req_("")
+Client::Client(const ServConfig &serv, int fd) : serv_(serv), fd_(fd), status_(READY_TO_READ), req_(fd)
 {}
 
 Client::~Client() {

@@ -60,7 +60,7 @@ void Server::initSockets()
 
 void Server::receive(int fd)
 {
-	std::cout << "revs" << std::endl;
+/*	std::cout << "revs" << std::endl;
 	int ret;
 	std::string headers;
 
@@ -75,6 +75,7 @@ void Server::receive(int fd)
 
 	//this->toSend(fd);// temporarily
 	//close(fd); // temporarily
+ */
 }
 
 void Server::toSend(const int fd)
