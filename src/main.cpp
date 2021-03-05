@@ -12,7 +12,6 @@ int main(int ac, char **av, char **env) {
 		std::vector<ServConfig> conf = p.getServs();
 		for (size_t i; i < conf.size(); ++i) {
 			//conf[i]
-
 		}
 		//TODO:next?
 	} catch (const std::exception &e) {

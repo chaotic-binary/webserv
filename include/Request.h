@@ -11,7 +11,6 @@ private:
 	std::string 										version;
 	std::map< std::string, std::vector<std::string> >	headers;
 	std::string 										body;
-
 	Request();
 
 public:
