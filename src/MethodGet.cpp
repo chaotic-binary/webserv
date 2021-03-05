@@ -6,7 +6,9 @@
 
 void methodGet(int fd, const std::string& path, const ServConfig& config)
 {
-	std::ifstream file(config.getLocations()[0].getRoot() + config.getLocations()[0].getIndex());
+	std::string pwd = getcwd(0x0, 0);
+	pwd +=  + "/www/" + config.getLocations()[0].getIndex();
+	std::ifstream file(pwd);
 
 	if (!file)
 		exit(13);
