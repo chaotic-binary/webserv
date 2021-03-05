@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.17)
 project(webserv)
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 #set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 include_directories(include)
 
-add_executable(webserv
+add_executable(test_parser
         src/main.cpp
         src/ServConfig.cpp include/ServConfig.hpp
         src/Parser.cpp include/Parser.hpp
@@ -23,10 +23,10 @@ add_executable(test_server
         src/FD.cpp
         src/Cgi.cpp
         test/testServer.cpp
-        src/Request.cpp
-        src/MethodGet.cpp src/Response.cpp src/Response.hpp)
-#        src/Client.cpp src/Client.h)
+        src/Request.cpp include/Request.h
+        src/Client.cpp
+        )
 
 add_executable(test
         test/test.cpp
-        )
+        src/Request.cpp include/Request.h)

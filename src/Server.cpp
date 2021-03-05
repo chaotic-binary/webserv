@@ -4,6 +4,7 @@
 
 #include "Server.hpp"
 #include "Request.h"
+#include "Client.h"
 
 Server::Server(char *config)
 : _servers(Parser(config).getServs()), _amountServers(_servers.size())
@@ -86,45 +87,38 @@ bool isFinished(const std::string &s)
 	return false;
 }
 
-void Server::receive(int fd)
+
+__deprecated void Server::toSend(const int fd)
 {
-	std::cout << "revs" << std::endl;
-	int ret;
-	std::string headers;
+	std::cout << "tossern" << std::endl;
+	// for test
+	char msg[] = "hello from server\n";
 
-//	while ((ret = recv(fd, this->_buffer, 2048, MSG_PEEK)) > 0)
-	//size_t begin = 0;
-	while ((ret = read(fd, this->_buffer, 2048)) > 0)
-	{
-		this->_buffer[ret] = 0x0;
-		//begin = ret;
-		headers += this->_buffer;
-	}
-/*	if (ret == -1)
-	{
-		this->toSend(fd);// temporarily
-		std::cout << "error: read. errno: " << strerror(errno) << std::endl; // FORBIDDEN TO USE!!!!!!!!!!!!!
-		exit(EXIT_FAILURE);
-	}*/
-	std::cout << headers << std::endl;
+	std::stringstream response_body;
+	response_body << "<title>Test C++ HTTP Server</title>\n"
+				  << "<h1>Test page</h1>\n"
+				  << "<p>This is body of the test page...</p>\n"
+				  << "<h2>Request headers</h2>\n"
+				  << "<pre>" << msg << "</pre>\n"
+				  << "<em><small>Test C++ Http Server</small></em>\n";
 
-	if (isFinished(headers))
-	{
-		Request request(headers);
-		std::cout << "<REQUEST\n" << request << std::endl;
-		std::cout << "REQUEST>\n"; //test
-		//if (request.getMethod() == POST)
-			//this->sendCgi(request);
-		//if (request.getMethod() == GET)
-		methodGet(fd, request.getReqTarget(), this->_servers[3]);
-		close(fd); // temporarily
-	}
-
-}
-
-void Server::toSend(int& fd)
-{
-
+	// Формируем весь ответ вместе с заголовками
+	std::stringstream response;
+	response << "HTTP/1.1 200 OK\r\n"
+			 << "Version: HTTP/1.1\r\n"
+			 << "Content-Type: text/html; charset=utf-8\r\n"
+			 << "Content-Length: " << response_body.str().length()
+			 << "\r\n\r\n"
+			 << response_body.str();
+	// for test
+	bzero(this->_buffer, 2048);
+	// Send a message to the connection
+	// write
+	int ret = send(fd, response.str().c_str(), response.str().length(), 0);
+	if (ret == -1)
+		throw Error("send message");
+	//close(fd);
+	// fd = -1;
 }
 
 void Server::newClient(int indexServer)
@@ -135,8 +129,8 @@ void Server::newClient(int indexServer)
 							(struct sockaddr *) &this->_servers[indexServer].getSockAddr(),
 							(socklen_t *) &addrlen);
 	if (connection == -1)
-		throw Error("connection");
-	this->_clientsFd.push_back(connection);
+		throw Error("connection"); //TODO: move it in client?
+	_clients.push_back(SharedPtr<Client>(new Client(_servers[indexServer], connection)));
 	fcntl(connection, F_SETFL, O_NONBLOCK);
 }
 
@@ -146,58 +140,56 @@ int Server::getMaxSockFd() const
 	for (size_t i = 0; i < this->_amountServers; ++i)
 		maxFd = std::max(_servers[i].getSockFd(), maxFd);
 
-	for (size_t i = 0; i <_clientsFd.size(); ++i)
-		maxFd = std::max(_clientsFd[i], maxFd);
+	for (size_t i = 0; i < getClients().size(); ++i)
+		maxFd = std::max(getClients()[i]->getFd(), maxFd);
 
 	if (maxFd == -1)
 		throw Error("get Max Fd");
 	return (maxFd);
 }
-void Server::checkClientsBefore(fd_set &readFds, fd_set &writeFds)
+
+void Server::reloadFdSets()
 {
-	for (size_t i = 0; i < this->_clientsFd.size(); ++i)
-	{
-		FD_SET(this->_clientsFd[i], &readFds);
+	FD_ZERO(&_readFds); // clean set TODO:why?
+	FD_ZERO(&_writeFds); // clean set
+	std::vector<SharedPtr<Client> >::const_iterator client;
+	for (client = getClients().cbegin(); client != getClients().cend(); client++) {
+		FD_SET((*client)->getFd(), &_readFds);
+		FD_SET((*client)->getFd(), &_writeFds);
 	}
 	for (size_t i = 0; i < _servers.size(); ++i)
-	{
-		FD_SET(_servers[i].getSockFd(), &readFds);
-	}
+		FD_SET(_servers[i].getSockFd(), &_readFds); //TODO add writeFds if not working
 }
 
-void Server::checkClientsAfter(fd_set &readFds, fd_set &writeFds)
+void Server::checkClientsAfter()
 {
-	std::vector<int>::iterator pos = this->_clientsFd.begin();
+	std::vector< SharedPtr<Client> >::iterator it;
+	for (it = _clients.begin(); it != _clients.end();)
+	{
+		if (FD_ISSET((*it)->getFd(), &_readFds))
+			(*it)->receive();
 
-	for (size_t i = 0; i < this->_clientsFd.size(); ++i) {
-		if (FD_ISSET(this->_clientsFd[i], &readFds)) {
-			this->receive(this->_clientsFd[i]);
-			//temporarily part
-			{
-				this->_clientsFd.erase(pos + i); //TODO: remove index error
-			}
-		}
-		if (FD_ISSET(this->_clientsFd[i], &writeFds))
-		{
-			this->toSend(this->_clientsFd[i]);
-		}
+		if (FD_ISSET((*it)->getFd(), &_writeFds) && (*it)->response())
+			_clients.erase(it);
+		else
+			++it;
 	}
 }
 
-int Server::Select(fd_set &readFds, fd_set &writeFds) const
+int Server::Select()
 {
 	struct timeval tv;
 	tv.tv_sec = 10;
 	tv.tv_usec = 0;
-
-	return (select(getMaxSockFd() + 1, &readFds, &writeFds, NULL, &tv));
+	reloadFdSets();
+	return (select(getMaxSockFd() + 1, &_readFds, &_writeFds, NULL, &tv));
 }
 
-void Server::checkSockets(fd_set &readFds, fd_set &writeFds)
+void Server::checkSockets()
 {
-	for (size_t i = 0; i < this->_amountServers; ++i)
+	for (size_t i = 0; i < _servers.size(); ++i)
 	{
-		if (FD_ISSET(this->_servers[i].getSockFd(), &readFds))
+		if (FD_ISSET(this->_servers[i].getSockFd(), &_readFds))
 		{
 			this->newClient(i);
 		}
@@ -207,5 +199,9 @@ void Server::checkSockets(fd_set &readFds, fd_set &writeFds)
 void Server::sendCgi(const Request &request)
 {
 	Cgi cgi(request);
+}
+
+const std::vector<SharedPtr<Client> > & Server::getClients() const {
+	return _clients;
 }
 
