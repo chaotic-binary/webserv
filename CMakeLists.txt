@@ -25,7 +25,7 @@ add_executable(test_server
         test/testServer.cpp
         src/Request.cpp include/Request.h
         src/Client.cpp
-        )
+        src/MethodGet.cpp)
 
 add_executable(test
         test/test.cpp

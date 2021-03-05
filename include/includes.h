@@ -48,5 +48,4 @@ enum eEnvCgi {
 };
 
 void methodGet(int fd, const std::string& path, const ServConfig& config);
-
 #endif //INCLUDES_H

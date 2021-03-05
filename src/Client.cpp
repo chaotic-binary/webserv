@@ -1,8 +1,9 @@
 #include "Client.h"
 #include <iostream>
+#include <unistd.h>
+#include "methods.h"
 
 std::string generate_response(const Request& request, const ServConfig &config) {
-
 	std::cout << "tossern" << std::endl;
 	// for test
 	char msg[] = "hello from server\n";
@@ -33,11 +34,14 @@ std::string generate_response(const Request& request, const ServConfig &config) 
 bool Client::response() {
 	if (status_ == READY_TO_READ)
 		return false;
-	std::string response = generate_response(req_, serv_);
-	write(fd_ ,response.c_str(), response.size());
-
+	if(req_.getMethod() == GET)
+		methodGet(fd_,req_.getReqTarget(), serv_);
+	else {
+		std::string response = generate_response(req_, serv_);
+		int ret = send(fd_, response.c_str(), response.length(), 0);
+	}
 	//TODO: Do we need it? bzero(this->_buffer, 2048);
-	int ret = send(fd_, response.c_str(), response.length(), 0);
+	//int ret = send(fd_, response.c_str(), response.length(), 0);
 	return status_ == CLOSE_CONNECTION;
 }
 
