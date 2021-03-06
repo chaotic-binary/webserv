@@ -35,13 +35,13 @@ bool Client::response() {
 	if (status_ == READY_TO_READ)
 		return false;
 	if(req_.getMethod() == GET)
-		methodGet(fd_,req_.getReqTarget(), serv_);
+		::tmpFunctionForResponse(fd_, req_, serv_); //TODO: come up with a name!! !! !!
 	else {
 		std::string response = generate_response(req_, serv_);
 		int ret = send(fd_, response.c_str(), response.length(), 0);
 	}
 	//TODO: Do we need it? bzero(this->_buffer, 2048);
-	//int ret = send(fd_, response.c_str(), response.length(), 0);
+	//int ret = send(fd_, response.c_str(), tmpFunctionForResponse.length(), 0);
 	return status_ == CLOSE_CONNECTION;
 }
 
@@ -66,7 +66,8 @@ void Client::receive() {
 			raw_request += buffer;
 		}
 		req_ = Request(raw_request);
-		std::cout << "<REQUEST\n" << req_ << std::endl;
+		std::cout << raw_request; // TODO: NO DELETE LINE !!
+//		std::cout << "<REQUEST\n" << req_ << std::endl;
 		std::cout << "REQUEST>\n"; //test
 		status_ = CLOSE_CONNECTION;
 	}

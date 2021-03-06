@@ -178,11 +178,8 @@ void Server::checkClientsAfter()
 
 int Server::Select()
 {
-	struct timeval tv;
-	tv.tv_sec = 10;
-	tv.tv_usec = 0;
 	reloadFdSets();
-	return (select(getMaxSockFd() + 1, &_readFds, &_writeFds, NULL, &tv));
+	return (select(getMaxSockFd() + 1, &_readFds, &_writeFds, 0x0, 0x0));
 }
 
 void Server::checkSockets()

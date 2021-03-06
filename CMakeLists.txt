@@ -23,9 +23,11 @@ add_executable(test_server
         src/FD.cpp
         src/Cgi.cpp
         test/testServer.cpp
-        src/Request.cpp include/Request.h
+        src/Request.cpp
         src/Client.cpp
-        src/MethodGet.cpp)
+        src/MethodGet.cpp
+        src/Response.cpp
+        src/initMimeType.cpp)
 
 add_executable(test
         test/test.cpp

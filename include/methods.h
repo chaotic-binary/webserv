@@ -1,2 +1,3 @@
 #pragma once
-void methodGet(int fd, const std::string& path, const ServConfig& config);
+
+void tmpFunctionForResponse(int fd, const Request &req, const ServConfig& config);

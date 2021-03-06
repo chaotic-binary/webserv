@@ -3,11 +3,42 @@
 //
 
 #include "includes.h"
+#include "Response.hpp"
+#include "Request.h"
+#include "mimeTypes.h"
 
-void methodGet(int fd, const std::string& path, const ServConfig& config)
+std::string getMimeType(const std::string& file)
 {
+	static std::map<std::string, std::string> mimeTypes;
+	if (mimeTypes.empty())
+		initMimeType(mimeTypes);
+	std::string exp =  &file.c_str()[file.rfind('.')];
+	std::string res;
+	if (mimeTypes.count(exp))
+	{
+		res = mimeTypes[exp];
+	}
+	else
+		res = "text/plain";
+	return res;
+}
+
+void tmpFunctionForResponse(int fd, const Request &req, const ServConfig& config)
+{
+	Response response1(fd, req, config); // TODO: mv all response <<
+
+	std::string mimeType;
 	std::string pwd = getcwd(0x0, 0);
-	pwd +=  + "/www/" + config.getLocations()[0].getIndex();
+	if (req.getReqTarget() == "/")
+	{
+		pwd +=  + "/www/" + config.getLocations()[0].getIndex();
+		mimeType = getMimeType(config.getLocations()[0].getIndex());
+	}
+	else
+	{
+		pwd += "/www" + req.getReqTarget();
+		mimeType = getMimeType(req.getReqTarget());
+	}
 	std::ifstream file(pwd);
 
 	if (!file)
@@ -20,7 +51,7 @@ void methodGet(int fd, const std::string& path, const ServConfig& config)
 	std::stringstream response;
 	response << "HTTP/1.1 200 OK\r\n"
 			 << "Version: HTTP/1.1\r\n"
-			 << "Content-Type: text/html; charset=utf-8\r\n"
+			 << "Content-Type: " << mimeType << "; charset=utf-8\r\n"
 			 << "Content-Length: " << response_body.str().length()
 			 << "\r\n\r\n"
 			 << response_body.str();
