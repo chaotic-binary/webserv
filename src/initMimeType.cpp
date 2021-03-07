@@ -8,6 +8,7 @@ const std::map<std::string, std::string>& initMimeType(std::map<std::string, std
 {
 //	if (mimeTypes.empty())
 	{
+		mimeTypes[".php"] = "text/html";
 		mimeTypes[".bmp"] = "image/bmp";
 		mimeTypes[".cgm"] = "image/cgm";
 		mimeTypes[".g3"] = "image/g3fax";

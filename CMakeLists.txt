@@ -25,7 +25,7 @@ add_executable(test_server
         test/testServer.cpp
         src/Request.cpp
         src/Client.cpp
-        src/MethodGet.cpp
+        src/tmpFunctionForResponse.cpp
         src/Response.cpp
         src/initMimeType.cpp)
 
