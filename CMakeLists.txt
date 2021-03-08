@@ -7,11 +7,13 @@ include_directories(include)
 
 add_executable(test_parser
         src/main.cpp
-        src/ServConfig.cpp include/ServConfig.hpp
-        src/Parser.cpp include/Parser.hpp
-        src/Location.cpp include/Location.hpp
-        src/utils.cpp include/utils.hpp
-        src/FD.cpp include/FD.hpp
+        src/ServConfig.cpp
+        src/Parser.cpp
+        src/Location.cpp
+        src/utils.cpp
+        src/FD.cpp
+        src/Request.cpp
+        src/Client.cpp
         )
 
 add_executable(test_server
@@ -23,7 +25,7 @@ add_executable(test_server
         src/FD.cpp
         src/Cgi.cpp
         test/testServer.cpp
-        src/Request.cpp include/Request.h
+        src/Request.cpp
         src/Client.cpp
         )
 

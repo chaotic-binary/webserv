@@ -44,14 +44,18 @@ void Request::parse_headers(const std::string &str) {
 			if (v.size() != 3)
 				throw InvalidData(line_num);
 			setMethodFromStr(v[0]);
+			ft::cut_char_from_end(v[2], "\r");
 			setReqTarget(v[1]);
 			setVersion(v[2]);
 		}
-		else if (line != "\r")
+		else if (line == "\r") {
+			break;
+		} else {
 			for (size_t i = 1; i < v.size(); ++i) {
-				ft::cut_char_from_end(v[i], ",;");
+				ft::cut_char_from_end(v[i], ",;\r");
 				headers[v[0]].push_back(v[i]);
 			}
+		}
 	}
 	std::map< std::string, std::vector<std::string> >::iterator it;
 	for (it = headers.begin(); it != headers.end(); ++it) {
@@ -67,7 +71,7 @@ int Request::parse_chunk(const int fd) {
 	char	buffer[2049];
 
 	if (!contentLength) {
-		while (raw_request.find("\r\n") != raw_request.npos) {
+		while (raw_request.find("\r\n") == raw_request.npos) {
 			if ((ret = read(fd, buffer, 1)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
@@ -141,7 +145,7 @@ int Request::receive() {
 			{
 				parse_headers(raw_request);
 				raw_request.clear();
-				lseek(fd_, raw_request.size() - i + 4, SEEK_CUR); //
+				lseek(fd_, i + 3, SEEK_SET); //
 				headersParsed = true;
 				break;
 			}

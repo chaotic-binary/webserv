@@ -6,11 +6,31 @@
 # include <ostream>
 # include <unistd.h>
 
-
 enum e_client_status
 {
 	CLOSE_CONNECTION, READY_TO_READ, READY_TO_SEND
 };
+
+/*
+"Accept-Charsets:"
+"Accept-Language:"
+"Allow:"
+"Authorization:"
+"Content-Language:"
+"Content-Length:"
+"Content-Location:"
+"Content-Type:"
+"Date:"
+"Host:"
+"Last-Modified:"
+"Location:"
+"Referer:"
+"Retry-After:"
+"Server:"
+"Transfer-Encoding:"
+"User-Agent:"
+"WWW-Authenticate:"
+*/
 
 class Request {
 private:

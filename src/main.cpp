@@ -1,25 +1,33 @@
 #include "Parser.hpp"
+#include <fcntl.h>
+#include <Request.h>
 
 int main(int ac, char **av, char **env) {
-	/*if (ac != 2) {
+	if (ac != 2) {
 		std::cerr << "Wrong number of arguments: one required\n";
 		return (1);
 	}
 	try {
 		Parser p = Parser(av[1]);
 
-		std::cout << p;//test
-		std::vector<ServConfig> conf = p.getServs();
-		for (size_t i; i < conf.size(); ++i) {
-			//conf[i]
-		}
-		//TODO:next?
+	//	std::cout << p;//test
+	//	std::vector<ServConfig> conf = p.getServs();
+
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
-	}*/
-	std::string raw_request = "8ab";
-	std::string n = raw_request.substr(0, raw_request.size() - 2);
-	//size_t n = ft::to_num(s);
-	std::cout << n;
+	}
+	int fd = open("../test/request_chunked.http", O_RDONLY);
+	std::cout << "fd: " << fd << std::endl;
+	Request req_(fd);
+	try {
+		std::cout << "res: " << (req_.receive()) << std::endl;
+
+		std::cout << "<REQUEST\n" << req_ << std::endl;
+		std::cout << "REQUEST>\n"; //test
+	}
+	catch (std::exception &) {
+		std::cout << "TODO: handle the half msg!!!" << std::endl;
+	}
+
 	return 0;
 }
