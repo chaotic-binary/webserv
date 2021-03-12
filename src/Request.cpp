@@ -24,7 +24,9 @@ void	Request::headersListInit() {
 };
 
 Request::Request(const int fd)
-	: method(OTHER), contentLength(0), chunked(false), headersParsed(false), complete(false), fd_(fd) { }
+		: method(OTHER), contentLength(0), chunked(false), headersParsed(false), complete(false), fd_(fd) {
+	headersListInit();
+}
 
 Request::~Request() {}
 
@@ -158,7 +160,6 @@ int Request::receive() {
 
 	if (!headersParsed)
 	{
-		headersListInit();
 		while ((ret = read(fd_, buffer, 2048)) > 0)
 		{
 			buffer[ret] = 0x0;
