@@ -46,7 +46,7 @@ std::istream &ft::getline(std::istream &ifs, std::string &line) {
 }
 
 std::vector<std::string> ft::split(const std::string &str, const char delim) {
-	size_t start = 0;
+	size_t start;
 	size_t end = 0;
 	std::vector<std::string> res;
 
@@ -57,4 +57,8 @@ std::vector<std::string> ft::split(const std::string &str, const char delim) {
 			res.push_back(str.substr(start, end - start));
 	}
 	return res;
+}
+
+void ft::tolower(std::string &s) {
+	transform(s.begin(), s.end(), s.begin(), ::tolower);
 }

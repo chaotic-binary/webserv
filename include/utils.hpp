@@ -20,7 +20,7 @@ namespace ft {
 	std::istream &getline(std::istream &ifs, std::string &line);
 
 	template <typename T>
-	std::string to_str(T n) {
+	std::string	to_str(T n) {
 		std::string res;
 		std::stringstream ss;
 		if (!(ss << n) || !(ss >> res)) {
@@ -31,7 +31,9 @@ namespace ft {
 		return res;
 	}
 
-	size_t to_num(const std::string &str, bool hex = false);
+	size_t	to_num(const std::string &str, bool hex = false);
+
+	void	tolower(std::string &s);
 
 } //namespace ft
 
