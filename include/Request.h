@@ -50,15 +50,14 @@ private:
 
 	static std::vector<std::string>						headersList;
 	static void											headersListInit();
+	void												setMethodFromStr(const std::string &);
 
 	Request();
 
 public:
 	Request(const int fd);
 	virtual ~Request();
-
 	e_methods getMethod() const;
-	void setMethodFromStr(const std::string &);
 	const std::string &getReqTarget() const;
 	const std::string &getVersion() const;
 	const std::map< e_header, std::vector<std::string> > &getHeaders() const;

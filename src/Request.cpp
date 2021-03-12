@@ -51,7 +51,7 @@ void Request::parse_headers(const std::string &str) {
 	std::string line;
 	int line_num = 0;
 
-	while (std::getline(ss, line)) {
+	while (ft::getline(ss, line)) {
 		++line_num;
 		std::vector<std::string> v = ft::split(line, ' ');
 		if (line != "\r" && v.size() < 2)
