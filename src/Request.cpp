@@ -25,7 +25,8 @@ void	Request::headersListInit() {
 
 Request::Request(const int fd)
 		: method(OTHER), contentLength(0), chunked(false), headersParsed(false), complete(false), fd_(fd) {
-	headersListInit();
+	if (!headersList.size())
+		headersListInit();
 }
 
 Request::~Request() {}
