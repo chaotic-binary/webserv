@@ -38,7 +38,7 @@ private:
 	e_methods											method;
 	std::string		 									reqTarget;
 	std::string 										version;
-	std::map< e_header, std::vector<std::string> >	headers;
+	std::map< e_header, std::vector<std::string> >		headers;
 	std::string 										body;
 
 	std::string 										raw_request;
