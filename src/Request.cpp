@@ -5,22 +5,22 @@ std::vector<std::string>	Request::headersList;
 void	Request::headersListInit() {
 	headersList.push_back("accept-charsets:");
 	headersList.push_back("accept-language:");
-	headersList.push_back("allow:");
 	headersList.push_back("authorization:");
 	headersList.push_back("content-language:");
 	headersList.push_back("content-length:");
-	headersList.push_back("content-location:");
 	headersList.push_back("content-type:");
 	headersList.push_back("date:");
 	headersList.push_back("host:");
-	headersList.push_back("last-modified:");
-	headersList.push_back("location:");
 	headersList.push_back("referer:");
-	headersList.push_back("retry-after:");
-	headersList.push_back("server:");
 	headersList.push_back("transfer-encoding:");
 	headersList.push_back("user-agent:");
+/*	headersList.push_back("server:");
 	headersList.push_back("www-authenticate:");
+	headersList.push_back("allow:");
+	headersList.push_back("content-location:");
+	headersList.push_back("retry-after:");
+	headersList.push_back("location:");
+	headersList.push_back("last-modified:");*/
 };
 
 Request::Request(const int fd)
