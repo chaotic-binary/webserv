@@ -11,7 +11,7 @@ enum e_client_status
 	CLOSE_CONNECTION, READY_TO_READ, READY_TO_SEND
 };
 
-enum e_header
+/*enum e_header
 {
 	ACCEPT_CHARSETS,
 	ACCEPT_LANGUAGE,
@@ -23,8 +23,9 @@ enum e_header
 	HOST,
 	REFERER,
 	TRANSFER_ENCODING,
-	USER_AGENT
+	USER_AGENT*/
 	/*,
+
 	SERVER,
 	WWW_AUTHENTICATE,
 	ALLOW,
@@ -32,15 +33,15 @@ enum e_header
 	RETRY_AFTER,
 	LOCATION,
 	LAST_MODIFIED
-	*/
-};
+
+};*/
 
 class Request {
 private:
 	e_methods											method;
 	std::string		 									reqTarget;
 	std::string 										version;
-	std::map< e_header, std::vector<std::string> >		headers;
+	std::map< std::string, std::string >				headers;
 	std::string 										body;
 
 	std::string 										raw_request;
@@ -54,7 +55,7 @@ private:
 	static void											headersListInit();
 	void												setMethodFromStr(const std::string &);
 
-	void	parse_headers(const std::string &str);
+	void	parse_headers(std::string str);
 	int		parse_body(const int fd);
 	int		parse_chunk(const int fd);
 
@@ -66,7 +67,7 @@ public:
 	e_methods getMethod() const;
 	const std::string &getReqTarget() const;
 	const std::string &getVersion() const;
-	const std::map< e_header, std::vector<std::string> > &getHeaders() const;
+	const std::map< std::string, std::string > &getHeaders() const;
 	const std::string &getBody() const;
 	bool isComplete() const;
 
@@ -81,7 +82,7 @@ public:
 	void	clear();
 };
 
-std::ostream &operator<<(std::ostream &os, const std::map< e_header, std::vector<std::string> > &headers);
+//std::ostream &operator<<(std::ostream &os, const std::map< std::string, std::string > &headers);
 
 std::ostream &operator<<(std::ostream &os, const Request &request);
 

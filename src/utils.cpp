@@ -11,17 +11,17 @@ void ft::ws_to_tab(std::string &str) {
 			str[i] = '\t';
 }
 
-void ft::trim(std::string &str) {
-	str.erase(0, str.find_first_not_of('\t'));
-	str.erase(str.find_last_not_of('\t') + 1);
+void ft::trim(std::string &str, char c) {
+	str.erase(0, str.find_first_not_of(c));
+	str.erase(str.find_last_not_of(c) + 1);
 }
 
-void ft::cut_char_from_end(std::string &str, const std::string &charset) {
-	std::string::iterator it = --str.end();
+/*void ft::cut_char_from_end(std::string &str, const std::string &charset) {
+	std::string::iterator it;
 	for (size_t i = 0; i < charset.size(); ++i)
-		if (*it == charset[i])
+		if (*(it = --str.end()) == charset[i])
 			str.erase(it);
-}
+}*/
 
 size_t ft::to_num(const std::string &str, bool hex)
 {

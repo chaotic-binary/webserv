@@ -1,5 +1,5 @@
 #include "Request.h"
-
+/*
 std::vector<std::string>	Request::headersList;
 
 void	Request::headersListInit() {
@@ -13,7 +13,8 @@ void	Request::headersListInit() {
 	headersList.push_back("host:");
 	headersList.push_back("referer:");
 	headersList.push_back("transfer-encoding:");
-	headersList.push_back("user-agent:");
+	headersList.push_back("user-agent:");*/
+
 /*	headersList.push_back("server:");
 	headersList.push_back("www-authenticate:");
 	headersList.push_back("allow:");
@@ -21,12 +22,12 @@ void	Request::headersListInit() {
 	headersList.push_back("retry-after:");
 	headersList.push_back("location:");
 	headersList.push_back("last-modified:");*/
-};
+//};
 
 Request::Request(const int fd)
 		: method(OTHER), contentLength(0), chunked(false), headersParsed(false), complete(false), fd_(fd) {
-	if (headersList.empty())
-		headersListInit();
+//	if (headersList.empty())
+//		headersListInit();
 }
 
 Request::~Request() {}
@@ -43,51 +44,44 @@ void Request::setMethodFromStr(const std::string &s) {
 
 const std::string	&Request::getReqTarget() const { return reqTarget; }
 const std::string	&Request::getVersion() const { return version; }
-const std::map< e_header, std::vector<std::string> >	&Request::getHeaders() const { return headers; }
+const std::map< std::string, std::string >	&Request::getHeaders() const { return headers; }
 const std::string	&Request::getBody() const { return body; }
 bool	Request::isComplete() const { return complete; }
-const std::vector<std::string>	&Request::getHeadersList() { return headersList; }
+//const std::vector<std::string>	&Request::getHeadersList() { return headersList; }
 
-void Request::parse_headers(const std::string &str) {
-	std::string line;
-	int line_num = 0;
-	size_t prevPos = 0;
-	size_t newPos;
+void Request::parse_headers(std::string str) {
+	std::string					line;
+	std::vector<std::string>	v;
+	int							line_num = 0;
+	size_t						newPos;
 
-	while ((newPos = str.find("\r\n", prevPos)) != str.npos) {
+	while ((newPos = str.find_first_of('\r')) != str.npos) {
 		line.clear();
-		line = str.substr(prevPos, newPos);
-		prevPos = newPos + 2;
+		line = str.substr(0, newPos);
+		str.erase(0, newPos + 2);
 		++line_num;
-		std::vector<std::string> v = ft::split(line, ' ');
-		if (line != "\r" && v.size() < 2)
-			throw InvalidData(line_num);
 		if (line_num == 1) {
+			v = ft::split(line, ' ');
 			if (v.size() != 3)
 				throw InvalidData(line_num);
 			setMethodFromStr(v[0]);
 			reqTarget = v[1];
 			version = v[2];
 		}
-		else if (line.empty()) {
-			break;
-		} else {
-			ft::tolower(v[0]);
-			for (size_t h = 0; h < headersList.size(); ++h) {
-				if (v[0] == headersList[h]) //{
-					for (size_t i = 1; i < v.size(); ++i) {
-						ft::cut_char_from_end(v[i], ",;");
-						headers[static_cast<const e_header>(h)].push_back(v[i]);
-					}
-				//}
-			}
+		else {
+			newPos = line.find_first_of(':');
+			if (newPos == line.npos)
+				throw InvalidData(line_num);
+			std::string tmp = line.substr(0, newPos);
+			ft::tolower(tmp);
+			headers[tmp] = line.substr(newPos + 2, line.size() - 1);
 		}
 	}
-	std::map< e_header, std::vector<std::string> >::iterator it;
+	std::map< std::string, std::string >::iterator it;
 	for (it = headers.begin(); it != headers.end(); ++it) {
-		if (it->first == CONTENT_LENGTH)
-			contentLength = ft::to_num(it->second[0]);
-		if (it->first == TRANSFER_ENCODING && it->second[0] == "chunked")
+		if (it->first == "content-length")
+			contentLength = ft::to_num(it->second);
+		if (it->first == "transfer-encoding" && it->second == "chunked")
 			chunked = true;
 	}
 }
@@ -132,8 +126,7 @@ int Request::parse_body(const int fd)
 	char	buffer[2049];
 
 	if (!chunked) {
-		while (raw_request.size() != contentLength)
-		{
+		while (raw_request.size() != contentLength) {
 			if ((ret = read(fd, buffer,(contentLength - raw_request.size()) % 1024)) > 0)
 			{
 				buffer[ret] = 0x0;
@@ -157,9 +150,9 @@ int Request::parse_body(const int fd)
 }
 
 int Request::receive() {
-	int			ret;
-	char		buffer[2049];
-	size_t		i;
+	int		ret;
+	char	buffer[2049];
+	size_t	i;
 
 	if (!headersParsed)
 	{
@@ -198,15 +191,6 @@ void Request::clear()
 	headersParsed = false;
 	complete = false;
 	chunked = false;
-}
-
-std::ostream &operator<<(std::ostream &os, const std::map< e_header, std::vector<std::string> > &headers) {
-	std::map< e_header, std::vector<std::string> >::const_iterator it;
-	std::vector<std::string> v = Request::getHeadersList();
-	for (it = headers.begin(); it != headers.end(); ++it) {
-		std::cout << v.at(it->first) << " => " << it->second << '\n';
-	}
-	return os;
 }
 
 std::ostream &operator<<(std::ostream &os, const Request &request) {

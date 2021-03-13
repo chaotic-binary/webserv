@@ -16,7 +16,7 @@ int main(int ac, char **av, char **env) {
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 	}
-	int fd = open("../test/request.http", O_RDONLY);
+	int fd = open("../test/request_chunked.http", O_RDONLY);
 	std::cout << "fd: " << fd << std::endl;
 	Request req_(fd);
 	try {

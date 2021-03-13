@@ -11,7 +11,7 @@ namespace ft {
 
 	void ws_to_tab(std::string &str);
 
-	void trim(std::string &str);
+	void trim(std::string &str, char c);
 
 	void cut_char_from_end(std::string &str, const std::string &charset);
 
