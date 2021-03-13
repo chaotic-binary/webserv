@@ -20,14 +20,12 @@ public:
 	void												initSockets();
 	//void												initHeaders(const std::string& headers);
 
-	void												checkClientsAfter();
+	void												checkClients();
 	void												checkSockets();
 	int													Select();
 	int													getMaxSockFd() const;
 	void												newClient(int indexServer);
 
-	void												toSend(int);
-	void												receive(int);
 
 	void												sendCgi(const Request &request);
 
