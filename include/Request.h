@@ -52,6 +52,10 @@ private:
 	static void											headersListInit();
 	void												setMethodFromStr(const std::string &);
 
+	void	parse_headers(const std::string &str);
+	int		parse_body(const int fd);
+	int		parse_chunk(const int fd);
+
 	Request();
 
 public:
@@ -63,18 +67,15 @@ public:
 	const std::map< e_header, std::vector<std::string> > &getHeaders() const;
 	const std::string &getBody() const;
 	bool isComplete() const;
+
 	static const std::vector<std::string> &getHeadersList();
 
 	class InvalidData: public std::logic_error {
 	private: InvalidData();
 	public: InvalidData(int line) : std::logic_error("Wrong number of arguments: line:" + ft::to_str(line)){};
 	};
-
 	int		receive();
 	void	clear();
-	void	parse_headers(const std::string &str);
-	int		parse_body(const int fd);
-	int		parse_chunk(const int fd);
 };
 
 std::ostream &operator<<(std::ostream &os, const std::map< e_header, std::vector<std::string> > &headers);

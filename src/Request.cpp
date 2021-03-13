@@ -25,7 +25,7 @@ void	Request::headersListInit() {
 
 Request::Request(const int fd)
 		: method(OTHER), contentLength(0), chunked(false), headersParsed(false), complete(false), fd_(fd) {
-	if (!headersList.size())
+	if (headersList.empty())
 		headersListInit();
 }
 
@@ -49,12 +49,15 @@ bool	Request::isComplete() const { return complete; }
 const std::vector<std::string>	&Request::getHeadersList() { return headersList; }
 
 void Request::parse_headers(const std::string &str) {
-	std::stringstream ss;
-	ss << str;
 	std::string line;
 	int line_num = 0;
+	size_t prevPos = 0;
+	size_t newPos;
 
-	while (ft::getline(ss, line)) {
+	while ((newPos = str.find("\r\n", prevPos)) != str.npos) {
+		line.clear();
+		line = str.substr(prevPos, newPos);
+		prevPos = newPos + 2;
 		++line_num;
 		std::vector<std::string> v = ft::split(line, ' ');
 		if (line != "\r" && v.size() < 2)
@@ -63,18 +66,17 @@ void Request::parse_headers(const std::string &str) {
 			if (v.size() != 3)
 				throw InvalidData(line_num);
 			setMethodFromStr(v[0]);
-			ft::cut_char_from_end(v[2], "\r");
 			reqTarget = v[1];
 			version = v[2];
 		}
-		else if (line == "\r") {
+		else if (line.empty()) {
 			break;
 		} else {
 			ft::tolower(v[0]);
 			for (size_t h = 0; h < headersList.size(); ++h) {
 				if (v[0] == headersList[h]) //{
 					for (size_t i = 1; i < v.size(); ++i) {
-						ft::cut_char_from_end(v[i], ",;\r");
+						ft::cut_char_from_end(v[i], ",;");
 						headers[static_cast<const e_header>(h)].push_back(v[i]);
 					}
 				//}
@@ -167,7 +169,7 @@ int Request::receive() {
 			raw_request += buffer;
 			if ((i = raw_request.find("\r\n\r\n")) != raw_request.npos)
 			{
-				parse_headers(raw_request);
+				parse_headers(raw_request.substr(0, i + 2));
 				raw_request.clear();
 				lseek(fd_, i + 3, SEEK_SET); //
 				headersParsed = true;
