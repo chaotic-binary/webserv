@@ -180,6 +180,6 @@ std::ostream &operator<<(std::ostream &os, const Request &request)
 	os << " reqTarget: " << request.getReqTarget() << std::endl;
 	os << " version: " << request.getVersion() << std::endl;
 	os << " headers: " << request.getHeaders() << std::endl;
-	os << " body: " << request.getBody() << std::endl;
+	os << " body_: " << request.getBody() << std::endl;
 	return os;
 }

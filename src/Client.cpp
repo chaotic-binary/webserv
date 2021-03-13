@@ -1,7 +1,8 @@
 #include "Client.h"
 #include <iostream>
+#include <response.h>
 
-std::string generate_response(const Request& request, const ServConfig &config) {
+Response generate_response(const Request& request, const ServConfig &config) {
 
 	std::cout << "tossern" << std::endl;
 	char msg[] = "hello from server\n";
@@ -9,7 +10,7 @@ std::string generate_response(const Request& request, const ServConfig &config) 
 	std::stringstream response_body;
 	response_body << "<title>Test C++ HTTP Server</title>\n"
 				  << "<h1>Test page</h1>\n"
-				  << "<p>This is body of the test page...</p>\n"
+				  << "<p>This is body_ of the test page...</p>\n"
 				  << "<h2>Request headers</h2>\n"
 				  << "<pre>" << msg << "</pre>\n"
 				  << "<em><small>Test C++ Http Server</small></em>\n";
@@ -21,17 +22,18 @@ std::string generate_response(const Request& request, const ServConfig &config) 
 			 << "Content-Length: " << response_body.str().length()
 			 << "\r\n\r\n"
 			 << response_body.str();
-
-	return response.str();
+	return Response(200);
 }
 
 bool Client::response() {
-	if (status_ == READY_TO_READ)
+	if (status_ != READY_TO_SEND)
 		return false;
-	std::string response = generate_response(req_, serv_);
+	std::string response = Response(200).Generate();
+	Response rsp = generate_response(req_, serv_);
 	int ret = send(fd_, response.c_str(), response.length(), 0); //TODO: CHECK RET
+	status_ = READY_TO_READ;
 	req_.clear();
-	return status_ == CLOSE_CONNECTION;
+	return true;//status_ == CLOSE_CONNECTION;
 }
 
 const ServConfig &Client::getServ() const {
@@ -46,13 +48,12 @@ void Client::receive() {
 	if (status_ != READY_TO_READ)
 		return;
 	try {
-			if (req_.receive())
-				status_ = READY_TO_SEND;
-			else
-				status_ = CLOSE_CONNECTION;
-		//TODO::???
-		std::cout << "<REQUEST\n" << req_ << std::endl;
-		std::cout << "REQUEST>\n"; //test
+		req_.receive();
+		if(req_.isComplete()) {
+			status_ = READY_TO_SEND;
+			std::cout << "<REQUEST\n" << req_ << std::endl;
+			std::cout << "REQUEST>\n"; //test
+		}
 	}
 	catch (std::exception &) {
 		std::cout << "TODO: handle the half msg!!!" << std::endl;

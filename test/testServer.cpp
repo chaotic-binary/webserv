@@ -30,7 +30,7 @@ int main(int ac, char **av, char **env)
 				continue ;
 			}*/
 			server.checkSockets();
-			server.checkClientsAfter();
+			server.checkClients();
 		}
 		//	close(server.initSockets());
 	} catch (std::exception &e) {
