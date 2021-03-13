@@ -22,7 +22,7 @@ public:
 		SetHeader("Server",  "KingGinx");
 		//TODO: Allow
 		//if (!body_.empty())
-			SetHeader("Content-Lenght", std::to_string(body_.length()));
+			SetHeader("Content-Length", std::to_string(body_.length()));
 		std::ostringstream str_out;
 		str_out << "HTTP/1.1 " << code_ << " " << g_resp_codes.at(code_) << "\r\n";
 		for (Headers::iterator it = headers_.begin(); it != headers_.end(); it++)
@@ -59,12 +59,12 @@ private:
 
 	void generate_error_page(int code) {
 		std::ostringstream response_body;
-		response_body << "<title> Error " << code << "</title>\n";
+		response_body << "<title> Error " << code << "</title>\r\n";
 		response_body << "<h1>Code: " << code << "</h1>"
-		<< "<h2>" << g_resp_codes.at(code_) << "</h2>\n"
-		<< "<em><small>king's server</small></em>";
-		body_ = response_body.str();
-		headers_["Content-Type"] = "text/html; charset=utf-8";
+		<< "<h2>" << g_resp_codes.at(code_) << "</h2>\r\n"
+		<< "<em><small>king's server</small></em>\r\n";
+		SetBody(response_body.str());
+		headers_["Content-Type"] = "text/html";
 	}
 	int code_;
 	Headers headers_;

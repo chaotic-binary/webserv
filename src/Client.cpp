@@ -28,12 +28,12 @@ Response generate_response(const Request& request, const ServConfig &config) {
 bool Client::response() {
 	if (status_ != READY_TO_SEND)
 		return false;
-	std::string response = Response(200).Generate();
+	std::string response = Response(404).Generate();
 	Response rsp = generate_response(req_, serv_);
-	int ret = send(fd_, response.c_str(), response.length(), 0); //TODO: CHECK RET
+	int ret = send(fd_, response.c_str(), response.length() + 1, 0); //TODO: CHECK RET
 	status_ = READY_TO_READ;
 	req_.clear();
-	return true;//status_ == CLOSE_CONNECTION;
+	return status_ == CLOSE_CONNECTION;
 }
 
 const ServConfig &Client::getServ() const {
