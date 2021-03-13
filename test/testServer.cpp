@@ -7,22 +7,20 @@ volatile bool loop = true;
 
 int main(int ac, char **av, char **env)
 {
-	Server server(Parser(av[1]).getServs());
-	server.initSockets();
-	while (loop)
-	{
-		//FD_SET(server.getMaxSockFd(), &readFds); //TODO: WHY?!
-		int ret = server.Select();
-//		std::cout << "wait select" << std::endl;
-		if ( ret == -1 )
-			throw Server::Error("select");
-		if ( ret == 0 )
+	try {
+		Server server(Parser(av[1]).getServs());
+		server.initSockets();
+		while (loop)
 		{
-			continue ;
+			int ret = server.Select();
+			std::cout << "wait select" << std::endl;
+			if ( ret == -1 )
+				throw Server::Error("select");
+			server.checkSockets();
+			server.checkClients();
 		}
-		server.checkSockets();
-		server.checkClientsAfter();
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
 	}
-//	TODO:: close all sockets;
 	return (0);
 }

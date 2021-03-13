@@ -4,7 +4,7 @@
 # include <map>
 # include <string>
 # include <exception>
-# include <fstream>
+# include <sstream>
 
 namespace ft {
 	bool isalldigits(const std::string &str);
@@ -32,7 +32,10 @@ namespace ft {
 		//TODO: do we need exception?
 		return res;
 	}
-}
+
+	size_t to_num(const std::string &str, bool hex = false);
+
+} //namespace ft
 
 template <class T, class Alloc>
 std::ostream &operator<<(std::ostream &os, const std::vector<T, Alloc> &c) {

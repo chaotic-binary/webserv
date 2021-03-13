@@ -42,7 +42,7 @@ void Response::selectLocation()
 	const std::vector<Location> loc = _config.getLocations();
 	std::vector<Location>::const_iterator it = loc.cbegin();
 	int maxCoincidence = 0;
-
+	//TODO: rewrite
 	for (int res = 0; it != loc.cend(); it++, res++)
 	{
 		if (_req.getReqTarget().compare(0, it->getPath().size(), it->getPath()) == 0
