@@ -1,5 +1,5 @@
 #pragma once
-#include "ServConfig.hpp"
+#include "ServConfig.h"
 #include "Request.h"
 
 class Client {

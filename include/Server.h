@@ -7,7 +7,7 @@
 
 #include "includes.h"
 #include "Parser.hpp"
-#include "Cgi.hpp"
+#include "Cgi.h"
 #include "Client.h"
 #include "SharedPtr.h"
 

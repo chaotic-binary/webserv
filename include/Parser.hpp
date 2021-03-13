@@ -1,9 +1,9 @@
 #pragma once
 
-# include "ServConfig.hpp"
+# include "ServConfig.h"
 # include <fstream>
 # include <sstream>
-# include "utils.hpp"
+# include "utils.h"
 
 class Parser {
 public:

@@ -1,5 +1,5 @@
 #include <sstream>
-#include "utils.hpp"
+#include "utils.h"
 
 bool ft::isalldigits(const std::string &str) {
 	return (str.find_first_not_of("0123456789") == std::string::npos);

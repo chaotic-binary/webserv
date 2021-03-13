@@ -1,6 +1,6 @@
 #pragma once
 
-# include "Location.hpp"
+# include "Location.h"
 # include "includes.h"
 
 #define LOCALHOST "127.0.0.1"

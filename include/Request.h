@@ -1,7 +1,7 @@
 #pragma once
 
-# include "utils.hpp"
-# include "Location.hpp" //TODO::move enum from Location
+# include "utils.h"
+# include "Location.h" //TODO::move enum from Location
 # include <sstream>
 # include <ostream>
 # include <unistd.h>
@@ -74,6 +74,7 @@ public:
 	private: InvalidData();
 	public: InvalidData(int line) : std::logic_error("Wrong number of arguments: line:" + ft::to_str(line)){};
 	};
+
 	int		receive();
 	void	clear();
 };

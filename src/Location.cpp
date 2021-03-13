@@ -1,4 +1,4 @@
-#include "../include/Location.hpp"
+#include "../include/Location.h"
 
 Location::Location() :
 		_maxBody(DEF_MAX_BODY),
