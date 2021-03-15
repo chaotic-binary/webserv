@@ -11,7 +11,6 @@ int main(int ac, char **av, char **env) {
 		Parser p = Parser(av[1]);
 
 	//	std::cout << p;//test
-	//	std::vector<ServConfig> conf = p.getServs();
 
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;

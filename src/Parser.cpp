@@ -19,6 +19,7 @@ void Parser::initLocParser() {
 	locParser["index"] = &Location::setIndex;
 	locParser["autoindex"] = &Location::setAutoindexFromStr;
 	locParser["upload_enable"] = &Location::setUploadEnableFromStr;
+	//locParser["scrypt"] = &Location::setScrypt;
 }
 
 void Parser::initLocArrParser() {
@@ -128,7 +129,7 @@ Parser::Parser(char *file) {
 	int brace = 0;
 	line_num = 0;
 	ServConfig main;
-	while (ft::getline(ifs, line)) {
+	while (ft::getline(ifs, line) || !line.empty()) {
 		//std::cout << line << std::endl << std::endl;
 		++line_num;
 		ft::ws_to_tab(line);

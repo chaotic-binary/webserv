@@ -38,24 +38,20 @@ enum e_client_status
 
 class Request {
 private:
-	e_methods											method;
-	std::string		 									reqTarget;
-	std::string 										version;
-	std::map< std::string, std::string >				headers;
-	std::string 										body;
+	e_methods							method;
+	std::string		 					reqTarget;
+	std::string 						version;
+	std::map<std::string, std::string>	headers;
+	std::string 						body;
+	std::string 						raw_request;
+	size_t								contentLength;
+	bool								chunked;
+	bool								headersParsed;
+	bool								complete;
+	const int 							fd_;
 
-	std::string 										raw_request;
-	size_t												contentLength;
-	bool												chunked;
-	bool												headersParsed;
-	bool												complete;
-	const int 											fd_;
-
-	static std::vector<std::string>						headersList;
-	static void											headersListInit();
-	void												setMethodFromStr(const std::string &);
-
-	void	parse_headers(std::string str);
+	void	setMethodFromStr(const std::string &);
+	void	parse_headers(std::string);
 	int		parse_body(const int fd);
 	int		parse_chunk(const int fd);
 
@@ -64,14 +60,13 @@ private:
 public:
 	Request(const int fd);
 	virtual ~Request();
-	e_methods getMethod() const;
-	const std::string &getReqTarget() const;
-	const std::string &getVersion() const;
-	const std::map< std::string, std::string > &getHeaders() const;
-	const std::string &getBody() const;
-	bool isComplete() const;
 
-	static const std::vector<std::string> &getHeadersList();
+	e_methods									getMethod() const;
+	const std::string							&getReqTarget() const;
+	const std::string 							&getVersion() const;
+	const std::map<std::string, std::string>	&getHeaders() const;
+	const std::string							&getBody() const;
+	bool										isComplete() const;
 
 	class InvalidData: public std::logic_error {
 	private: InvalidData();
@@ -80,9 +75,8 @@ public:
 
 	int		receive();
 	void	clear();
+	bool 	isValid(Location &location);
 };
-
-//std::ostream &operator<<(std::ostream &os, const std::map< std::string, std::string > &headers);
 
 std::ostream &operator<<(std::ostream &os, const Request &request);
 

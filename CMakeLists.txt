@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories(include)
 
 add_executable(test_parser
-        src/main.cpp
+        test/test_parser.cpp
         src/ServConfig.cpp
         src/Parser.cpp
         src/Location.cpp
@@ -14,6 +14,7 @@ add_executable(test_parser
         src/FD.cpp
         src/Request.cpp
         src/Client.cpp
+        src/response.cpp
         )
 
 add_executable(test_server

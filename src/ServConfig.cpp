@@ -29,7 +29,7 @@ void ServConfig::setNames(const std::vector<std::string> &names) {
 
 void ServConfig::setHost(const std::string &host) {
 	_host = host;
-	//TODO: validate? turn to num value while parsing?
+	//TODO: isValid? turn to num value while parsing?
 }
 
 void ServConfig::setPort(size_t port) {
