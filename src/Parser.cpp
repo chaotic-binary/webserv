@@ -132,7 +132,7 @@ Parser::Parser(char *file) {
 		//std::cout << line << std::endl << std::endl;
 		++line_num;
 		ft::ws_to_tab(line);
-		ft::trim(line);
+		ft::trim(line, '\t');
 		if (!line.empty() && line[0] != '#')
 			parse_line(line, brace, main);
 	}

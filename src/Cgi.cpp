@@ -2,7 +2,7 @@
 // Created by Mahmud Jego on 3/3/21.
 //
 
-#include "Cgi.hpp"
+#include "Cgi.h"
 
 Cgi::Cgi(const Request &request)
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-# include "Location.hpp"
-# include <arpa/inet.h>
+#include "Location.h"
+#include <arpa/inet.h>
 
 #define LOCALHOST "127.0.0.1"
 
@@ -42,7 +42,7 @@ private:
 	std::vector<Location>				_locations;
 	std::map<int, std::string>			_errorPages;
 
-	int							_sockFd;
-	sockaddr_in 				_sockAddr;
+	int									_sockFd;
+	sockaddr_in 						_sockAddr;
 };
 

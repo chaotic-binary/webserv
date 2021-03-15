@@ -1,14 +1,6 @@
 #pragma once
-#include "ServConfig.hpp"
+#include "ServConfig.h"
 #include "Request.h"
-
-enum e_client_status
-{
-	CLOSE_CONNECTION, READY_TO_READ, READY_TO_SEND
-};
-
-
-std::string generate_responce(Request request, const ServConfig &config);
 
 class Client {
 public:

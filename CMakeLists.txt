@@ -28,7 +28,3 @@ add_executable(test_server
         src/tmpFunctionForResponse.cpp
         src/king_Response.cpp
         src/initMimeType.cpp)
-
-add_executable(test
-        test/test.cpp
-        src/Request.cpp include/Request.h)
