@@ -1,54 +1,64 @@
-#include "../include/Parser.hpp"
+#include "../include/Parser.h"
 
 std::map<std::string, void (*)(const std::vector<std::string> &, ServConfig &)> Parser::servParser;
 std::map<std::string, void (Location::*)(const std::string &)> Parser::locParser;
 std::map<std::string, void (Location::*)(const std::vector<std::string> &)> Parser::locArrParser;
 int Parser::line_num;
 
-void Parser::initServParser() {
+void Parser::initServParser()
+{
 	servParser["listen"] = &Parser::parseListen;
 	servParser["server_name"] = &Parser::parseServNames;
 	servParser["root"] = &Parser::parseServRoot;
 	servParser["error_page"] = &Parser::parseErrorPages;
 }
 
-void Parser::initLocParser() {
+void Parser::initLocParser()
+{
 	locParser["root"] = &Location::setRoot;
 	locParser["upload_path"] = &Location::setUploadPath;
 	locParser["cgi_path"] = &Location::setCgiPath;
 	locParser["index"] = &Location::setIndex;
 	locParser["autoindex"] = &Location::setAutoindexFromStr;
 	locParser["upload_enable"] = &Location::setUploadEnableFromStr;
+	//locParser["scrypt"] = &Location::setScrypt;
 }
 
-void Parser::initLocArrParser() {
+void Parser::initLocArrParser()
+{
 	locArrParser["cgi_extension"] = &Location::setCgiExtensions;
 	locArrParser["method"] = &Location::setMethodsFromStr;
 	//TODO: delete if no other arr in loc
 }
 
-void Parser::line_to_serv(std::vector<std::string> &v, ServConfig &serv) {
+void Parser::line_to_serv(std::vector<std::string> &v, ServConfig &serv)
+{
 	std::map<std::string, void (*)(const std::vector<std::string> &, ServConfig &)>::const_iterator it;
-	if ((it = servParser.find(v[0])) != servParser.end()) {
+	if ((it = servParser.find(v[0])) != servParser.end())
+	{
 		//std::cout << "find func" << std::endl;//
 		(*it->second)(v, serv);
 	} else
 		throw ParserException::UnknownParam(line_num);
 }
 
-void Parser::line_to_loc(std::vector<std::string> &v, Location &loc) {
+void Parser::line_to_loc(std::vector<std::string> &v, Location &loc)
+{
 	std::map<std::string, void (Location::*)(const std::vector<std::string> &)>::const_iterator ita;
-	if ((ita = locArrParser.find(v[0])) != locArrParser.end()) {
+	if ((ita = locArrParser.find(v[0])) != locArrParser.end())
+	{
 		//std::cout << "find loc arr func" << std::endl;//
 		if (v.size() < 2)
 			throw ParserException::InvalidData(line_num);
 		v.erase(v.begin());
 		(loc.*ita->second)(v);
-	} else {
+	} else
+	{
 		if (v.size() != 2)
 			throw ParserException::InvalidData(line_num);
 		std::map<std::string, void (Location::*)(const std::string &)>::const_iterator it;
-		if ((it = locParser.find(v[0])) != locParser.end()) {
+		if ((it = locParser.find(v[0])) != locParser.end())
+		{
 			//std::cout << "find loc func" << std::endl;//
 			(loc.*it->second)(v[1]);
 		} else if (v[0] == "client_max_body_size")
@@ -58,14 +68,17 @@ void Parser::line_to_loc(std::vector<std::string> &v, Location &loc) {
 	}
 }
 
-void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
+void Parser::parse_line(std::string &line, int &brace, ServConfig &main)
+{
 	static int loc_context = 0;
 	static int serv = -1;
 //	static int loc = -1;
 	static Location location;
 
-	if (line == "server{" || (line.substr(0, line.find("\t")) == "server")) {
-		if (line != "server{") {
+	if (line == "server{" || (line.substr(0, line.find("\t")) == "server"))
+	{
+		if (line != "server{")
+		{
 			if (line[line.size() - 1] != '{' || (brace))
 				throw ParserException::BraceExpected(line_num);
 			std::vector<std::string> v = ft::split(line, '\t');
@@ -77,7 +90,8 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 		_servs.push_back(s);
 		++brace;
 //		loc = -1;
-	} else if (line.substr(0, line.find("\t")) == "location") {
+	} else if (line.substr(0, line.find("\t")) == "location")
+	{
 		if (!brace && serv != -1)
 			throw ParserException::InvalidData(line_num);
 //		if (!loc_context)
@@ -87,28 +101,35 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 		parseLocName(ft::split(line, '\t'), location);
 		//(serv < 0) ? main.addLocation(location) : _servs[serv].addLocation(location);
 
-	} else {
-		if (line[0] == '}' && line.size() == 1) {
+	} else
+	{
+		if (line[0] == '}' && line.size() == 1)
+		{
 			if (!brace)
 				throw ParserException::BraceExpected(line_num);
-			if (loc_context) {
+			if (loc_context)
+			{
 				(serv < 0) ? main.addLocation(location) : _servs[serv].addLocation(location);
 				//std::cout<<location<<std::endl;
 				location = Location();
 				--loc_context;
 			}
 			--brace;
-		} else {
+		} else
+		{
 			trim_semicolon(line);
 			std::vector<std::string> v = ft::split(line, '\t');
-			if (v.empty() || v[1].empty()) {
+			if (v.empty() || v[1].empty())
+			{
 				throw ParserException::InvalidData(line_num);
 			}
-			if (loc_context) { //std::cout << "loc " << loc << std::endl;
+			if (loc_context)
+			{ //std::cout << "loc " << loc << std::endl;
 				line_to_loc(v, location);
 			} else if (brace == 1)
 				line_to_serv(v, _servs[serv]);
-			else if (!brace && serv < 0) {
+			else if (!brace && serv < 0)
+			{
 				line_to_serv(v, main);
 			} else
 				throw ParserException::InvalidData(line_num);
@@ -116,7 +137,8 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 	}
 }
 
-Parser::Parser(char *file) {
+Parser::Parser(char *file)
+{
 	std::ifstream ifs(file);
 	if (!ifs)
 		throw ParserException::CannotOpenFile();
@@ -128,7 +150,8 @@ Parser::Parser(char *file) {
 	int brace = 0;
 	line_num = 0;
 	ServConfig main;
-	while (ft::getline(ifs, line)) {
+	while (ft::getline(ifs, line) || !line.empty())
+	{
 		//std::cout << line << std::endl << std::endl;
 		++line_num;
 		ft::ws_to_tab(line);
@@ -142,36 +165,46 @@ Parser::Parser(char *file) {
 	addMainAndDefaults(main);
 }
 
-Parser::Parser() { }
+Parser::Parser()
+{}
 
-Parser::~Parser() { }
+Parser::~Parser()
+{}
 
-Parser::Parser(const Parser &copy) {
+Parser::Parser(const Parser &copy)
+{
 	*this = copy;
 }
 
-Parser &Parser::operator=(const Parser &copy) {
+Parser &Parser::operator=(const Parser &copy)
+{
 	if (this != &copy)
 		*this = copy;
 	return (*this);
 }
 
-void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv) {
-	if (args[1].find(':') != args[1].npos && args.size() == 2) {
+void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv)
+{
+	if (args[1].find(':') != args[1].npos && args.size() == 2)
+	{
 		std::vector<std::string> v = ft::split(args[1], ':');
 		if (v.size() != 2)
 			throw ParserException::InvalidData(line_num);
 		parseHost(v[0], serv);
 		serv.setPort(to_num(v[1]));
-	} else {
+	} else
+	{
 		if (args.size() > 3)
 			throw ParserException::InvalidData(line_num);
-		for (size_t i = 1; i < args.size(); ++i) {
-			if (args[i].find('.') != args[i].npos || (args[i] == "localhost")) {
+		for (size_t i = 1; i < args.size(); ++i)
+		{
+			if (args[i].find('.') != args[i].npos || (args[i] == "localhost"))
+			{
 				if (!serv.getHost().empty())
 					throw ParserException::InvalidData(line_num);
 				parseHost(args[i], serv);
-			} else {
+			} else
+			{
 				if (serv.getPort() != 0)
 					throw ParserException::InvalidData(line_num);
 				serv.setPort(to_num(args[i]));
@@ -180,7 +213,8 @@ void Parser::parseListen(const std::vector<std::string> &args, ServConfig &serv)
 	}
 }
 
-void Parser::parseHost(const std::string &s, ServConfig &serv) {
+void Parser::parseHost(const std::string &s, ServConfig &serv)
+{
 	if (s == "localhost")
 		serv.setHost(LOCALHOST);
 	else if (s.find(':') != std::string::npos)
@@ -189,10 +223,12 @@ void Parser::parseHost(const std::string &s, ServConfig &serv) {
 		serv.setHost(s);
 }
 
-void Parser::parseServNames(const std::vector<std::string> &args, ServConfig &serv) {
+void Parser::parseServNames(const std::vector<std::string> &args, ServConfig &serv)
+{
 	std::vector<std::string> names;
 
-	for (size_t i = 1; i < args.size(); ++i) {
+	for (size_t i = 1; i < args.size(); ++i)
+	{
 		if (args[i] == "localhost")
 			names.push_back(LOCALHOST);
 		else
@@ -201,19 +237,22 @@ void Parser::parseServNames(const std::vector<std::string> &args, ServConfig &se
 	serv.setNames(names);
 }
 
-void Parser::parseServRoot(const std::vector<std::string> &args, ServConfig &serv) {
+void Parser::parseServRoot(const std::vector<std::string> &args, ServConfig &serv)
+{
 	if (args.size() != 2)
 		throw ParserException::InvalidData(line_num);
 	serv.setRoot(args[1]);
 }
 
-void Parser::parseErrorPages(const std::vector<std::string> &args, ServConfig &serv) {
+void Parser::parseErrorPages(const std::vector<std::string> &args, ServConfig &serv)
+{
 	std::pair<int, std::string> p;
 	size_t size = args.size();
 
 	if (size < 3)
 		throw ParserException::InvalidData(line_num);
-	for (size_t i = 1; i < size - 1; ++i) {
+	for (size_t i = 1; i < size - 1; ++i)
+	{
 		p.first = to_num(args[i]);
 		p.second = args[size - 1];
 		serv.addErrorPage(p);
@@ -226,7 +265,8 @@ void Parser::parseErrorPages(const std::vector<std::string> &args, ServConfig &s
 		std::cout << it->first << " => " << it->second << '\n';*/
 }
 
-void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
+void Parser::parseLocName(const std::vector<std::string> &args, Location &loc)
+{
 	size_t size = args.size();
 
 	if (args[size - 1] != "{")
@@ -236,12 +276,15 @@ void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
 	loc.setName(args[1]);
 }
 
-void Parser::parseMaxBody(std::string &val, Location &loc) {
+void Parser::parseMaxBody(std::string &val, Location &loc)
+{
 	size_t n = 1;
 	char letter = val[val.size() - 1];
-	if (!std::isdigit(letter)) {
+	if (!std::isdigit(letter))
+	{
 		letter = toupper(letter);
-		switch (letter) {
+		switch (letter)
+		{
 			case 'K':
 				n = 1024;
 				break;
@@ -261,13 +304,16 @@ void Parser::parseMaxBody(std::string &val, Location &loc) {
 	//TODO: overflow manage
 }
 
-void Parser::addMainAndDefaults(const ServConfig &main) {
-	for (size_t i = 0; i < _servs.size(); ++i) {
+void Parser::addMainAndDefaults(const ServConfig &main)
+{
+	for (size_t i = 0; i < _servs.size(); ++i)
+	{
 		if (_servs[i].getRoot().empty())
 			_servs[i].setRoot(main.getRoot());
 		if (_servs[i].getErrorPages().empty())
 			_servs[i].setErrorPages(main.getErrorPages());
-		if (!main.getLocations().empty()) {
+		if (!main.getLocations().empty())
+		{
 			std::vector<Location> locs = main.getLocations();
 			for (size_t l = 0; l < locs.size(); ++l)
 				_servs[i].addLocation(locs[l]);
@@ -279,7 +325,8 @@ void Parser::addMainAndDefaults(const ServConfig &main) {
 	}
 }
 
-void Parser::trim_semicolon(std::string &str) {
+void Parser::trim_semicolon(std::string &str)
+{
 	if (str.find('#') != std::string::npos)
 		str.erase(str.find_last_of('#'));
 	str.erase(str.find_last_not_of('\t') + 1);
@@ -287,23 +334,29 @@ void Parser::trim_semicolon(std::string &str) {
 	str.erase(str.find_last_not_of('\t') + 1);
 }
 
-size_t Parser::to_num(const std::string &str) {
+size_t Parser::to_num(const std::string &str)
+{
 	if (!ft::isalldigits(str))
 		throw Parser::ParserException::InvalidData(line_num);
-	try {
+	try
+	{
 		return (ft::to_num(str));
-	} catch (std::exception &e) {
+	} catch (std::exception &e)
+	{
 		throw Parser::ParserException::InvalidData(line_num);
 	}
 }
 
-const std::vector<ServConfig> &Parser::getServs() const {
+const std::vector<ServConfig> &Parser::getServs() const
+{
 	return _servs;
 }
 
-std::ostream &operator<<(std::ostream &os, const Parser &parser) {
+std::ostream &operator<<(std::ostream &os, const Parser &parser)
+{
 	std::vector<ServConfig> servs = parser.getServs();
-	for (size_t i = 0; i < servs.size(); ++i) {
+	for (size_t i = 0; i < servs.size(); ++i)
+	{
 		os << "SERV[" << i << "]:\n";
 		os << "host: " << servs[i].getHost() << std::endl;
 		os << "port: " << servs[i].getPort() << std::endl;
@@ -320,13 +373,15 @@ std::ostream &operator<<(std::ostream &os, const Parser &parser) {
 			std::cout << it->first << " => " << it->second << '\n';
 
 		std::vector<Location> locations = servs[i].getLocations();
-		for (size_t l = 0; l < locations.size(); ++l) {
+		for (size_t l = 0; l < locations.size(); ++l)
+		{
 			os << "location " << l << std::endl << locations[l] << std::endl;
 		}
 	}
 	return os;
 }
 
-const char *Parser::ParserException::CannotOpenFile::what() const throw() {
+const char *Parser::ParserException::CannotOpenFile::what() const throw()
+{
 	return "Cannot open file";
 }
