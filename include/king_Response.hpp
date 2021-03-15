@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ServConfig.hpp"
+#include "ServConfig.h"
 #include "Request.h"
 #include <unistd.h>
 

@@ -5,14 +5,14 @@ set(CMAKE_CXX_STANDARD 11)
 #set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 include_directories(include)
 
-add_executable(test_parser
-        src/main.cpp
-        src/ServConfig.cpp include/ServConfig.hpp
-        src/Parser.cpp include/Parser.hpp
-        src/Location.cpp include/Location.hpp
-        src/utils.cpp include/utils.hpp
-        src/FD.cpp include/FD.hpp
-        )
+#add_executable(test_parser
+#        src/main.cpp
+#        src/ServConfig.cpp include/ServConfig.hpp
+#        src/Parser.cpp include/Parser.hpp
+#        src/Location.cpp include/Location.hpp
+#        src/utils.cpp include/utils.hpp
+#        src/FD.cpp include/FD.hpp
+#        )
 
 add_executable(test_server
         src/Server.cpp
@@ -27,4 +27,5 @@ add_executable(test_server
         src/Client.cpp
         src/tmpFunctionForResponse.cpp
         src/king_Response.cpp
-        src/initMimeType.cpp)
+        src/initMimeType.cpp
+        src/response.cpp)

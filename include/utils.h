@@ -19,7 +19,7 @@ namespace ft {
 
 	std::istream &getline(std::istream &ifs, std::string &line);
 
-	size_t to_num(const std::string &str);
+// depricated__	size_t to_num(const std::string &str);
 
 	template <typename T>
 	std::string	to_str(T n) {

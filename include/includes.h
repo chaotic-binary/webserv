@@ -25,7 +25,7 @@
 # include <list>
 
 #include "defines.h"
-#include "ServConfig.hpp"
+#include "ServConfig.h"
 
 enum eEnvCgi {
 	AUTH_TYPE,

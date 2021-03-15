@@ -1,4 +1,5 @@
 #include "king_Response.hpp"
+#include <fstream>
 
 king_Response::king_Response(int fd, const Request &req, const ServConfig &config)
 : _fd(fd), _req(req), _config(config)

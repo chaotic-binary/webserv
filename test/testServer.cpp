@@ -1,8 +1,4 @@
-//
-// Created by Mahmud Jego on 3/2/21.
-//
-
-#include "Server.hpp"
+#include "Server.h"
 volatile bool loop = true;
 
 int main(int ac, char **av, char **env)
@@ -21,7 +17,7 @@ int main(int ac, char **av, char **env)
 			continue ;
 		}
 		server.checkSockets();
-		server.checkClientsAfter();
+		server.checkClients();
 	}
 //	TODO:: close all sockets;
 	return (0);
