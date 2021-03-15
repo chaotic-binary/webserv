@@ -2,7 +2,7 @@
 #include <map>
 #include <mimeTypes.h>
 #include <response.h>
-#include "Parser.hpp"
+#include "Parser.h"
 
 
 const Location &getLocation(const std::string &path, const ServConfig &config) {
