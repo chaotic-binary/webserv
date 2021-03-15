@@ -100,7 +100,10 @@ void Server::checkClients()
 		if (FD_ISSET((*it)->getFd(), &_readFds))
 			(*it)->receive();
 
-		if (FD_ISSET((*it)->getFd(), &_writeFds) && (*it)->response())
+		if (FD_ISSET((*it)->getFd(), &_writeFds))
+			(*it)->response();
+
+		if((*it)->GetStatus() == CLOSE_CONNECTION)
 			_clients.erase(it);
 		else
 			++it;

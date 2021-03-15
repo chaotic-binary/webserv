@@ -32,7 +32,7 @@ std::string Response::GetHeader(const std::string &title) const {
 	return headers_.at(title);
 }
 
-std::string Response::GetCurDate() {
+std::string Response::GetCurDate() const {
 	timeval time;
 	tm date;
 	char buff[1024];
@@ -65,3 +65,15 @@ void Response::SetHeader(const std::string &title, const std::vector<std::string
 	}
 	SetHeader(title, content);
 }
+
+int Response::GetCode() const {
+	return code_;
+}
+const Response &RespException::GetRsp() const {
+	return rsp_;
+}
+RespException::RespException(const Response &rsp) throw() : rsp_(rsp) {}
+const char *RespException::what() const throw() {
+	return "HTTP ERRROR";
+}
+RespException::~RespException() throw() {}

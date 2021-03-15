@@ -1,8 +1,19 @@
-//
-// Created by Mahmud Jego on 3/6/21.
-//
+#include "mimeTypes.h"
 #include <string>
 #include <map>
+
+std::string getMimeType(const std::string &file) {
+	static std::map<std::string, std::string> mimeTypes;
+	if (mimeTypes.empty())
+		initMimeType(mimeTypes); //TODO: ???
+	std::string exp = file.substr(file.rfind('.'));
+	std::string res;
+	if (mimeTypes.count(exp)) {
+		res = mimeTypes[exp];
+	} else
+		res = "text/plain";
+	return res;
+}
 
 const std::map<std::string, std::string>& initMimeType(std::map<std::string, std::string>& mimeTypes)
 {
