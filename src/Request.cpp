@@ -182,7 +182,7 @@ int Request::receive()
 
 	if (!headersParsed)
 	{
-		while ((ret = read(fd_, buffer, 2048)) > 0)
+		while ((ret = read(fd_, buffer, 1)) > 0)
 		{
 			buffer[ret] = 0x0;
 			raw_request += buffer;
@@ -190,7 +190,7 @@ int Request::receive()
 			{
 				parse_headers(raw_request.substr(0, i + 2));
 				raw_request.clear();
-				lseek(fd_, i + 3, SEEK_SET); //
+				//lseek(fd_, i + 3, SEEK_SET); //
 				headersParsed = true;
 				break;
 			}
