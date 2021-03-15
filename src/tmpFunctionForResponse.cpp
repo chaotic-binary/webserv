@@ -2,7 +2,7 @@
 // Created by Mahmud Jego on 3/4/21.
 //
 
-#include "Response.hpp"
+#include "king_Response.hpp"
 #include "Request.h"
 #include "mimeTypes.h"
 
@@ -24,7 +24,7 @@ std::string getMimeType(const std::string& file)
 
 void tmpFunctionForResponse(int fd, const Request &req, const ServConfig& config)
 {
-	Response response1(fd, req, config);
+	king_Response response1(fd, req, config);
 
 	response1.generateBody();
 	response1.generateHeaders();

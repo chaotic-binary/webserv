@@ -230,9 +230,9 @@ const std::map<std::string, std::string>& initMimeType(std::map<std::string, std
 		mimeTypes[".xml"] = "application/rtf"; //	Rich Text Format
 		mimeTypes[".rtf"] = "application/sbml+xml"; //	Systems Biology Markup Language
 		mimeTypes[".sbml"] = "application/scvp-cv-request"; //	Server-Based Certificate Validation Protocol - Validation Request
-		mimeTypes[".scq"] = "application/scvp-cv-response"; //	Server-Based Certificate Validation Protocol - Validation Response
+		mimeTypes[".scq"] = "application/scvp-cv-response"; //	Server-Based Certificate Validation Protocol - Validation king_Response
 		mimeTypes[".scs"] = "application/scvp-vp-request"; //	Server-Based Certificate Validation Protocol - Validation Policies - Request
-		mimeTypes[".spq"] = "application/scvp-vp-response"; //	Server-Based Certificate Validation Protocol - Validation Policies - Response
+		mimeTypes[".spq"] = "application/scvp-vp-response"; //	Server-Based Certificate Validation Protocol - Validation Policies - king_Response
 		mimeTypes[".spp"] = "application/sdp"; //	Session Description Protocol
 		mimeTypes[".sdp"] = "application/set-payment-initiation"; //	Secure Electronic Transaction - Payment
 		mimeTypes[".setpay"] = "application/set-registration-initiation"; //	Secure Electronic Transaction - Registration
@@ -242,7 +242,7 @@ const std::map<std::string, std::string>& initMimeType(std::map<std::string, std
 		mimeTypes[".rq"] = "application/sparql-results+xml"; //	SPARQL - Results
 		mimeTypes[".srx"] = "application/srgs"; //	Speech Recognition Grammar Specification
 		mimeTypes[".gram"] = "application/srgs+xml"; //	Speech Recognition Grammar Specification - XML
-		mimeTypes[".grxml"] = "application/sru+xml"; //	Search/Retrieve via URL Response Format
+		mimeTypes[".grxml"] = "application/sru+xml"; //	Search/Retrieve via URL king_Response Format
 		mimeTypes[".sru"] = "application/ssml+xml"; //	Speech Synthesis Markup Language
 		mimeTypes[".ssml"] = "application/tei+xml"; //	Text Encoding and Interchange
 		mimeTypes[".tei"] = "application/thraud+xml"; //	Sharing Transaction Fraud Data
@@ -653,7 +653,7 @@ const std::map<std::string, std::string>& initMimeType(std::map<std::string, std
 		mimeTypes[".nc"] = "application/x-netcdf"; //	Network Common Data Form (NetCDF)
 		mimeTypes[".p12"] = "application/x-pkcs12"; //	PKCS #12 - Personal Information Exchange Syntax Standard
 		mimeTypes[".p7b"] = "application/x-pkcs7-certificates"; //	PKCS #7 - Cryptographic Message Syntax Standard (Certificates)
-		mimeTypes[".p7r"] = "application/x-pkcs7-certreqresp"; //	PKCS #7 - Cryptographic Message Syntax Standard (Certificate Request Response)
+		mimeTypes[".p7r"] = "application/x-pkcs7-certreqresp"; //	PKCS #7 - Cryptographic Message Syntax Standard (Certificate Request king_Response)
 		mimeTypes[".rar"] = "application/x-rar-compressed"; //	RAR Archive
 		mimeTypes[".sh"] = "application/x-sh"; //	Bourne Shell Script
 		mimeTypes[".shar"] = "application/x-shar"; //	Shell Archive

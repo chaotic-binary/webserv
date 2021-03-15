@@ -1,16 +1,12 @@
-//
-// Created by Mahmud Jego on 3/4/21.
-//
+#include "king_Response.hpp"
 
-#include "Response.hpp"
-
-Response::Response(int fd, const Request &req, const ServConfig &config)
+king_Response::king_Response(int fd, const Request &req, const ServConfig &config)
 : _fd(fd), _req(req), _config(config)
 {
 	this->selectLocation();
 }
 
-std::string Response::checkSource()
+std::string king_Response::checkSource()
 {
 	if (_req.getReqTarget() == "/")
 		_pathObj = _config.getLocations()[_location].getRoot()
@@ -37,7 +33,7 @@ std::string Response::checkSource()
 	return (OK);
 }
 
-void Response::selectLocation()
+void king_Response::selectLocation()
 {
 	const std::vector<Location> loc = _config.getLocations();
 	std::vector<Location>::const_iterator it = loc.cbegin();
@@ -55,7 +51,7 @@ void Response::selectLocation()
 	status = checkSource();
 }
 
-void Response::generateHeaders()
+void king_Response::generateHeaders()
 {
 	this->_responseHeaders << "HTTP/1.1 " + status
 	<< ((status == "200") ? "OK"
@@ -68,7 +64,7 @@ void Response::generateHeaders()
 	<< "\r\n\r\n";
 }
 
-void Response::generateBody()
+void king_Response::generateBody()
 {
 	std::ifstream file(_pathObj);
 	_responseBody << file.rdbuf();
@@ -76,7 +72,7 @@ void Response::generateBody()
 	file.close();
 }
 
-std::string Response::getRespone()
+std::string king_Response::getRespone()
 {
 	std::string res = _responseHeaders.str() + _responseBody.str();
 	_responseHeaders.clear();

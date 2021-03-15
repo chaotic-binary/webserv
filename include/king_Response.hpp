@@ -1,9 +1,4 @@
-//
-// Created by Mahmud Jego on 3/4/21.
-//
-
-#ifndef RESPONSE_HPP
-#define RESPONSE_HPP
+#pragma once
 
 #include "ServConfig.hpp"
 #include "Request.h"
@@ -13,9 +8,9 @@
 #define FORBIDDEN "403"
 #define OK "200"
 
-class Response {
+class king_Response {
 public:
-	Response(int fd, const Request &req, const ServConfig& config);
+	king_Response(int fd, const Request &req, const ServConfig& config);
 
 	void generateHeaders();
 	void generateBody();
@@ -38,5 +33,3 @@ private:
 };
 
 std::string getMimeType(const std::string& file);
-
-#endif //RESPONSE_HPP
