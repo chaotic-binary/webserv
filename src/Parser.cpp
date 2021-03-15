@@ -237,6 +237,7 @@ void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
 }
 
 void Parser::parseMaxBody(std::string &val, Location &loc) {
+	//TODO: DELETE MAGIC NUMBERS PLS ;)
 	size_t n = 1;
 	char letter = val[val.size() - 1];
 	if (!std::isdigit(letter)) {

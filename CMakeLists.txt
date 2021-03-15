@@ -12,7 +12,7 @@ add_executable(test_parser
         src/Location.cpp
         src/utils.cpp
         src/FD.cpp
-        )
+        include/returnCodes.h)
 
 add_executable(test_server
         src/Server.cpp
