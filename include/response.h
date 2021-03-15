@@ -21,7 +21,7 @@ public:
 		SetHeader("Date", GetCurDate());
 		SetHeader("Server",  "KingGinx");
 		//TODO: Allow
-		//if (!body_.empty())
+		if (!body_.empty())
 			SetHeader("Content-Length", std::to_string(body_.length()));
 		std::ostringstream str_out;
 		str_out << "HTTP/1.1 " << code_ << " " << g_resp_codes.at(code_) << "\r\n";

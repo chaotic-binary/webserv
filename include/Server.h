@@ -15,7 +15,6 @@ class Server {
 public:
 	Server(char *);
 	Server(const std::vector<ServConfig>& servers);
-	Server(const std::string& ip, int port);
 
 	void												initSockets();
 	//void												initHeaders(const std::string& headers);
@@ -38,13 +37,13 @@ private:
 	std::vector<ServConfig>								_servers;
 	const size_t										_amountServers;
 //	std::vector<int>									_clientsFd;
-	std::vector<SharedPtr<Client>>						_clients;
+	std::vector<SharedPtr<Client> >						_clients;
 	char												_buffer[2048];
 	fd_set												_readFds;
 	fd_set												_writeFds;
 
 	void												reloadFdSets();
-	const std::vector<SharedPtr<Client>> & getClients() const;
+	const std::vector<SharedPtr<Client> > & getClients() const;
 };
 
 #endif //SERVER_HPP
