@@ -220,31 +220,25 @@ void Request::clear()
 	chunked = false;
 }
 
-static bool isMethodAllowed(e_methods method, const std::vector<e_methods> &v)
+static bool methodNotAllowed(e_methods method, const std::vector<e_methods> &v)
 {
-	if (method == OTHER)
-		return false;
 	for (size_t i = 0; i < v.size(); ++i)
 	{
 		if (v[i] == method)
-			return (true);
+			return (false);
 	}
-	return (false);
+	return (true);
 }
 
-bool Request::isValid(Location &location)
+int Request::isValid(Location &location)
 {
 	if (body.size() > location.getMaxBody())
-	{
-		//TODO:413
-		return false;
-	}
-	if (!isMethodAllowed(method, location.getMethods()))
-	{
-		//TODO:405
-		return false;
-	}
-	return true;
+		return 413;
+	if (method == OTHER)
+		return 501;
+	if ((methodNotAllowed(method, location.getMethods())))
+		return 405;
+	return 0;
 }
 
 std::ostream &operator<<(std::ostream &os, const Request &request)

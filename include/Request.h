@@ -92,7 +92,7 @@ public:
 
 	void clear();
 
-	bool isValid(Location &location);
+	int isValid(Location &location);
 };
 
 std::ostream &operator<<(std::ostream &os, const Request &request);
