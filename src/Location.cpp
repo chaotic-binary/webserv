@@ -174,7 +174,7 @@ std::ostream &operator<<(std::ostream &os, const Location &location) {
 	os << "\tindex: " << location.getIndex() << std::endl;
 	os << "\tcgi _path: " << location.getCgiPath() << std::endl;
 	os << "\tupload _path: " << location.getUploadPath() << std::endl;
-	os << "\tmax body_: " << location.getMaxBody() << std::endl;
+	os << "\tmax body: " << location.getMaxBody() << std::endl;
 	os << "\tautoindex: " << (location.getAutoindex() ? "on" : "off") << std::endl;
 	os << "\tupload enable: " << (location.getUploadEnable() ? "on" : "off") << std::endl;
 	const std::vector<std::string> &v = location.getCgiExtensions();

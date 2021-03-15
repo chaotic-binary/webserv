@@ -1,3 +1,7 @@
+//
+// Created by Mahmud Jego on 2/25/21.
+//
+
 #include "Server.hpp"
 #include "Request.h"
 #include "Client.h"
@@ -54,6 +58,69 @@ void Server::initSockets()
 	}
 }
 
+bool isFinished(const std::string &s)
+{
+	static int		bodyPresent = 0;
+	static size_t	contentLength = 0;
+	size_t	i;
+
+	if ((i = s.find("Content-Length:")) != s.npos)
+	{
+		bodyPresent = 1;
+		if ((i = i + 16) < s.size())
+			contentLength = ft::to_num(&s[i]);
+	}
+	if (s.find("Transfer-Encoding: chunked") != s.npos)
+		bodyPresent = 2;
+	if ((i = s.find("\r\n\r\n")))
+	{
+		if (!bodyPresent)
+			return true;
+		if (bodyPresent == 1)
+		{
+			if (s.size() - i == contentLength + 4)
+				return true;
+		}
+		if (bodyPresent == 2 && i < s.size() && s.find("0\r\n\r\n", i) != s.npos)
+			return true;
+	}
+	return false;
+}
+
+
+__deprecated void Server::toSend(const int fd)
+{
+	std::cout << "tossern" << std::endl;
+	// for test
+	char msg[] = "hello from server\n";
+
+	std::stringstream response_body;
+	response_body << "<title>Test C++ HTTP Server</title>\n"
+				  << "<h1>Test page</h1>\n"
+				  << "<p>This is body of the test page...</p>\n"
+				  << "<h2>Request headers</h2>\n"
+				  << "<pre>" << msg << "</pre>\n"
+				  << "<em><small>Test C++ Http Server</small></em>\n";
+
+	// Формируем весь ответ вместе с заголовками
+	std::stringstream response;
+	response << "HTTP/1.1 200 OK\r\n"
+			 << "Version: HTTP/1.1\r\n"
+			 << "Content-Type: text/html; charset=utf-8\r\n"
+			 << "Content-Length: " << response_body.str().length()
+			 << "\r\n\r\n"
+			 << response_body.str();
+	// for test
+	bzero(this->_buffer, 2048);
+	// Send a message to the connection
+	// write
+	int ret = send(fd, response.str().c_str(), response.str().length(), 0);
+	if (ret == -1)
+		throw Error("send message");
+	//close(fd);
+	// fd = -1;
+}
+
 void Server::newClient(int indexServer)
 {
 	int addrlen = sizeof(sockaddr);
@@ -94,7 +161,7 @@ void Server::reloadFdSets()
 		FD_SET(_servers[i].getSockFd(), &_readFds); //TODO add writeFds if not working
 }
 
-void Server::checkClients()
+void Server::checkClientsAfter()
 {
 	std::vector< SharedPtr<Client> >::iterator it;
 	for (it = _clients.begin(); it != _clients.end();)
@@ -112,8 +179,7 @@ void Server::checkClients()
 int Server::Select()
 {
 	reloadFdSets();
-	struct timeval tv = {10, 0};
-	return (select(getMaxSockFd() + 1, &_readFds, &_writeFds, 0x0, &tv));
+	return (select(getMaxSockFd() + 1, &_readFds, &_writeFds, 0x0, 0x0));
 }
 
 void Server::checkSockets()
@@ -121,7 +187,9 @@ void Server::checkSockets()
 	for (size_t i = 0; i < _servers.size(); ++i)
 	{
 		if (FD_ISSET(this->_servers[i].getSockFd(), &_readFds))
+		{
 			this->newClient(i);
+		}
 	}
 }
 

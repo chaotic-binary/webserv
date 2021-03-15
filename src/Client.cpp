@@ -1,9 +1,9 @@
 #include "Client.h"
 #include <iostream>
-#include "moh_Response.h"
+#include <unistd.h>
+#include "methods.h"
 
 std::string generate_response(const Request& request, const ServConfig &config) {
-
 	std::cout << "tossern" << std::endl;
 	// for test
 	char msg[] = "hello from server\n";
@@ -24,19 +24,25 @@ std::string generate_response(const Request& request, const ServConfig &config) 
 			 << "Content-Length: " << response_body.str().length()
 			 << "\r\n\r\n"
 			 << response_body.str();
-	//return Response(200);
-	return "fdg";
+	// for test
+
+	//if (ret == -1)
+	//	throw Error("send message");
+	return response.str();
 }
 
 bool Client::response() {
-	if (status_ != READY_TO_SEND)
+	if (status_ == READY_TO_READ)
 		return false;
-	std::string response = Response(200).Generate();
-	//Response rsp = generate_response(req_, serv_);
-	int ret = send(fd_, response.c_str(), response.length(), 0); //TODO: CHECK RET
-	status_ = READY_TO_READ;
-	req_.clear();
-	return true;//status_ == CLOSE_CONNECTION;
+	if(req_.getMethod() == GET)
+		::tmpFunctionForResponse(fd_, req_, serv_); //TODO: come up with a name!! !! !!
+	else {
+		std::string response = generate_response(req_, serv_);
+		int ret = send(fd_, response.c_str(), response.length(), 0);
+	}
+	//TODO: Do we need it? bzero(this->_buffer, 2048);
+	//int ret = send(fd_, response.c_str(), tmpFunctionForResponse.length(), 0);
+	return status_ == CLOSE_CONNECTION;
 }
 
 const ServConfig &Client::getServ() const {
@@ -51,19 +57,26 @@ void Client::receive() {
 	if (status_ != READY_TO_READ)
 		return;
 	try {
-		req_.receive();
-		if(req_.isComplete()) {
-			status_ = READY_TO_SEND;
-			std::cout << "<REQUEST\n" << req_ << std::endl;
-			std::cout << "REQUEST>\n"; //test
+		int ret;
+		char buffer[2049];
+		std::string raw_request;
+		//TODO: MOVE TO REQUEST
+		while ((ret = read(fd_, buffer, 2048)) > 0) {
+			buffer[ret] = 0x0;
+			raw_request += buffer;
 		}
+		req_ = Request(raw_request);
+		std::cout << raw_request; // TODO: NO DELETE LINE !!
+//		std::cout << "<REQUEST\n" << req_ << std::endl;
+		std::cout << "REQUEST>\n"; //test
+		status_ = CLOSE_CONNECTION;
 	}
 	catch (...) {
 		std::cout << "TODO: handle the half msg!!!" << std::endl;
 	}
 }
-Client::Client(const ServConfig &serv, int fd)
-: serv_(serv), fd_(fd), status_(READY_TO_READ), req_(fd)
+
+Client::Client(const ServConfig &serv, int fd) : serv_(serv), fd_(fd), status_(READY_TO_READ), req_("")
 {}
 
 Client::~Client() {

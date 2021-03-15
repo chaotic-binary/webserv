@@ -14,8 +14,7 @@ enum e_methods {
 	DELETE,
 	CONNECT,
 	OPTIONS,
-	TRACE,
-	OTHER
+	TRACE
 };
 
 class Location {
