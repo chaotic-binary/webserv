@@ -4,14 +4,14 @@
 # include <map>
 # include <string>
 # include <exception>
-# include <fstream>
+# include <sstream>
 
 namespace ft {
 	bool isalldigits(const std::string &str);
 
 	void ws_to_tab(std::string &str);
 
-	void trim(std::string &str);
+	void trim(std::string &str, char c);
 
 	void cut_char_from_end(std::string &str, const std::string &charset);
 
@@ -19,8 +19,9 @@ namespace ft {
 
 	std::istream &getline(std::istream &ifs, std::string &line);
 
-	template <typename T>
-	std::string to_str(T n) {
+	template<typename T>
+	std::string to_str(T n)
+	{
 		std::string res;
 		std::stringstream ss;
 		if (!(ss << n) || !(ss >> res)) {
@@ -30,7 +31,12 @@ namespace ft {
 		//TODO: do we need exception?
 		return res;
 	}
-}
+
+	size_t	to_num(const std::string &str, bool hex = false);
+
+	void	tolower(std::string &s);
+
+} //namespace ft
 
 template <class T, class Alloc>
 std::ostream &operator<<(std::ostream &os, const std::vector<T, Alloc> &c) {

@@ -25,7 +25,7 @@
 # include <list>
 
 #include "defines.h"
-#include "ServConfig.hpp"
+#include "ServConfig.h"
 
 enum eEnvCgi {
 	AUTH_TYPE,
@@ -46,7 +46,5 @@ enum eEnvCgi {
 	SERVER_PROTOCOL,
 	SERVER_SOFTWARE
 };
-
-void methodGet(int fd, const std::string& path, const ServConfig& config);
 
 #endif //INCLUDES_H

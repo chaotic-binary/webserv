@@ -1,4 +1,4 @@
-#include "../include/Parser.hpp"
+#include "Parser.h"
 
 std::map<std::string, void (*)(const std::vector<std::string> &, ServConfig &)> Parser::servParser;
 std::map<std::string, void (Location::*)(const std::string &)> Parser::locParser;
@@ -132,7 +132,7 @@ Parser::Parser(char *file) {
 		//std::cout << line << std::endl << std::endl;
 		++line_num;
 		ft::ws_to_tab(line);
-		ft::trim(line);
+		ft::trim(line, '\t');
 		if (!line.empty() && line[0] != '#')
 			parse_line(line, brace, main);
 	}
@@ -237,6 +237,7 @@ void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
 }
 
 void Parser::parseMaxBody(std::string &val, Location &loc) {
+	//TODO: DELETE MAGIC NUMBERS PLS ;)
 	size_t n = 1;
 	char letter = val[val.size() - 1];
 	if (!std::isdigit(letter)) {
@@ -290,12 +291,11 @@ void Parser::trim_semicolon(std::string &str) {
 size_t Parser::to_num(const std::string &str) {
 	if (!ft::isalldigits(str))
 		throw Parser::ParserException::InvalidData(line_num);
-
-	size_t n;
-	std::stringstream ss(str);
-	if (!(ss >> n))
+	try {
+		return (ft::to_num(str));
+	} catch (std::exception &e) {
 		throw Parser::ParserException::InvalidData(line_num);
-	return (n);
+	}
 }
 
 const std::vector<ServConfig> &Parser::getServs() const {
