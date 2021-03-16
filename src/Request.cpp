@@ -1,3 +1,4 @@
+#include <libc.h>
 #include "Request.h"
 /*
 std::vector<std::string>	Request::headersList;
@@ -182,15 +183,17 @@ int Request::receive()
 
 	if (!headersParsed)
 	{
-		while ((ret = read(fd_, buffer, 1)) > 0)
+		while ((ret = recv(fd_, buffer, 2048, MSG_PEEK | MSG_DONTWAIT)) > 0)
+//		while ((ret = read(fd_, buffer, 1)) > 0)
 		{
 			buffer[ret] = 0x0;
 			raw_request += buffer;
+			//	std::cout << raw_request << std::endl;
 			if ((i = raw_request.find("\r\n\r\n")) != std::string::npos)
 			{
 				parse_headers(raw_request.substr(0, i + 2));
 				raw_request.clear();
-				//lseek(fd_, i + 3, SEEK_SET); //
+				read(fd_, buffer, i + 4);
 				headersParsed = true;
 				break;
 			}
@@ -220,11 +223,11 @@ void Request::clear()
 	chunked = false;
 }
 
-static bool methodNotAllowed(e_methods method, const std::vector<e_methods> &v)
+static bool methodNotAllowed(e_methods method, const std::vector<e_methods> &methodsAllowed)
 {
-	for (size_t i = 0; i < v.size(); ++i)
+	for (size_t i = 0; i < methodsAllowed.size(); ++i)
 	{
-		if (v[i] == method)
+		if (methodsAllowed[i] == method)
 			return (false);
 	}
 	return (true);

@@ -147,7 +147,6 @@ void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions)
 void Location::setMethods(const std::vector<e_methods> &methods)
 {
 	_methods = methods;
-	//TODO: set instead of vector?
 }
 
 void Location::setMethodsFromStr(const std::vector<std::string> &methods)

@@ -23,6 +23,7 @@ public:
 
 	void addErrorPage(const std::pair <int, std::string> &);
 	void addLocation(const Location &loc);
+	const Location &getLocation(const std::string &reqPath) const;
 
 	const std::vector<std::string>		&getNames() const;
 	const std::string					&getHost() const;
