@@ -96,12 +96,14 @@ public:
 	};
 
 	friend std::ostream &operator<<(std::ostream &os, const Location &location);
-
 	friend std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v);
 
 private:
 	std::string _path;
-	std::string _root;
+ public:
+  const std::string &getPath() const;
+ private:
+  std::string _root;
 	std::string _index;
 	std::string _cgiPath;
 	std::string _uploadPath;

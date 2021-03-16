@@ -1,6 +1,7 @@
 //
 // Created by Mahmud Jego on 3/2/21.
 //
+#pragma once
 
 #ifndef INCLUDES_H
 #define INCLUDES_H
@@ -24,6 +25,7 @@
 # include <list>
 
 #include "defines.h"
+#include "ServConfig.h"
 
 enum eEnvCgi {
 	AUTH_TYPE,

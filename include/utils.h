@@ -6,8 +6,7 @@
 # include <exception>
 # include <sstream>
 
-namespace ft
-{
+namespace ft {
 	bool isalldigits(const std::string &str);
 
 	void ws_to_tab(std::string &str);
@@ -25,8 +24,7 @@ namespace ft
 	{
 		std::string res;
 		std::stringstream ss;
-		if (!(ss << n) || !(ss >> res))
-		{
+		if (!(ss << n) || !(ss >> res)) {
 			std::string s = "Conversion impossible";
 			throw std::runtime_error(s);
 		}
@@ -34,17 +32,15 @@ namespace ft
 		return res;
 	}
 
-	size_t to_num(const std::string &str, bool hex = false);
+	size_t	to_num(const std::string &str, bool hex = false);
 
-	void tolower(std::string &s);
+	void	tolower(std::string &s);
 
 } //namespace ft
 
-template<class T, class Alloc>
-std::ostream &operator<<(std::ostream &os, const std::vector<T, Alloc> &c)
-{
-	for (typename std::vector<T, Alloc>::const_iterator it = c.begin(); it != c.end(); it++)
-	{
+template <class T, class Alloc>
+std::ostream &operator<<(std::ostream &os, const std::vector<T, Alloc> &c) {
+	for (typename std::vector<T,Alloc>::const_iterator it = c.begin(); it != c.end(); it++) {
 		if (it != c.begin())
 			os << '\t';
 		os << *it;
@@ -52,14 +48,12 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T, Alloc> &c)
 	return os;
 }
 
-template<class Key, class V, class Compare, class Alloc>
-std::ostream &operator<<(std::ostream &os, const std::map<Key, V, Compare, Alloc> &c)
-{
+template < class Key, class V, class Compare, class Alloc >
+std::ostream &operator<<(std::ostream &os, const std::map<Key, V, Compare, Alloc> &c) {
 	typename std::map<Key, V>::const_iterator it;
-	for (it = c.begin(); it != c.end(); ++it)
-	{
+	for (it = c.begin(); it != c.end(); ++it) {
 		//if (it != c.begin())
-		os << "\t";
+			os << "\t";
 		os << it->first << "=>" << it->second << std::endl;
 	}
 	return os;

@@ -18,9 +18,6 @@ Server::Server(char *config)
 	}
 }
 
-Server::Server(const std::string &ip, int port)
-: _amountServers(1)
-{}
 
 Server::Server(const std::vector<ServConfig>& servers)
 : _servers(servers), _amountServers(servers.size())
@@ -56,14 +53,15 @@ void Server::initSockets()
 
 void Server::newClient(int indexServer)
 {
+	sockaddr_in		clientAddr;
 	int addrlen = sizeof(sockaddr);
 
 	int connection = accept(this->_servers[indexServer].getSockFd(),
-							(struct sockaddr *) &this->_servers[indexServer].getSockAddr(),
-							(socklen_t *) &addrlen);
+					(struct sockaddr *) &clientAddr,
+					(socklen_t *) &addrlen);
 	if (connection == -1)
 		throw Error("connection"); //TODO: move it in client?
-	_clients.push_back(SharedPtr<Client>(new Client(_servers[indexServer], connection)));
+	_clients.push_back(SharedPtr<Client>(new Client(_servers[indexServer], connection, clientAddr)));
 	fcntl(connection, F_SETFL, O_NONBLOCK);
 }
 
@@ -83,9 +81,9 @@ int Server::getMaxSockFd() const
 
 void Server::reloadFdSets()
 {
-	FD_ZERO(&_readFds); // clean set TODO:why?
-	FD_ZERO(&_writeFds); // clean set
-	std::vector<SharedPtr<Client>>::const_iterator client;
+	FD_ZERO(&_readFds);
+	FD_ZERO(&_writeFds);
+	std::vector<SharedPtr<Client> >::const_iterator client;
 	for (client = getClients().cbegin(); client != getClients().cend(); client++) {
 		FD_SET((*client)->getFd(), &_readFds);
 		FD_SET((*client)->getFd(), &_writeFds);
@@ -102,7 +100,10 @@ void Server::checkClients()
 		if (FD_ISSET((*it)->getFd(), &_readFds))
 			(*it)->receive();
 
-		if (FD_ISSET((*it)->getFd(), &_writeFds) && (*it)->response())
+		if (FD_ISSET((*it)->getFd(), &_writeFds))
+			(*it)->response();
+
+		if((*it)->GetStatus() == CLOSE_CONNECTION)
 			_clients.erase(it);
 		else
 			++it;
@@ -118,9 +119,10 @@ int Server::Select()
 
 void Server::checkSockets()
 {
-	for (size_t i = 0; i < _servers.size(); ++i)
+	for (size_t i = 0; i < _servers.size(); ++i) {
 		if (FD_ISSET(this->_servers[i].getSockFd(), &_readFds))
 			this->newClient(i);
+	}
 }
 
 void Server::sendCgi(const Request &request)
@@ -128,7 +130,7 @@ void Server::sendCgi(const Request &request)
 	Cgi cgi(request);
 }
 
-const std::vector<SharedPtr<Client>> & Server::getClients() const {
+const std::vector<SharedPtr<Client> > & Server::getClients() const {
 	return _clients;
 }
 

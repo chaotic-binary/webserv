@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.17)
 project(webserv)
 
-set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 include_directories(include)
 
 add_executable(test_parser
@@ -28,4 +28,7 @@ add_executable(test_server
         test/testServer.cpp
         src/Request.cpp
         src/Client.cpp
-        src/response.cpp )
+        src/MimeTypes.cpp
+        src/response.cpp
+        src/method_utils.cpp src/GetMethod.cpp
+        src/methods.cpp)

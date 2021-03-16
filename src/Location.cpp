@@ -219,6 +219,9 @@ std::ostream &operator<<(std::ostream &os, const Location &location)
 	os << "\tmethods: \n" << m;
 	return os;
 }
+const std::string &Location::getPath() const {
+	return _path;
+}
 
 const char *Location::LocException::WrongMethod::what() const throw()
 {
