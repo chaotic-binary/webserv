@@ -6,7 +6,7 @@
 #define SERVER_HPP
 
 #include "includes.h"
-#include "Parser.hpp"
+#include "Parser.h"
 #include "Cgi.h"
 #include "Client.h"
 #include "SharedPtr.h"

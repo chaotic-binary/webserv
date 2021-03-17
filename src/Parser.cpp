@@ -1,4 +1,4 @@
-#include "../include/Parser.hpp"
+#include "Parser.h"
 
 std::map<std::string, void (*)(const std::vector<std::string> &, ServConfig &)> Parser::servParser;
 std::map<std::string, void (Location::*)(const std::string &)> Parser::locParser;
