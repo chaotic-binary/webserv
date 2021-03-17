@@ -11,36 +11,12 @@ enum e_client_status
 	CLOSE_CONNECTION, READY_TO_READ, READY_TO_SEND
 };
 
-/*enum e_header
-{
-	ACCEPT_CHARSETS,
-	ACCEPT_LANGUAGE,
-	AUTHORIZATION,
-	CONTENT_LANGUAGE,
-	CONTENT_LENGTH,
-	CONTENT_TYPE,
-	DATE,
-	HOST,
-	REFERER,
-	TRANSFER_ENCODING,
-	USER_AGENT*/
-/*,
-
-SERVER,
-WWW_AUTHENTICATE,
-ALLOW,
-CONTENT_LOCATION,
-RETRY_AFTER,
-LOCATION,
-LAST_MODIFIED
-
-};*/
-
 class Request
 {
 private:
 	e_methods method;
 	std::string reqTarget;
+	std::string queryString;
 	std::string version;
 	std::map<std::string, std::string> headers;
 	std::string body;
@@ -78,21 +54,39 @@ public:
 
 	bool isComplete() const;
 
-	class InvalidData : public std::logic_error
+	class InvalidFormat : public std::logic_error
 	{
 	private:
-		InvalidData();
+		InvalidFormat();
 
 	public:
-		InvalidData(int line) : std::logic_error("Wrong number of arguments: line:" + ft::to_str(line))
+		InvalidFormat(int line) : std::logic_error("Invalid data format: line:" + ft::to_str(line))
+		{};
+	};
+
+	class DuplicateHeader : public std::logic_error
+	{
+	private:
+		DuplicateHeader();
+
+	public:
+		DuplicateHeader(std::string name) : std::logic_error("Duplicate header: " + name)
+		{};
+	};
+
+	class HeaderNotPresent : public std::logic_error
+	{
+	private:
+		HeaderNotPresent();
+
+	public:
+		HeaderNotPresent(std::string name) : std::logic_error("Header \"" + name + "\" not present")
 		{};
 	};
 
 	int receive();
 
 	void clear();
-
-	int isValid(Location &location);
 };
 
 std::ostream &operator<<(std::ostream &os, const Request &request);
