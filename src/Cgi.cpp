@@ -28,7 +28,7 @@ Cgi::Cgi(const Request &request)
 
 char *Cgi::getServerName()
 {
-	return (strdup("SERVER_NAME=MyLazyServer"));
+	return (strdup("SERVER_NAME="));
 }
 
 char *Cgi::getRequestUri(const std::string &uri)
