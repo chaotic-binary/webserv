@@ -2,6 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
+	<link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
 	<meta http-equiv="Refresh" content="1; URL=http://localhost:1998">
 	<title></title>
 </head>
