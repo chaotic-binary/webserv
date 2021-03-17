@@ -78,7 +78,7 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 		++brace;
 //		loc = -1;
 	} else if (line.substr(0, line.find("\t")) == "location") {
-		if (!brace && serv != -1)
+		if ((serv > -1) ? brace != 1 : brace != 0)
 			throw ParserException::InvalidData(line_num);
 //		if (!loc_context)
 //			++loc;
