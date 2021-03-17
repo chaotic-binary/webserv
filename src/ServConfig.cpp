@@ -48,6 +48,8 @@ void ServConfig::setPort(size_t port)
 void ServConfig::setRoot(const std::string &root)
 {
 	_root = root;
+	if (_root.back() != '/')
+		_root += '/';
 }
 
 void ServConfig::setLocations(const std::vector<Location> &locations)

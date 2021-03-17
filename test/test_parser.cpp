@@ -10,7 +10,7 @@ int main(int ac, char **av) {
 	try {
 		Parser p = Parser(av[1]);
 
-	//	std::cout << p;//test
+		std::cout << p;//test
 
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;

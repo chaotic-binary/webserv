@@ -106,6 +106,8 @@ void Location::setName(const std::string &name)
 void Location::setRoot(const std::string &root)
 {
 	_root = root;
+	if (_root.back() != '/')
+		_root += '/';
 }
 
 void Location::setIndex(const std::string &index)
