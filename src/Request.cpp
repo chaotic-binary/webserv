@@ -233,6 +233,7 @@ void Request::clear()
 {
 	method = OTHER;
 	reqTarget.clear();
+	queryString.clear();
 	headers.clear();
 	body.clear();
 	version.clear();
