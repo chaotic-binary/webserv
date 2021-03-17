@@ -85,6 +85,8 @@ void Request::parse_headers(std::string str)
 			v = ft::split(line, ' ');
 			if (v.size() != 3)
 				throw InvalidFormat(line_num);
+			if (v[2].find("HTTP/") != 0)
+				throw InvalidFormat(line_num);
 			setMethodFromStr(v[0]);
 			reqTarget = v[1];
 			version = v[2];
