@@ -243,7 +243,7 @@ void Request::clear()
 
 std::ostream &operator<<(std::ostream &os, const Request &request)
 {
-	os << " method: " << request.getMethod() << std::endl;
+	os << " method: " << ((request.getMethod() == OTHER) ? "OTHER" : ft::to_str(request.getMethod())) << std::endl;
 	os << " reqTarget: " << request.getReqTarget() << std::endl;
 	os << " version: " << request.getVersion() << std::endl;
 	os << " HEADERS: " << std::endl << request.getHeaders() << std::endl;
