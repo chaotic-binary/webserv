@@ -1,0 +1,348 @@
+body {
+    margin: 0;;
+    padding: 0;
+
+    background-color: #31293c;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+main {
+   margin: 5vh 0;
+
+    text-align: center;
+
+    color: grey;
+}
+a {
+    font-size: 22px;
+
+    text-decoration: none;
+
+    color: gray;
+}
+span {
+    display: block;
+}
+
+div {
+	display: none;
+}
+
+/* айм соррииииииииииииииииии */
+.figure {
+    width: 300px;
+    margin: 60px auto;
+
+}
+.spinner {
+    width: 100%;
+}
+.star {
+width: 100%;
+    animation: ease start 100ms infinite;
+}
+
+@keyframes start {
+    0% {
+        transform: none;
+    }
+    1% {
+        transform: rotate(3.6deg);
+    }
+    2% {
+        transform: rotate(7.2deg);
+    }
+    3% {
+        transform: rotate(10.8deg);
+    }
+    4% {
+        transform: rotate(14.4deg);
+    }
+    5% {
+        transform: rotate(18deg);
+    }
+    6% {
+        transform: rotate(21.6deg);
+    }
+    7% {
+        transform: rotate(25.2deg);
+    }
+    8% {
+        transform: rotate(28.8deg);
+    }
+    9% {
+        transform: rotate(32.4deg);
+    }
+    10% {
+        transform: rotate(36deg);
+    }
+    11% {
+        transform: rotate(39.6deg);
+    }
+    12% {
+        transform: rotate(43.2deg);
+    }
+    13% {
+        transform: rotate(46.8deg);
+    }
+    14% {
+        transform: rotate(50.4deg);
+    }
+    15% {
+        transform: rotate(54deg);
+    }
+    16% {
+        transform: rotate(57.6deg);
+    }
+    17% {
+        transform: rotate(60.2deg);
+    }
+    18% {
+        transform: rotate(63.8deg);
+    }
+    19% {
+        transform: rotate(67.4deg);
+    }
+    20% {
+        transform: rotate(71deg);
+    }
+    21% {
+        transform: rotate(74.6deg);
+    }
+    22% {
+        transform: rotate(78.2deg);
+    }
+    23% {
+        transform: rotate(81.8deg);
+    }
+    24% {
+        transform: rotate(85.4deg);
+    }
+    25% {
+        transform: rotate(89deg);
+    }
+    26% {
+        transform: rotate(92.6deg);
+    }
+    27% {
+        transform: rotate(96.2deg);
+    }
+    28% {
+        transform: rotate(99.8deg);
+    }
+    29% {
+        transform: rotate(103.4deg);
+    }
+    30% {
+        transform: rotate(108deg);
+    }
+    31% {
+        transform: rotate(111.6deg);
+    }
+    32% {
+        transform: rotate(115.2deg);
+    }
+    33% {
+        transform: rotate(118.8deg);
+    }
+    34% {
+        transform: rotate(122.4deg);
+    }
+    35% {
+        transform: rotate(126deg);
+    }
+    36% {
+        transform: rotate(129.6deg);
+    }
+    37% {
+        transform: rotate(133.2deg);
+    }
+    38% {
+        transform: rotate(137.8deg);
+    }
+    39% {
+        transform: rotate(141.4deg);
+    }
+    40% {
+        transform: rotate(145deg);
+    }
+    41% {
+        transform: rotate(148.6deg);
+    }
+    42% {
+        transform: rotate(152.2deg);
+    }
+    43% {
+        transform: rotate(155.8deg);
+    }
+    44% {
+        transform: rotate(159.4deg);
+    }
+    45% {
+        transform: rotate(163deg);
+    }
+    46% {
+        transform: rotate(166.6deg);
+    }
+    47% {
+        transform: rotate(170.2deg);
+    }
+    48% {
+        transform: rotate(173.8deg);
+    }
+    49% {
+        transform: rotate(177.4deg);
+    }
+    50% {
+        transform: rotate(181deg);
+    }
+    51% {
+        transform: rotate(184.6deg);
+    }
+    52% {
+        transform: rotate(188.2deg);
+    }
+    53% {
+        transform: rotate(191.8deg);
+    }
+    54% {
+        transform: rotate(195.4deg);
+    }
+    55% {
+        transform: rotate(199deg);
+    }
+    56% {
+        transform: rotate(202.6deg);
+    }
+    57% {
+        transform: rotate(206.2deg);
+    }
+    58% {
+        transform: rotate(209.8deg);
+    }
+    59% {
+        transform: rotate(213.4deg);
+    }
+    60% {
+        transform: rotate(217deg);
+    }
+    61% {
+        transform: rotate(220.6deg);
+    }
+    62% {
+        transform: rotate(224.2deg);
+    }
+    63% {
+        transform: rotate(227.8deg);
+    }
+    64% {
+        transform: rotate(231.4deg);
+    }
+    65% {
+        transform: rotate(235deg);
+    }
+    66% {
+        transform: rotate(238.6deg);
+    }
+    67% {
+        transform: rotate(242.2deg);
+    }
+    68% {
+        transform: rotate(245.8deg);
+    }
+    69% {
+        transform: rotate(249.4deg);
+    }
+    70% {
+        transform: rotate(253deg);
+    }
+    71% {
+        transform: rotate(256.6deg);
+    }
+    72% {
+        transform: rotate(260.2deg);
+    }
+    73% {
+        transform: rotate(263.8deg);
+    }
+    74% {
+        transform: rotate(267.4deg);
+    }
+    75% {
+        transform: rotate(271deg);
+    }
+    76% {
+        transform: rotate(274.6deg);
+    }
+    77% {
+        transform: rotate(278.2deg);
+    }
+    78% {
+        transform: rotate(281.8deg);
+    }
+    79% {
+        transform: rotate(285.4deg);
+    }
+    80% {
+        transform: rotate(289deg);
+    }
+    81% {
+        transform: rotate(292.6deg);
+    }
+    82% {
+        transform: rotate(296.2deg);
+    }
+    83% {
+        transform: rotate(299.8deg);
+    }
+    84% {
+        transform: rotate(303.4deg);
+    }
+    85% {
+        transform: rotate(308deg);
+    }
+    86% {
+        transform: rotate(311.6deg);
+    }
+    87% {
+        transform: rotate(315.2deg);
+    }
+    88% {
+        transform: rotate(318.8deg);
+    }
+    89% {
+        transform: rotate(322.4deg);
+    }
+    90% {
+        transform: rotate(326deg);
+    }
+    91% {
+        transform: rotate(329.6deg);
+    }
+    92% {
+        transform: rotate(333.2deg);
+    }
+    93% {
+        transform: rotate(336.8deg);
+    }
+    94% {
+        transform: rotate(340.4deg);
+    }
+    95% {
+        transform: rotate(344deg);
+    }
+    96% {
+        transform: rotate(347.6deg);
+    }
+    97% {
+        transform: rotate(351.2deg);
+    }
+    98% {
+        transform: rotate(354.8deg);
+    }
+    99% {
+        transform: rotate(358.4deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
