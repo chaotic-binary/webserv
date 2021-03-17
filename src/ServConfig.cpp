@@ -1,3 +1,4 @@
+#include <response.h>
 #include "ServConfig.h"
 
 ServConfig::ServConfig() :
@@ -35,7 +36,7 @@ void ServConfig::setNames(const std::vector<std::string> &names)
 void ServConfig::setHost(const std::string &host)
 {
 	_host = host;
-	//TODO: isValid? turn to num value while parsing?
+	//TODO: notValid? turn to num value while parsing?
 }
 
 void ServConfig::setPort(size_t port)
@@ -47,6 +48,8 @@ void ServConfig::setPort(size_t port)
 void ServConfig::setRoot(const std::string &root)
 {
 	_root = root;
+	if (_root.back() != '/')
+		_root += '/';
 }
 
 void ServConfig::setLocations(const std::vector<Location> &locations)
@@ -125,7 +128,26 @@ sockaddr_in &ServConfig::getSockAddr()
 	return (this->_sockAddr);
 }
 
-/*Location &ServConfig::getLocation(int i) {
-	return _locations[i];
-}*/
+const Location &ServConfig::getLocation(const std::string &reqPath) const
+{
+	std::vector<Location>::const_iterator it = _locations.begin();
+	size_t maxCoincidence = 0;
+	int locationIndex = -1;
+
+	for (int res = 0; it != _locations.end(); it++, res++)
+	{
+		if (reqPath.compare(0, it->getPath().size(), it->getPath()) == 0
+			&& it->getPath().size() > maxCoincidence
+			&& (reqPath.size() == maxCoincidence || reqPath[maxCoincidence] == '/'))
+		{
+			//std::string tmp = it->getPath();
+			//std::cout << tmp << std::endl;
+			locationIndex = res;
+			maxCoincidence = it->getPath().size();
+		}
+	}
+	if (locationIndex == -1)
+		throw RespException(Response(404));
+	return _locations[locationIndex];
+}
 

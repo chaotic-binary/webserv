@@ -29,18 +29,18 @@ Location &Location::operator=(const Location &copy)
 	return (*this);
 }
 
-std::map<std::string, e_methods> Location::methodsParser;
+std::vector<std::string> Location::methodsParser;
 
 void Location::initMethodsParser()
 {
-	methodsParser["GET"] = GET;
-	methodsParser["HEAD"] = HEAD;
-	methodsParser["POST"] = POST;
-	methodsParser["PUT"] = PUT;
-	methodsParser["DELETE"] = DELETE;
-	methodsParser["CONNECT"] = CONNECT;
-	methodsParser["OPTIONS"] = OPTIONS;
-	methodsParser["TRACE"] = TRACE;
+	methodsParser.push_back("GET");
+	methodsParser.push_back("HEAD");
+	methodsParser.push_back("POST");
+	methodsParser.push_back("PUT");
+	methodsParser.push_back("DELETE");
+	methodsParser.push_back("CONNECT");
+	methodsParser.push_back("OPTIONS");
+	methodsParser.push_back("TRACE");
 }
 
 const std::string &Location::getName() const
@@ -93,7 +93,7 @@ const std::vector<e_methods> &Location::getMethods() const
 	return _methods;
 }
 
-const std::map<std::string, e_methods> &Location::getMethodsParser()
+const std::vector<std::string> &Location::getMethodsParser()
 {
 	return methodsParser;
 }
@@ -106,6 +106,8 @@ void Location::setName(const std::string &name)
 void Location::setRoot(const std::string &root)
 {
 	_root = root;
+	if (_root.back() != '/')
+		_root += '/';
 }
 
 void Location::setIndex(const std::string &index)
@@ -147,16 +149,15 @@ void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions)
 void Location::setMethods(const std::vector<e_methods> &methods)
 {
 	_methods = methods;
-	//TODO: set instead of vector?
 }
 
 void Location::setMethodsFromStr(const std::vector<std::string> &methods)
 {
+	std::vector<std::string>::const_iterator it;
 	for (size_t i = 0; i < methods.size(); ++i)
 	{
-		std::map<std::string, e_methods>::const_iterator it;
-		if ((it = methodsParser.find(methods[i])) != methodsParser.end())
-			_methods.push_back(methodsParser[methods[i]]);
+		if ((it = find(methodsParser.begin(), methodsParser.end(), methods[i])) != methodsParser.end())
+			_methods.push_back(static_cast<e_methods>(it - methodsParser.begin()));
 		else
 			throw LocException::WrongMethod();
 	}
@@ -193,12 +194,9 @@ std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v)
 {
 	for (size_t i = 0; i < v.size(); ++i)
 	{
-		std::map<std::string, e_methods>::const_iterator it;
-		for ((it = Location::getMethodsParser().begin()); it != Location::getMethodsParser().end(); ++it)
-		{
-			if (it->second == v[i])
-				os << "\t\t" << it->first << std::endl;
-		}
+		std::vector<std::string>::const_iterator it;
+		std::vector<std::string> methods = Location::getMethodsParser();
+		os << "\t\t" << methods.at(v[i]) << std::endl;
 	}
 	return os;
 }
@@ -219,7 +217,9 @@ std::ostream &operator<<(std::ostream &os, const Location &location)
 	os << "\tmethods: \n" << m;
 	return os;
 }
-const std::string &Location::getPath() const {
+
+const std::string &Location::getPath() const
+{
 	return _path;
 }
 

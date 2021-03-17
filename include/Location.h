@@ -76,7 +76,7 @@ public:
 
 	const std::vector<e_methods> &getMethods() const;
 
-	static const std::map<std::string, e_methods> &getMethodsParser();
+	static const std::vector<std::string> &getMethodsParser();
 
 	static void initMethodsParser();
 
@@ -96,14 +96,16 @@ public:
 	};
 
 	friend std::ostream &operator<<(std::ostream &os, const Location &location);
+
 	friend std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v);
 
 private:
 	std::string _path;
- public:
-  const std::string &getPath() const;
- private:
-  std::string _root;
+public:
+	const std::string &getPath() const;
+
+private:
+	std::string _root;
 	std::string _index;
 	std::string _cgiPath;
 	std::string _uploadPath;
@@ -115,6 +117,6 @@ private:
 
 	static bool getBoolFromStr(const std::string &str);
 
-	static std::map<std::string, e_methods> methodsParser;
+	static std::vector<std::string> methodsParser;
 };
 

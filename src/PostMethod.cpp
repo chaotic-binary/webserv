@@ -147,52 +147,10 @@ std::string CgiEx(const std::string& cgi, const std::string& script, const std::
 	}
 }
 
-std::string RunCgi(const Request &request, const ServConfig &config)
-{
-	Pipe Opipe, Ipipe;
-	Opipe.Create();
-	Ipipe.Create();
-	pid_t pid = fork();
-	if(pid == -1)
-		throw std::runtime_error("FORK ERROR");
-	else if (pid == 0) {
-		dup2(Ipipe.ReadFd(), 0);
-		Ipipe.Close();
-		dup2(Opipe.WriteFd(), 1);
-		Opipe.Close();
-		Location location = getLocation(request.getReqTarget(), config);
-		std::string cgi = location.getCgiPath(); //TODO: check cgi extension
-		std::string script = checkSource_ft(location, request.getReqTarget());
-		char * const args[3] = {strdup(cgi.c_str()), strdup(script.c_str()), NULL}; //TODO: LEAK!
-		char * const * envp = {NULL};
-		execve(cgi.c_str() , args, envp);
-		exit(1);
-	} else {
-		close(Opipe.WriteFd());
-		close(Ipipe.ReadFd());
-		write(Ipipe.WriteFd(), request.getBody().c_str(), request.getBody().length());
-		close(Ipipe.WriteFd());
-		char buff[1025];
-		int ret;
-		std::string total;
-		while ((ret = read(Opipe.ReadFd(), buff, 1024)) > 0) {
-			buff[ret] = '\0';
-			total += buff;
-		}
-		close(Opipe.ReadFd());
-		waitpid(pid, &ret, 0);
-		while ((ret = read(Opipe.ReadFd(), buff, 1024)) > 0) {
-			buff[ret] = '\0';
-			total += buff; //TODO: Maybe i need only one
-		}
-		return total;
-		//TODO :: close FD change?!
-	}
-}
 
 Response PostGenerator(const Request &request, const ServConfig &config) {
 	Response rsp(201);
-	Location location = getLocation(request.getReqTarget(), config);
+	Location location = config.getLocation(request.getReqTarget());
 	//std::string total = RunCgi(request, config);
 	EnvironMap tmp;
 	std::string total = CgiEx(location.getCgiPath(), request.getReqTarget(), request.getBody(), tmp);
