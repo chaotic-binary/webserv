@@ -69,3 +69,8 @@ void ft::tolower(std::string &s)
 {
 	transform(s.begin(), s.end(), s.begin(), ::tolower);
 }
+
+std::string ft::to_str(e_methods m)
+{
+	return Location::getMethodsParser().at(m);
+}

@@ -39,11 +39,12 @@ Request::~Request()
 
 void Request::setMethodFromStr(const std::string &s)
 {
-	std::map<std::string, e_methods> methodsParser = Location::getMethodsParser();
-	if (methodsParser.find(s) != methodsParser.end())
-		method = methodsParser[s];
-	//else
-	//	throw Location::LocException::WrongMethod();
+	std::vector<std::string> methodsParser = Location::getMethodsParser();
+	for (size_t i = 0; i < methodsParser.size(); ++i)
+	{
+		if (s == methodsParser[i])
+			method = static_cast<e_methods>(i);
+	}
 }
 
 e_methods Request::getMethod() const
@@ -76,31 +77,47 @@ void Request::parse_headers(std::string str)
 		line.clear();
 		line = str.substr(0, newPos);
 		str.erase(0, newPos + 2);
+		if (!line_num && line.empty())
+			continue;
 		++line_num;
 		if (line_num == 1)
 		{
 			v = ft::split(line, ' ');
 			if (v.size() != 3)
-				throw InvalidData(line_num);
+				throw InvalidFormat(line_num);
 			setMethodFromStr(v[0]);
 			reqTarget = v[1];
 			version = v[2];
 		} else
 		{
 			if ((newPos = line.find_first_of(':')) == std::string::npos)
-				throw InvalidData(line_num);
+				throw InvalidFormat(line_num);
 			std::string tmp = line.substr(0, newPos);
 			ft::tolower(tmp);
+			if (headers.count(tmp))
+			{
+				if ((tmp == "host" || tmp == "content-length"))
+					throw DuplicateHeader(tmp);
+				//TODO:other headers?
+			}
 			headers[tmp] = line.substr(newPos + 2, line.size() - 1);
 		}
 	}
-	std::map<std::string, std::string>::iterator it;
+	if (headers.find("host") == headers.end())
+		throw HeaderNotPresent("host");
+	std::map<std::string, std::string>::const_iterator it;
 	for (it = headers.begin(); it != headers.end(); ++it)
 	{
 		if (it->first == "content-length")
 			contentLength = ft::to_num(it->second);
 		if (it->first == "transfer-encoding" && it->second == "chunked")
 			chunked = true;
+	}
+	size_t i;
+	if ((i = reqTarget.find('?')) != std::string::npos)
+	{
+		queryString = reqTarget.substr(i + 1, reqTarget.size());
+		reqTarget.erase(i, reqTarget.size());
 	}
 }
 
@@ -188,7 +205,7 @@ int Request::receive()
 		{
 			buffer[ret] = 0x0;
 			raw_request += buffer;
-			//	std::cout << raw_request << std::endl;
+			//std::cout << raw_request << std::endl;
 			if ((i = raw_request.find("\r\n\r\n")) != std::string::npos)
 			{
 				parse_headers(raw_request.substr(0, i + 2));
@@ -196,7 +213,8 @@ int Request::receive()
 				read(fd_, buffer, i + 4);
 				headersParsed = true;
 				break;
-			}
+			} else
+				read(fd_, buffer, ret);
 		}
 	}
 	if (headersParsed)
@@ -221,27 +239,6 @@ void Request::clear()
 	headersParsed = false;
 	complete = false;
 	chunked = false;
-}
-
-static bool methodNotAllowed(e_methods method, const std::vector<e_methods> &methodsAllowed)
-{
-	for (size_t i = 0; i < methodsAllowed.size(); ++i)
-	{
-		if (methodsAllowed[i] == method)
-			return (false);
-	}
-	return (true);
-}
-
-int Request::isValid(Location &location)
-{
-	if (body.size() > location.getMaxBody())
-		return 413;
-	if (method == OTHER)
-		return 501;
-	if ((methodNotAllowed(method, location.getMethods())))
-		return 405;
-	return 0;
 }
 
 std::ostream &operator<<(std::ostream &os, const Request &request)
