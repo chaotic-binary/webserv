@@ -14,6 +14,9 @@ Response generate_response(const Request &request, const ServConfig &config) {
 	} catch(const RespException &err_rsp)
 	{
 		return err_rsp.GetRsp();
+	} catch(...)
+	{
+		return Response(500);
 	}
 }
 
@@ -21,7 +24,11 @@ bool Client::response() {
 	if (status_ != READY_TO_SEND)
 		return false;
 
-	Response rsp = generate_response(req_, serv_);
+	Response rsp;
+	if(req_.isComplete())
+		rsp = generate_response(req_, serv_);
+	else
+		rsp = Response(400);
 
 	this->raw_send(rsp.Generate());
 	status_ = READY_TO_READ;
@@ -53,6 +60,8 @@ void Client::receive() {
 		}
 	}
 	catch (std::exception &) {
+		req_.clear();
+		status_ = READY_TO_SEND;
 		std::cout << "TODO: handle the half msg!!!" << std::endl;
 	}
 }

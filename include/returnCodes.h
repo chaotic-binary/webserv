@@ -71,6 +71,7 @@ inline std::map<int, std::string> generate_map_codes() {
 	result[507] =  "Insufficient Storage";
 	result[508] =  "Loop Detected";
 	result[510] =  "Not Extended";
+	result[518] =  "I am a teapot";
 	result[511] =  "Network Authentication Required";
 	result[599] =  "Network Connect Timeout Error";
 	return result;
