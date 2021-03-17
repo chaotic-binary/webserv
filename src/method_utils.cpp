@@ -3,22 +3,23 @@
 #include <mimeTypes.h>
 #include <response.h>
 #include "Parser.h"
+#include <sys/stat.h>
 
-std::string checkSource(const Location &location, const std::string &reqTarget) {
-	std::string pathObj;
-	if (reqTarget == "/")
-		pathObj = location.getRoot() + location.getIndex();
-	else
-		pathObj = location.getRoot() + reqTarget.substr(1);
+std::string checkSource(const Location &location, const std::string &reqTarget)
+{
+	std::string	pathObj;
+	struct stat	sb;
 
+	pathObj = location.getRoot() + reqTarget.substr(1);
+	stat(pathObj.c_str(), &sb);
+	if (S_ISDIR(sb.st_mode))
+		pathObj += (pathObj.back() != '/') ? '/' + location.getIndex() : location.getIndex();
 	std::ifstream file(pathObj);
-	if (!file) {
+	if (!file)
 		throw RespException(Response(404));
-	}
 	file.close();
-	if (location.getAutoindex()) {
+	if (location.getAutoindex())
 		throw RespException(Response(403));
-	}
 	return (pathObj);
 }
 
