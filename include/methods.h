@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GetMethod.h"
-#include "PostMethod.h"
 #include <map>
 
 Response GetGenerator(const Request &request, const ServConfig &config);
