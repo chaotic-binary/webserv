@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include "Server.h"
 #include "Request.h"
 #include "Client.h"
@@ -125,10 +126,10 @@ void Server::checkSockets()
 	}
 }
 
-void Server::sendCgi(const Request &request)
-{
-	Cgi cgi(request);
-}
+//void Server::sendCgi(const Request &request)
+//{
+//	Cgi cgi(request);
+//}
 
 const std::vector<SharedPtr<Client> > & Server::getClients() const {
 	return _clients;

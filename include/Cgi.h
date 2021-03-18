@@ -1,24 +1,13 @@
-//
-// Created by Mahmud Jego on 3/3/21.
-//
+#pragma once
 
-#ifndef CGI_HPP
-#define CGI_HPP
-
-#include "includes.h"
+#include <string>
+#include <map>
+#include "ServConfig.h"
 #include "Request.h"
 
-class Cgi {
-public:
-	Cgi(const Request &);
+typedef std::map<std::string, std::string> EnvironMap;
 
-//	char *initEnv(const std::map<std::string, std::vector<std::string> > &headers, int header);
+std::map<std::string, std::string> CgiGenerateEnv(const Request& request, const ServConfig& config);
 
-	char*	getServerName();
-	char*	getRequestUri(const std::string &);
-private:
-	char	*env[18];
-};
-
-
-#endif //CGI_HPP
+std::string CgiEx(const std::string& cgi, const std::string& script, const std::string input,
+				  const EnvironMap & env_map);

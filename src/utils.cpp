@@ -1,4 +1,5 @@
 #include <sstream>
+#include <algorithm>
 #include "utils.h"
 
 bool ft::isalldigits(const std::string &str)
@@ -73,4 +74,32 @@ void ft::tolower(std::string &s)
 std::string ft::to_str(e_methods m)
 {
 	return Location::getMethodsParser().at(m);
+}
+
+struct char_to_lower
+{
+  char operator()(char c)
+  {
+	  return std::tolower(c);
+  }
+};
+
+struct char_to_upper
+{
+  char operator()(char c)
+  {
+	  return std::toupper(c);
+  }
+};
+
+std::string ft::to_upper(std::string data)
+{
+	std::transform(data.begin(), data.end(), data.begin(), char_to_upper());
+	return data;
+}
+
+std::string ft::to_lower(std::string data)
+{
+	std::transform(data.begin(), data.end(), data.begin(), char_to_lower());
+	return data;
 }

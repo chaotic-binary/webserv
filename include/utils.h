@@ -41,6 +41,8 @@ namespace ft
 
 	void tolower(std::string &s);
 
+std::string to_upper(std::string data);
+std::string to_lower(std::string data);
 } //namespace ft
 
 template<class T, class Alloc>
