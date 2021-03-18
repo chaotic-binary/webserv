@@ -1,26 +1,28 @@
 #include <fstream>
-#include <method_utils.h>
-#include <mimeTypes.h>
 #include "GetMethod.h"
 #include "ServConfig.h"
+#include <sys/stat.h>
 
 Response PutGenerator(const Request &request, const ServConfig &config)
 {
 	Response rsp(201);
-	std::vector<std::string> dirs;
+	const Location &location = config.getLocation(request.getReqTarget());
+	std::string absPath = location.getRoot() + request.getReqTarget().substr(1);
+	int i = location.getRoot().size();
 
-	std::string g = request.getReqTarget().substr(1);
-	int i;
-	while ((i = g.find("/")) != -1)
+	while ((i = absPath.find("/", i)) != -1)
 	{
-		dirs.push_back(g.substr(0, i));
-		g = g.substr(0, i);
+		std::string dir = absPath.substr(0, i++);
+		mkdir(dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		printf("%s\n", strerror(errno));
+		if (errno == EACCES || errno == EROFS
+		|| errno == ENOSPC || errno == ENAMETOOLONG)
+			throw Response(403);
 	}
-/*	std::ifstream file(obj);
-	std::stringstream ss;
-	ss << file.rdbuf();
-	file.close();*/
-	config.getHost();
+	std::ofstream hello(absPath);
+	if (hello.fail())
+		throw Response(403);
+	hello << request.getBody();
+	hello.close();
 	return rsp;
-
 }
