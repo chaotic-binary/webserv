@@ -4,7 +4,7 @@
 #include "GetMethod.h"
 #include "ServConfig.h"
 
-Response GetGenerator(const Request &request, const ServConfig &config) {
+Response HeadGenerator(const Request &request, const ServConfig &config) {
 	Response rsp(200);
 	const Location &location = config.getLocation(request.getReqTarget());
 	const std::string obj = checkSource(location, request.getReqTarget());
@@ -14,7 +14,7 @@ Response GetGenerator(const Request &request, const ServConfig &config) {
 	ss << file.rdbuf();
 	file.close();
 
-	rsp.SetBody(ss.str());
+	rsp.SetHeader("Content-Length", std::to_string(ss.str().length()));
 	rsp.SetHeader("content-type", getMimeType(obj));
 	return rsp;
 

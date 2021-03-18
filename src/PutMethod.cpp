@@ -4,18 +4,23 @@
 #include "GetMethod.h"
 #include "ServConfig.h"
 
-Response GetGenerator(const Request &request, const ServConfig &config) {
-	Response rsp(200);
-	const Location &location = config.getLocation(request.getReqTarget());
-	const std::string obj = checkSource(location, request.getReqTarget());
+Response PutGenerator(const Request &request, const ServConfig &config)
+{
+	Response rsp(201);
+	std::vector<std::string> dirs;
 
-	std::ifstream file(obj);
+	std::string g = request.getReqTarget().substr(1);
+	int i;
+	while ((i = g.find("/")) != -1)
+	{
+		dirs.push_back(g.substr(0, i));
+		g = g.substr(0, i);
+	}
+/*	std::ifstream file(obj);
 	std::stringstream ss;
 	ss << file.rdbuf();
-	file.close();
-
-	rsp.SetBody(ss.str());
-	rsp.SetHeader("content-type", getMimeType(obj));
+	file.close();*/
+	config.getHost();
 	return rsp;
 
 }

@@ -10,7 +10,7 @@ int main()
 	DIR		*dir;
 	char	*tmp;
 	struct dirent * dir_el;
-	if ((dir = opendir("/Users/mizola/webservt/www")))
+	if ((dir = opendir("/")))
 	{
 		while ((dir_el = readdir(dir)))
 		{
