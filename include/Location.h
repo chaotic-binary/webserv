@@ -28,13 +28,14 @@ public:
 
 	~Location();
 
-	Location &operator=(const Location &copy);
+	//Location &operator=(const Location &copy);
 
 	void setName(const std::string &name);
 
 	void setRoot(const std::string &root);
 
 	void setIndex(const std::string &index);
+  	void setCgiIndex(const std::string &index);
 
 	void setCgiPath(const std::string &cgiPath);
 
@@ -61,6 +62,7 @@ public:
 	const std::string &getRoot() const;
 
 	const std::string &getIndex() const;
+  	const std::string &getCgiIndex() const;
 
 	const std::string &getCgiPath() const;
 
@@ -118,5 +120,6 @@ private:
 	static bool getBoolFromStr(const std::string &str);
 
 	static std::vector<std::string> methodsParser;
+  	std::string _cgi_index;
 };
 

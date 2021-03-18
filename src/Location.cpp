@@ -14,21 +14,6 @@ Location::Location(const Location &copy)
 Location::~Location()
 {}
 
-Location &Location::operator=(const Location &copy)
-{
-	this->_path = copy._path;
-	this->_root = copy._root;
-	this->_index = copy._index;
-	this->_cgiPath = copy._cgiPath;
-	this->_uploadPath = copy._uploadPath;
-	this->_maxBody = copy._maxBody;
-	this->_autoindex = copy._autoindex;
-	this->_uploadEnable = copy._uploadEnable;
-	this->_cgiExtensions = copy._cgiExtensions;
-	this->_methods = copy._methods;
-	return (*this);
-}
-
 std::vector<std::string> Location::methodsParser;
 
 void Location::initMethodsParser()
@@ -56,6 +41,11 @@ const std::string &Location::getRoot() const
 const std::string &Location::getIndex() const
 {
 	return _index;
+}
+
+const std::string &Location::getCgiIndex() const
+{
+	return _cgi_index;
 }
 
 const std::string &Location::getCgiPath() const
@@ -115,6 +105,10 @@ void Location::setIndex(const std::string &index)
 	_index = index;
 }
 
+void Location::setCgiIndex(const std::string &index)
+{
+	_cgi_index = index;
+}
 void Location::setCgiPath(const std::string &cgiPath)
 {
 	_cgiPath = cgiPath;
@@ -206,6 +200,7 @@ std::ostream &operator<<(std::ostream &os, const Location &location)
 	os << "\tname: " << location.getName() << std::endl;
 	os << "\troot: " << location.getRoot() << std::endl;
 	os << "\tindex: " << location.getIndex() << std::endl;
+	os << "\tindex: " << location.getCgiIndex() << std::endl;
 	os << "\tcgi_path: " << location.getCgiPath() << std::endl;
 	os << "\tupload_path: " << location.getUploadPath() << std::endl;
 	os << "\tmax body: " << location.getMaxBody() << std::endl;

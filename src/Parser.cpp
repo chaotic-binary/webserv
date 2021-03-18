@@ -17,6 +17,7 @@ void Parser::initLocParser() {
 	locParser["upload_path"] = &Location::setUploadPath;
 	locParser["cgi_path"] = &Location::setCgiPath;
 	locParser["index"] = &Location::setIndex;
+	locParser["cgi_index"] = &Location::setCgiIndex;
 	locParser["autoindex"] = &Location::setAutoindexFromStr;
 	locParser["upload_enable"] = &Location::setUploadEnableFromStr;
 }

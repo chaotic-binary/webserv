@@ -114,11 +114,15 @@ void Request::parse_headers(std::string str)
 			chunked = true;
 	}
 	size_t i;
+	uri_ = reqTarget;
 	if ((i = reqTarget.find('?')) != std::string::npos)
 	{
 		queryString = reqTarget.substr(i + 1, reqTarget.size());
 		reqTarget.erase(i, reqTarget.size());
 	}
+}
+const std::string &Request::GetUri() const {
+	return uri_;
 }
 
 int Request::parse_chunk(const int fd)
@@ -239,6 +243,17 @@ void Request::clear()
 	headersParsed = false;
 	complete = false;
 	chunked = false;
+}
+const std::string &Request::getHeader(const std::string& title) const {
+	const static std::string empty;
+	try {
+		return this->getHeaders().at(title);
+	} catch (const std::out_of_range&) {
+		return empty;
+	}
+}
+const std::string &Request::GetQueryString() const {
+	return queryString;
 }
 
 std::ostream &operator<<(std::ostream &os, const Request &request)

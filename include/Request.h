@@ -16,8 +16,12 @@ class Request
 private:
 	e_methods method;
 	std::string reqTarget;
+  	std::string uri_;
 	std::string queryString;
-	std::string version;
+ public:
+  const std::string &GetQueryString() const;
+ private:
+  std::string version;
 	std::map<std::string, std::string> headers;
 	std::string body;
 	std::string raw_request;
@@ -49,8 +53,10 @@ public:
 	const std::string &getVersion() const;
 
 	const std::map<std::string, std::string> &getHeaders() const;
+  	const std::string &getHeader(const std::string &title) const;
+  	const std::string &GetUri() const;
 
-	const std::string &getBody() const;
+  const std::string &getBody() const;
 
 	bool isComplete() const;
 
