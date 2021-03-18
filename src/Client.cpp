@@ -10,10 +10,13 @@ Response generate_response(const Request &request, const ServConfig &config) {
 	try {
 		return method_map.at(request.getMethod())(request, config);
 	} catch (const std::out_of_range& ex) {
-		return Response(405);
+		return Response(501);
 	} catch(const RespException &err_rsp)
 	{
 		return err_rsp.GetRsp();
+	} catch(...)
+	{
+		return Response(500);
 	}
 }
 
@@ -21,7 +24,11 @@ bool Client::response() {
 	if (status_ != READY_TO_SEND)
 		return false;
 
-	Response rsp = generate_response(req_, serv_);
+	Response rsp;
+	if(req_.isComplete())
+		rsp = generate_response(req_, serv_);
+	else
+		rsp = Response(400);
 
 	this->raw_send(rsp.Generate());
 	status_ = READY_TO_READ;
@@ -50,10 +57,13 @@ void Client::receive() {
 			status_ = READY_TO_SEND;
 			std::cout << "<REQUEST\n" << req_ << std::endl;
 			std::cout << "REQUEST>\n"; //test
+			//std::cout << "Method: " << ft::to_str(req_.getMethod()) << std::endl;//
 		}
 	}
-	catch (std::exception &) {
-		std::cout << "TODO: handle the half msg!!!" << std::endl;
+	catch (std::exception &e) {
+		req_.clear();
+		status_ = READY_TO_SEND;
+		std::cout << e.what() << std::endl;
 	}
 }
 __deprecated Client::Client(const ServConfig &serv, int fd) : serv_(serv), fd_(fd), status_(READY_TO_READ), req_(fd) {}

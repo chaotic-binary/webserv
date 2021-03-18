@@ -36,7 +36,7 @@ void ServConfig::setNames(const std::vector<std::string> &names)
 void ServConfig::setHost(const std::string &host)
 {
 	_host = host;
-	//TODO: isValid? turn to num value while parsing?
+	//TODO: notValid? turn to num value while parsing?
 }
 
 void ServConfig::setPort(size_t port)
@@ -48,6 +48,8 @@ void ServConfig::setPort(size_t port)
 void ServConfig::setRoot(const std::string &root)
 {
 	_root = root;
+	if (_root.back() != '/')
+		_root += '/';
 }
 
 void ServConfig::setLocations(const std::vector<Location> &locations)

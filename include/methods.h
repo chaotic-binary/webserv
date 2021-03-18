@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GetMethod.h"
+#include "PostMethod.h"
+
 #include <map>
 Response GetGenerator(const Request &request, const ServConfig &config);
 Response HeadGenerator(const Request &request, const ServConfig &config);
@@ -18,5 +20,6 @@ inline const std::map<e_methods, func> init_method_map() {
 	mp[GET] = GetGenerator;
 	mp[HEAD] = HeadGenerator;
 	mp[PUT] = PutGenerator;
+	mp[POST] = PostGenerator;
 	return mp;
 }
