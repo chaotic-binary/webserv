@@ -13,7 +13,7 @@
 all:
 			make -C test
 			make -C Client
-			mv test/serverV1 ./
+			mv test/KinGinx ./
 			mv Client/clientV1 ./
 
 clean:
@@ -30,8 +30,8 @@ free: fclean
 			rm -rf *.o src/*.o
 
 run: all
-			./serverV1 config/test.conf
+			./KinGinx config/test.conf
 s:
-			wc *.cpp *.h *.hpp
+			wc src/*.cpp include/*.h
 
 .PHONY:		all clean fclean re s server

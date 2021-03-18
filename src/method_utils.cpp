@@ -13,10 +13,8 @@ std::string checkSource(const Location &location, const std::string &reqTarget, 
 	pathObj = location.getRoot() + reqTarget.substr(1);
 	stat(pathObj.c_str(), &sb);
 	if (S_ISDIR(sb.st_mode)) {
-		if (cgi)
-			pathObj += (pathObj.back() != '/') ? '/' + location.getIndex() : location.getCgiIndex();
-		else
-			pathObj += (pathObj.back() != '/') ? '/' + location.getIndex() : location.getIndex();
+		pathObj += (pathObj.back() != '/') ? "/" : "";
+		pathObj += cgi ? location.getCgiIndex() : location.getIndex();
 	}
 	std::ifstream file(pathObj);
 	if (!file)

@@ -11,7 +11,6 @@ add_executable(test_parser
         src/Parser.cpp
         src/Location.cpp
         src/utils.cpp
-        src/FD.cpp
         src/Request.cpp
         src/Client.cpp
         src/MimeTypes.cpp
@@ -26,9 +25,8 @@ add_executable(test_server
         src/ServConfig.cpp
         src/Location.cpp
         src/utils.cpp
-        src/FD.cpp
         src/Cgi.cpp
-        test/testServer.cpp
+        src/main.cpp
         src/Request.cpp
         src/Client.cpp
         src/MimeTypes.cpp

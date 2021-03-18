@@ -1,10 +1,6 @@
 #include <method_utils.h>
-#include <mimeTypes.h>
 #include <algorithm>
-#include <fcntl.h>
 #include "PostMethod.h"
-#include "fstream"
-#include "method_utils.h"
 #include "Cgi.h"
 
 Response PostGenerator(const Request &request, const ServConfig &config) {
