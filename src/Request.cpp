@@ -85,6 +85,8 @@ void Request::parse_headers(std::string str)
 			v = ft::split(line, ' ');
 			if (v.size() != 3)
 				throw InvalidFormat(line_num);
+			if (v[2].find("HTTP/") != 0)
+				throw InvalidFormat(line_num);
 			setMethodFromStr(v[0]);
 			reqTarget = v[1];
 			version = v[2];
@@ -235,6 +237,7 @@ void Request::clear()
 {
 	method = OTHER;
 	reqTarget.clear();
+	queryString.clear();
 	headers.clear();
 	body.clear();
 	version.clear();
@@ -258,7 +261,7 @@ const std::string &Request::GetQueryString() const {
 
 std::ostream &operator<<(std::ostream &os, const Request &request)
 {
-	os << " method: " << request.getMethod() << std::endl;
+	os << " method: " << ((request.getMethod() == OTHER) ? "OTHER" : ft::to_str(request.getMethod())) << std::endl;
 	os << " reqTarget: " << request.getReqTarget() << std::endl;
 	os << " version: " << request.getVersion() << std::endl;
 	os << " HEADERS: " << std::endl << request.getHeaders() << std::endl;

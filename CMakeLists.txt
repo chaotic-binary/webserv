@@ -17,7 +17,7 @@ add_executable(test_parser
         src/MimeTypes.cpp
         src/response.cpp
         src/method_utils.cpp src/GetMethod.cpp
-        src/methods.cpp
+        src/methods.cpp src/PostMethod.cpp
         )
 
 add_executable(test_server
@@ -33,5 +33,12 @@ add_executable(test_server
         src/Client.cpp
         src/MimeTypes.cpp
         src/response.cpp
-        src/method_utils.cpp src/GetMethod.cpp
-        src/methods.cpp src/PostMethod.cpp)
+        src/method_utils.cpp
+        src/GetMethod.cpp
+        src/methods.cpp
+        src/PostMethod.cpp
+        src/method_utils.cpp
+        src/methods.cpp
+        src/HeadMethod.cpp
+        src/PutMethod.cpp
+        )

@@ -67,7 +67,7 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 
 	if (line == "server{" || (line.substr(0, line.find("\t")) == "server")) {
 		if (line != "server{") {
-			if (line[line.size() - 1] != '{' || (brace))
+			if (line.back() != '{' || (brace))
 				throw ParserException::BraceExpected(line_num);
 			std::vector<std::string> v = ft::split(line, '\t');
 			if (v.size() != 2)
@@ -129,7 +129,7 @@ Parser::Parser(char *file) {
 	int brace = 0;
 	line_num = 0;
 	ServConfig main;
-	while (ft::getline(ifs, line)) {
+	while (ft::getline(ifs, line) || !line.empty()) {
 		//std::cout << line << std::endl << std::endl;
 		++line_num;
 		ft::ws_to_tab(line);
@@ -216,7 +216,7 @@ void Parser::parseErrorPages(const std::vector<std::string> &args, ServConfig &s
 		throw ParserException::InvalidData(line_num);
 	for (size_t i = 1; i < size - 1; ++i) {
 		p.first = to_num(args[i]);
-		p.second = args[size - 1];
+		p.second = args.back();
 		serv.addErrorPage(p);
 	}
 
@@ -230,7 +230,7 @@ void Parser::parseErrorPages(const std::vector<std::string> &args, ServConfig &s
 void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
 	size_t size = args.size();
 
-	if (args[size - 1] != "{")
+	if (args.back() != "{")
 		throw ParserException::BraceExpected(line_num);
 	if (size != 3)
 		throw ParserException::InvalidData(line_num);
@@ -240,7 +240,7 @@ void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
 void Parser::parseMaxBody(std::string &val, Location &loc) {
 	//TODO: DELETE MAGIC NUMBERS PLS ;)
 	size_t n = 1;
-	char letter = val[val.size() - 1];
+	char letter = val.back();
 	if (!std::isdigit(letter)) {
 		letter = toupper(letter);
 		switch (letter) {

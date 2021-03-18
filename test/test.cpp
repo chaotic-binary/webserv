@@ -4,13 +4,14 @@
 
 #include "includes.h"
 #include <dirent.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
 int main()
 {
-	DIR		*dir;
+/*	DIR		*dir;
 	char	*tmp;
 	struct dirent * dir_el;
-	if ((dir = opendir("/Users/mizola/webservt/www")))
+	if ((dir = opendir("/")))
 	{
 		while ((dir_el = readdir(dir)))
 		{
@@ -18,5 +19,13 @@ int main()
 		}
 		if (closedir(dir))
 			exit(13);
-	}
+	}*/
+	int i = mkdir("hello", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	printf("%s\n", strerror(errno));
+	if (errno == EACCES)
+		printf("not");
+	if (errno == EEXIST)
+		printf("ude est");
+	printf("%d\n", i);
+
 }
