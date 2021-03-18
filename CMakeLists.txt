@@ -17,7 +17,7 @@ add_executable(test_parser
         src/MimeTypes.cpp
         src/response.cpp
         src/method_utils.cpp src/GetMethod.cpp
-        src/methods.cpp
+        src/methods.cpp src/PostMethod.cpp
         )
 
 add_executable(test_server
