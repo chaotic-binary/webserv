@@ -26,62 +26,66 @@ void	Request::headersListInit() {
 //};
 
 Request::Request(const int fd)
-		: method(OTHER),
-		  contentLength(0),
-		  chunked(false),
-		  headersParsed(false),
-		  complete(false),
-		  fd_(fd)
-{}
+	: method(OTHER),
+	  contentLength(0),
+	  chunked(false),
+	  headersParsed(false),
+	  complete(false),
+	  fd_(fd) {}
 
-Request::~Request()
-{}
+Request::~Request() {}
 
-void Request::setMethodFromStr(const std::string &s)
-{
+void Request::setMethodFromStr(const std::string &s) {
 	std::vector<std::string> methodsParser = Location::getMethodsParser();
-	for (size_t i = 0; i < methodsParser.size(); ++i)
-	{
+	for (size_t i = 0; i < methodsParser.size(); ++i) {
 		if (s == methodsParser[i])
 			method = static_cast<e_methods>(i);
 	}
 }
 
-e_methods Request::getMethod() const
-{ return method; }
+e_methods Request::getMethod() const { return method; }
 
-const std::string &Request::getReqTarget() const
-{ return reqTarget; }
+const std::string &Request::getReqTarget() const { return reqTarget; }
 
-const std::string &Request::getVersion() const
-{ return version; }
+const std::string &Request::getVersion() const { return version; }
 
-const std::map<std::string, std::string> &Request::getHeaders() const
-{ return headers; }
+const std::map<std::string, std::string> &Request::getHeaders() const { return headers; }
 
-const std::string &Request::getBody() const
-{ return body; }
+const std::string &Request::getBody() const { return body; }
 
-bool Request::isComplete() const
-{ return complete; }
+const std::string &Request::GetUri() const {
+	return uri_;
+}
 
-void Request::parse_headers(std::string str)
-{
+const std::string &Request::getHeader(const std::string &title) const {
+	const static std::string empty;
+	try {
+		return this->getHeaders().at(ft::tolower(title));
+	} catch (const std::out_of_range &) {
+		return empty;
+	}
+}
+
+const std::string &Request::GetQueryString() const {
+	return queryString;
+}
+
+bool Request::isComplete() const { return complete; }
+
+void Request::parse_headers(std::string str) {
 	std::string line;
 	std::vector<std::string> v;
 	size_t newPos;
 	int line_num = 0;
 
-	while ((newPos = str.find_first_of('\r')) != std::string::npos)
-	{
+	while ((newPos = str.find_first_of('\r')) != std::string::npos) {
 		line.clear();
 		line = str.substr(0, newPos);
 		str.erase(0, newPos + 2);
 		if (!line_num && line.empty())
 			continue;
 		++line_num;
-		if (line_num == 1)
-		{
+		if (line_num == 1) {
 			v = ft::split(line, ' ');
 			if (v.size() != 3)
 				throw InvalidFormat(line_num);
@@ -90,14 +94,12 @@ void Request::parse_headers(std::string str)
 			setMethodFromStr(v[0]);
 			reqTarget = v[1];
 			version = v[2];
-		} else
-		{
+		} else {
 			if ((newPos = line.find_first_of(':')) == std::string::npos)
 				throw InvalidFormat(line_num);
 			std::string tmp = line.substr(0, newPos);
-			ft::tolower(tmp);
-			if (headers.count(tmp))
-			{
+			tmp = ft::tolower(tmp);
+			if (headers.count(tmp)) {
 				if ((tmp == "host" || tmp == "content-length"))
 					throw DuplicateHeader(tmp);
 				//TODO:other headers?
@@ -108,8 +110,7 @@ void Request::parse_headers(std::string str)
 	if (headers.find("host") == headers.end())
 		throw HeaderNotPresent("host");
 	std::map<std::string, std::string>::const_iterator it;
-	for (it = headers.begin(); it != headers.end(); ++it)
-	{
+	for (it = headers.begin(); it != headers.end(); ++it) {
 		if (it->first == "content-length")
 			contentLength = ft::to_num(it->second);
 		if (it->first == "transfer-encoding" && it->second == "chunked")
@@ -117,27 +118,19 @@ void Request::parse_headers(std::string str)
 	}
 	size_t i;
 	uri_ = reqTarget;
-	if ((i = reqTarget.find('?')) != std::string::npos)
-	{
+	if ((i = reqTarget.find('?')) != std::string::npos) {
 		queryString = reqTarget.substr(i + 1, reqTarget.size());
 		reqTarget.erase(i, reqTarget.size());
 	}
 }
-const std::string &Request::GetUri() const {
-	return uri_;
-}
 
-int Request::parse_chunk(const int fd)
-{
+int Request::parse_chunk(const int fd) {
 	int ret;
 	char buffer[2049];
 
-	if (!contentLength)
-	{
-		while (raw_request.find("\r\n") == std::string::npos)
-		{
-			if ((ret = read(fd, buffer, 1)) > 0)
-			{
+	if (!contentLength) {
+		while (raw_request.find("\r\n") == std::string::npos) {
+			if ((ret = read(fd, buffer, 1)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
 			} else
@@ -146,12 +139,9 @@ int Request::parse_chunk(const int fd)
 		contentLength = ft::to_num(raw_request, true) + 2;
 		raw_request.clear();
 	}
-	if (contentLength)
-	{
-		while (raw_request.size() != contentLength)
-		{
-			if ((ret = read(fd, buffer, (contentLength - raw_request.size()) % 1024)) > 0)
-			{
+	if (contentLength) {
+		while (raw_request.size() != contentLength) {
+			if ((ret = read(fd, buffer, (contentLength - raw_request.size()) % 1024)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
 			} else
@@ -167,17 +157,13 @@ int Request::parse_chunk(const int fd)
 	return ret;
 }
 
-int Request::parse_body(const int fd)
-{
+int Request::parse_body(const int fd) {
 	int ret;
 	char buffer[2049];
 
-	if (!chunked)
-	{
-		while (raw_request.size() != contentLength)
-		{
-			if ((ret = read(fd, buffer, (contentLength - raw_request.size()) % 1024)) > 0)
-			{
+	if (!chunked) {
+		while (raw_request.size() != contentLength) {
+			if ((ret = read(fd, buffer, (contentLength - raw_request.size()) % 1024)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
 			} else
@@ -189,8 +175,7 @@ int Request::parse_body(const int fd)
 		return ret;
 	}
 //	else {
-	while (!complete)
-	{
+	while (!complete) {
 		if (!(ret = parse_chunk(fd)))
 			return ret;
 	}
@@ -198,22 +183,19 @@ int Request::parse_body(const int fd)
 //	}
 }
 
-int Request::receive()
-{
+int Request::receive() {
 	int ret;
 	char buffer[2049];
 	size_t i;
 
-	if (!headersParsed)
-	{
+	if (!headersParsed) {
 		while ((ret = recv(fd_, buffer, 2048, MSG_PEEK | MSG_DONTWAIT)) > 0)
 //		while ((ret = read(fd_, buffer, 1)) > 0)
 		{
 			buffer[ret] = 0x0;
 			raw_request += buffer;
 			//std::cout << raw_request << std::endl;
-			if ((i = raw_request.find("\r\n\r\n")) != std::string::npos)
-			{
+			if ((i = raw_request.find("\r\n\r\n")) != std::string::npos) {
 				parse_headers(raw_request.substr(0, i + 2));
 				raw_request.clear();
 				read(fd_, buffer, i + 4);
@@ -223,8 +205,7 @@ int Request::receive()
 				read(fd_, buffer, ret);
 		}
 	}
-	if (headersParsed)
-	{
+	if (headersParsed) {
 		if (contentLength || chunked)
 			return parse_body(fd_);
 		else
@@ -233,8 +214,7 @@ int Request::receive()
 	return ret;
 }
 
-void Request::clear()
-{
+void Request::clear() {
 	method = OTHER;
 	reqTarget.clear();
 	queryString.clear();
@@ -247,20 +227,8 @@ void Request::clear()
 	complete = false;
 	chunked = false;
 }
-const std::string &Request::getHeader(const std::string& title) const {
-	const static std::string empty;
-	try {
-		return this->getHeaders().at(title);
-	} catch (const std::out_of_range&) {
-		return empty;
-	}
-}
-const std::string &Request::GetQueryString() const {
-	return queryString;
-}
 
-std::ostream &operator<<(std::ostream &os, const Request &request)
-{
+std::ostream &operator<<(std::ostream &os, const Request &request) {
 	os << " method: " << ((request.getMethod() == OTHER) ? "OTHER" : ft::to_str(request.getMethod())) << std::endl;
 	os << " reqTarget: " << request.getReqTarget() << std::endl;
 	os << " version: " << request.getVersion() << std::endl;
