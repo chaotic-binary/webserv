@@ -35,7 +35,6 @@ add_executable(test_server
         src/GetMethod.cpp
         src/methods.cpp
         src/PostMethod.cpp
-        src/method_utils.cpp
         src/methods.cpp
         src/HeadMethod.cpp
         src/PutMethod.cpp

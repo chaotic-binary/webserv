@@ -2,9 +2,7 @@
 #include <iostream>
 #include <response.h>
 #include <stdexcept>
-#include <fstream>
 #include <methods.h>
-
 
 Response generate_response(const Request &request, const ServConfig &config) {
 	try {
