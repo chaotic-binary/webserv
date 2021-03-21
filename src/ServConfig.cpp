@@ -124,6 +124,6 @@ const Location &ServConfig::getLocation(const std::string &reqPath) const {
 	return _locations[locationIndex];
 }
 
-Location &ServConfig::getLocation(int index) {
-	return (this->_locations.at(index));
+void	ServConfig::updateLocationRoot(int index, const std::string &root) {
+	this->_locations.at(index).setRoot(root);
 }

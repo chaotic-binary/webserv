@@ -164,7 +164,6 @@ std::ostream &operator<<(std::ostream &os, const Location &location) {
 	os << "\tname: " << location.getName() << std::endl;
 	os << "\troot: " << location.getRoot() << std::endl;
 	os << "\tindex: " << location.getIndex() << std::endl;
-	os << "\tindex: " << location.getCgiIndex() << std::endl;
 	os << "\tcgi_path: " << location.getCgiPath() << std::endl;
 	os << "\tcgi_index: " << location.getCgiIndex() << std::endl;
 	os << "\tupload_path: " << location.getUploadPath() << std::endl;

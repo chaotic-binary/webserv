@@ -281,9 +281,9 @@ void Parser::addMainAndDefaults(const ServConfig &main) {
 					if (main.getRoot().empty())
 						throw ParserException::NoRoot();
 					else
-						_servs[i].getLocation(l).setRoot(main.getRoot());
+						_servs[i].updateLocationRoot(l, main.getRoot());
 				} else
-					_servs[i].getLocation(l).setRoot(_servs[i].getRoot());
+					_servs[i].updateLocationRoot(l, _servs[i].getRoot());
 			}
 		}
 		if (!_servs[i].getPort())

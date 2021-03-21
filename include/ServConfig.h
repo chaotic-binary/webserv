@@ -24,7 +24,7 @@ class ServConfig {
   void addErrorPage(const std::pair<int, std::string> &);
   void addLocation(const Location &loc);
   const Location &getLocation(const std::string &reqPath) const;
-  Location &getLocation(int index);
+  void updateLocationRoot(int index, const std::string &root);
 
   const std::vector<std::string> &getNames() const;
   const std::string &getHost() const;
