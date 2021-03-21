@@ -119,8 +119,8 @@ void Request::parse_headers(std::string str) {
 		if (it->first == "transfer-encoding" && it->second == "chunked")
 			chunked = true;
 	}
-	size_t i;
 	uri_ = reqTarget;
+	size_t i;
 	if ((i = reqTarget.find('?')) != std::string::npos) {
 		queryString = reqTarget.substr(i + 1, reqTarget.size());
 		reqTarget.erase(i, reqTarget.size());
@@ -162,7 +162,7 @@ int Request::parse_chunk(const int fd, bool read_activated) {
 				bzero(buffer, BUFFER_SIZE);
 			} else
 				return ret;
-			}
+		}
 		if (raw_request.size() >= contentLength) {
 			if (contentLength == 2)
 				complete = true;
@@ -170,6 +170,7 @@ int Request::parse_chunk(const int fd, bool read_activated) {
 				body += raw_request.substr(0, contentLength - 2);
 			raw_request.erase(0, contentLength);
 			contentLength = 0;
+			return 1;
 		}
 	}
 	return 1;
@@ -196,10 +197,9 @@ int Request::parse_body(const int fd, bool read_activated) {
 			body = raw_request.substr(0, contentLength);
 			raw_request.erase(0, contentLength);
 			complete = true;
-			return ret;
+			return 1;
 		}
-	}
-	if (!complete)
+	} else if (!complete)
 		ret = parse_chunk(fd, read_activated);
 	return ret;
 }
@@ -212,7 +212,7 @@ int Request::receive() {
 	bool read_activated = false;
 
 	if (!headersParsed) {
-		if ((i = raw_request.find("\r\n\r\n")) == std::string::npos) {
+		if (raw_request.find("\r\n\r\n") == std::string::npos) {
 			if ((ret = read(fd_, buffer, BUFFER_SIZE)) > 0) {
 				read_activated = true;
 				buffer[ret] = 0x0;
@@ -257,8 +257,10 @@ void Request::clear() {
 std::ostream &operator<<(std::ostream &os, const Request &request) {
 	os << " method: " << ((request.getMethod() == OTHER) ? "OTHER" : ft::to_str(request.getMethod())) << std::endl;
 	os << " reqTarget: " << request.getReqTarget() << std::endl;
+	os << " queryString: " << request.GetQueryString() << std::endl;
 	os << " version: " << request.getVersion() << std::endl;
 	os << " HEADERS: " << std::endl << request.getHeaders() << std::endl;
+	os << "URI: " << request.GetUri() << std::endl;
 	os << " body: " << request.getBody() << std::endl;
 	os << " complete: " << std::boolalpha << request.isComplete() << std::endl;
 	return os;
