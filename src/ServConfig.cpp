@@ -137,11 +137,10 @@ const Location &ServConfig::getLocation(const std::string &reqPath) const
 	for (int res = 0; it != _locations.end(); it++, res++)
 	{
 		if (reqPath.compare(0, it->getPath().size(), it->getPath()) == 0
-			&& it->getPath().size() > maxCoincidence
-			&& (reqPath.size() == maxCoincidence || reqPath[maxCoincidence] == '/'))
+		&& (reqPath[it->getPath().size()] == '/' ||  reqPath == it->getPath()))
 		{
-			//std::string tmp = it->getPath();
-			//std::cout << tmp << std::endl;
+			if(it->getPath().size() < maxCoincidence)
+				continue;
 			locationIndex = res;
 			maxCoincidence = it->getPath().size();
 		}

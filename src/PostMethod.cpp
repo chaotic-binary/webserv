@@ -8,7 +8,7 @@ Response PostGenerator(const Request &request, const ServConfig &config) {
 	const Location &location = config.getLocation(request.getReqTarget());
 	std::string path = checkSource(location, request.getReqTarget(), true);
 	const std::vector<std::string> &cgi_extentions = location.getCgiExtensions();
-	if (cgi_extentions.end() == find(cgi_extentions.begin(), cgi_extentions.end(), path.substr(path.rfind('.'))))
+	if (cgi_extentions.empty() || cgi_extentions.end() == find(cgi_extentions.begin(), cgi_extentions.end(), path.substr(path.rfind('.'))))
 		return Response(404);
 	try {
 		EnvironMap tmp = CgiGenerateEnv(request, config);
