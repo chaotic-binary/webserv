@@ -1,5 +1,8 @@
 #include <libc.h>
 #include "Request.h"
+
+#define BUFFER_SIZE 2048
+
 /*
 std::vector<std::string>	Request::headersList;
 
@@ -124,92 +127,114 @@ void Request::parse_headers(std::string str) {
 	}
 }
 
-int Request::parse_chunk(const int fd) {
-	int ret;
-	char buffer[2049];
+int Request::parse_chunk(const int fd, bool read_activated) {
+	int		ret;
+	char	buffer[BUFFER_SIZE + 1];
+	size_t	i;
 
 	if (!contentLength) {
-		while (raw_request.find("\r\n") == std::string::npos) {
-			if ((ret = read(fd, buffer, 1)) > 0) {
+		if (raw_request.find("\r\n") == std::string::npos) {
+			if (read_activated)
+				return 1;
+			if ((ret = read(fd_, buffer, BUFFER_SIZE)) > 0) {
 				buffer[ret] = 0x0;
+				//std::cout << "fd: " << fd_ << " rr:" << raw_request << " :rr" << std::endl;
 				raw_request += buffer;
+				//std::cout << "rr: " << raw_request << " :rr" << std::endl;
+				read_activated = true;
 			} else
 				return ret;
 		}
-		contentLength = ft::to_num(raw_request, true) + 2;
-		raw_request.clear();
+		if ((i = raw_request.find("\r\n")) != std::string::npos) {
+			contentLength = ft::to_num(raw_request, true) + 2;
+			raw_request.erase(0, i + 2);
+		}
 	}
 	if (contentLength) {
-		while (raw_request.size() != contentLength) {
-			if ((ret = read(fd, buffer, (contentLength - raw_request.size()) % 1024)) > 0) {
+		if (raw_request.size() < contentLength) {
+			if (read_activated)
+				return 1;
+			size_t read_len = (contentLength - raw_request.size()) % BUFFER_SIZE;
+			read_len = read_len ? read_len : BUFFER_SIZE;
+			if ((ret = read(fd, buffer, read_len)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
+				bzero(buffer, BUFFER_SIZE);
 			} else
 				return ret;
+			}
+		if (raw_request.size() >= contentLength) {
+			if (contentLength == 2)
+				complete = true;
+			else
+				body += raw_request.substr(0, contentLength - 2);
+			raw_request.erase(0, contentLength);
+			contentLength = 0;
 		}
-		if (contentLength == 2)
-			complete = true;
-		else
-			body += raw_request.substr(0, raw_request.size() - 2);
-		raw_request.clear();
-		contentLength = 0;
 	}
-	return ret;
+	return 1;
 }
 
-int Request::parse_body(const int fd) {
-	int ret;
-	char buffer[2049];
+int Request::parse_body(const int fd, bool read_activated) {
+	int		ret = 1;
+	char	buffer[BUFFER_SIZE + 1];
 
 	if (!chunked) {
-		while (raw_request.size() != contentLength) {
-			if ((ret = read(fd, buffer, (contentLength - raw_request.size()) % 1024)) > 0) {
+		if (raw_request.size() < contentLength) {
+			if (read_activated)
+				return 1;
+			size_t read_len = (contentLength - raw_request.size()) % BUFFER_SIZE;
+			read_len = read_len ? read_len : BUFFER_SIZE;
+			if ((ret = read(fd, buffer, read_len)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
+				bzero(buffer, BUFFER_SIZE);
 			} else
 				return ret;
 		}
-		body = raw_request;
-		raw_request.clear();
-		complete = true;
-		return ret;
-	}
-//	else {
-	while (!complete) {
-		if (!(ret = parse_chunk(fd)))
+		if (raw_request.size() >= contentLength) {
+			body = raw_request.substr(0, contentLength);
+			raw_request.erase(0, contentLength);
+			complete = true;
 			return ret;
+		}
 	}
+	if (!complete)
+		ret = parse_chunk(fd, read_activated);
 	return ret;
-//	}
 }
 
 int Request::receive() {
-	int ret;
-	char buffer[2049];
+	assert(complete == false);
+	int ret = 1;
+	char buffer[BUFFER_SIZE + 1];
 	size_t i;
+	bool read_activated = false;
 
 	if (!headersParsed) {
-		while ((ret = recv(fd_, buffer, 2048, MSG_PEEK | MSG_DONTWAIT)) > 0)
-//		while ((ret = read(fd_, buffer, 1)) > 0)
-		{
-			buffer[ret] = 0x0;
-			raw_request += buffer;
-			//std::cout << raw_request << std::endl;
-			if ((i = raw_request.find("\r\n\r\n")) != std::string::npos) {
-				parse_headers(raw_request.substr(0, i + 2));
-				raw_request.clear();
-				read(fd_, buffer, i + 4);
-				headersParsed = true;
-				break;
+		if ((i = raw_request.find("\r\n\r\n")) == std::string::npos) {
+			if ((ret = read(fd_, buffer, BUFFER_SIZE)) > 0) {
+				read_activated = true;
+				buffer[ret] = 0x0;
+				raw_request += buffer;
+				bzero(buffer, BUFFER_SIZE);
+				//std::cout << "fd: " << fd_ << " RAW<" << raw_request << ">RAW" << std::endl;
 			} else
-				read(fd_, buffer, ret);
+				return ret;
+		}
+		if ((i = raw_request.find("\r\n\r\n")) != std::string::npos) {
+			parse_headers(raw_request.substr(0, i + 2));
+			raw_request.erase(0, i + 4);
+			//	read(fd_, buffer, i + 4);
+			headersParsed = true;
+			//std::cout << "fd " << fd_ << ": !Headers parsed!" << std::endl;
 		}
 	}
 	if (headersParsed) {
-		if (contentLength || chunked)
-			return parse_body(fd_);
-		else
+		if (!contentLength && !chunked)
 			complete = true;
+		else
+			return parse_body(fd_, read_activated);
 	}
 	return ret;
 }
@@ -221,7 +246,8 @@ void Request::clear() {
 	headers.clear();
 	body.clear();
 	version.clear();
-	raw_request.clear();
+	//raw_request.clear();
+	uri_.clear();
 	contentLength = 0;
 	headersParsed = false;
 	complete = false;

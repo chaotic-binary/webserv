@@ -112,6 +112,10 @@ void Location::setUploadEnable(bool uploadEnable) {
 
 void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions) {
 	_cgiExtensions = cgiExtensions;
+	for (size_t i = 0; i < _cgiExtensions.size(); ++i) {
+		if (_cgiExtensions[i].front() != '.')
+			_cgiExtensions[i] = "." + _cgiExtensions[i];
+	}
 }
 
 void Location::setMethods(const std::vector<e_methods> &methods) {

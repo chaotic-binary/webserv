@@ -28,8 +28,8 @@ class Request {
   void	setMethodFromStr(const std::string &);
 
   void	parse_headers(std::string);
-  int	parse_body(const int fd);
-  int	parse_chunk(const int fd);
+  int parse_body(const int fd, bool read_activated);
+  int parse_chunk(const int fd, bool read_activated);
 
   Request();
 
