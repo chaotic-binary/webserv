@@ -10,7 +10,9 @@ std::string checkSource(const Location &location, const std::string &reqTarget, 
 	std::string	pathObj;
 	struct stat	sb;
 
-	pathObj = location.getRoot() + reqTarget.substr(1);
+	pathObj = location.getRoot();
+	if (reqTarget != location.getPath())
+		pathObj += reqTarget.substr(reqTarget.find("/", 1) + 1);
 	stat(pathObj.c_str(), &sb);
 	if (S_ISDIR(sb.st_mode)) {
 		pathObj += (pathObj.back() != '/') ? "/" : "";
