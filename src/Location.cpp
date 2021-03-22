@@ -155,6 +155,18 @@ static std::ostream &operator<<(std::ostream &os, const std::vector<std::string>
 	return os;
 }
 
+const std::string &Location::getPath() const {
+	return _path;
+}
+
+const char *Location::LocException::WrongMethod::what() const throw() {
+	return "Wrong method";
+}
+
+const char *Location::LocException::WrongOnOff::what() const throw() {
+	return "Wrong value: \"on\" or \"off\" required";
+}
+
 std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v) {
 	for (size_t i = 0; i < v.size(); ++i) {
 		std::vector<std::string>::const_iterator it;
@@ -179,16 +191,4 @@ std::ostream &operator<<(std::ostream &os, const Location &location) {
 	const std::vector<e_methods> &m = location.getMethods();
 	os << "\tmethods: \n" << m;
 	return os;
-}
-
-const std::string &Location::getPath() const {
-	return _path;
-}
-
-const char *Location::LocException::WrongMethod::what() const throw() {
-	return "Wrong method";
-}
-
-const char *Location::LocException::WrongOnOff::what() const throw() {
-	return "Wrong value: \"on\" or \"off\" required";
 }

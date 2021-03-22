@@ -68,10 +68,6 @@ class Location {
 	//virtual const char* what() const throw();
   };
 
-  friend std::ostream &operator<<(std::ostream &os, const Location &location);
-
-  friend std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v);
-//TODO:comment << before push
  private:
   std::string _root;
   std::string _index;
@@ -89,3 +85,6 @@ class Location {
   static std::vector<std::string> methodsParser;
 };
 
+std::ostream &operator<<(std::ostream &os, const Location &location);
+
+std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v);

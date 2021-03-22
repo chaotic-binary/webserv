@@ -128,9 +128,9 @@ void Request::parse_headers(std::string str) {
 }
 
 int Request::parse_chunk(const int fd, bool &read_activated) {
-	int		ret;
-	char	buffer[BUFFER_SIZE + 1];
-	size_t	i;
+	int ret;
+	char buffer[BUFFER_SIZE + 1];
+	size_t i;
 
 	if (!contentLength) {
 		if (raw_request.find("\r\n") == std::string::npos) {
@@ -140,7 +140,6 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				buffer[ret] = 0x0;
 				//std::cout << "fd: " << fd_ << " rr:" << raw_request << " :rr" << std::endl;
 				raw_request += buffer;
-				bzero(buffer, BUFFER_SIZE);
 				//std::cout << "rr: " << raw_request << " :rr" << std::endl;
 				read_activated = true;
 			} else
@@ -160,7 +159,6 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 			if ((ret = read(fd, buffer, read_len)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
-				bzero(buffer, BUFFER_SIZE);
 				//std::cout << "SIZE = " <<  raw_request.size() << std::endl;
 			} else
 				return ret;
@@ -180,8 +178,8 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 }
 
 int Request::parse_body(const int fd, bool read_activated) {
-	int		ret = 1;
-	char	buffer[BUFFER_SIZE + 1];
+	int ret = 1;
+	char buffer[BUFFER_SIZE + 1];
 
 	if (!chunked) {
 		if (raw_request.size() < contentLength) {
@@ -193,7 +191,6 @@ int Request::parse_body(const int fd, bool read_activated) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
 				read_activated = true;
-				bzero(buffer, BUFFER_SIZE);
 			} else
 				return ret;
 		}
@@ -203,11 +200,12 @@ int Request::parse_body(const int fd, bool read_activated) {
 			complete = true;
 			return 1;
 		}
-	} else while (!complete) {
-		ret = parse_chunk(fd, read_activated);
-		if (ret <= 0)
-			return (ret == -4) ? 1 : ret;
-	}
+	} else
+		while (!complete) {
+			ret = parse_chunk(fd, read_activated);
+			if (ret <= 0)
+				return (ret == -4) ? 1 : ret;
+		}
 	return ret;
 }
 

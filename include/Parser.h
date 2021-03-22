@@ -12,9 +12,6 @@ class Parser {
 
   const std::vector<ServConfig> &getServs() const;
 
-  friend std::ostream &operator<<(std::ostream &os, const Parser &parser);
-//TODO:comment << before push
-
   class ParserException : public std::exception {
    public:
 	class CannotOpenFile : public std::exception {
@@ -86,3 +83,4 @@ class Parser {
   static size_t to_num(const std::string &str);
 };
 
+std::ostream &operator<<(std::ostream &os, const Parser &parser);

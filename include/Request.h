@@ -1,7 +1,7 @@
 #pragma once
 
 # include "utils.h"
-# include "Location.h" //TODO::move enum from Location
+# include "Location.h"
 # include <ostream>
 # include <unistd.h>
 
@@ -25,9 +25,9 @@ class Request {
   bool complete;
   const int fd_;
 
-  void	setMethodFromStr(const std::string &);
+  void setMethodFromStr(const std::string &);
 
-  void	parse_headers(std::string);
+  void parse_headers(std::string);
   int parse_body(const int fd, bool read_activated);
   int parse_chunk(const int fd, bool &read_activated);
 
