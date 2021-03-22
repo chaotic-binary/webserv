@@ -113,7 +113,7 @@ void Request::parse_headers(const std::string &str) {
 	uri_ = reqTarget;
 	size_t i;
 	if ((i = reqTarget.find('?')) != std::string::npos) {
-		queryString = reqTarget.substr(i + 1, reqTarget.size());
+		queryString = reqTarget.substr(i + 1);
 		reqTarget.erase(i, reqTarget.size());
 	}
 }
