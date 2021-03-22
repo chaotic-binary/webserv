@@ -26,6 +26,9 @@ Response generate_response(const Request &request, const ServConfig &config) {
 			response.SetHeader("Allow", translate_methods(allowedMethods));
 			return response;
 		}
+		if ((request.getMethod() == PUT || request.getMethod() == POST)
+			&& request.getHeader("content-length").empty() && "transfer-encoding" != "chunked")
+			return Response(411);
 		return method_map.at(request.getMethod())(request, config);
 	} catch (const RespException &err_rsp) {
 		return err_rsp.GetRsp();
