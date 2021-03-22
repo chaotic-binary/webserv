@@ -5,18 +5,18 @@
 #include "Parser.h"
 #include <sys/stat.h>
 
-std::string checkSource(const Location &location, const std::string &reqTarget, bool cgi)
+std::string checkSource(const Location &location, std::string reqTarget, bool cgi)
 {
 	std::string	pathObj;
 	struct stat	sb;
 
-	pathObj = location.getRoot() + reqTarget.substr(1);
+	pathObj = location.getRoot();
+	if (reqTarget != location.getPath())
+		pathObj += reqTarget.erase(0, location.getPath().size());
 	stat(pathObj.c_str(), &sb);
 	if (S_ISDIR(sb.st_mode)) {
-		if (cgi)
-			pathObj += (pathObj.back() != '/') ? '/' + location.getIndex() : location.getCgiIndex();
-		else
-			pathObj += (pathObj.back() != '/') ? '/' + location.getIndex() : location.getIndex();
+		pathObj += (pathObj.back() != '/') ? "/" : "";
+		pathObj += cgi ? location.getCgiIndex() : location.getIndex();
 	}
 	std::ifstream file(pathObj);
 	if (!file)

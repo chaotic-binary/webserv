@@ -2,20 +2,34 @@
 #include <iostream>
 #include <response.h>
 #include <stdexcept>
-#include <fstream>
 #include <methods.h>
 
+std::vector<std::string> translate_methods(const std::vector<e_methods> &allowed_methods) {
+	std::vector<std::string> ans;
+
+	for (size_t i = 0; i < allowed_methods.size(); i++)
+		ans.push_back(ft::to_str(allowed_methods[i]));
+	return ans;
+}
 
 Response generate_response(const Request &request, const ServConfig &config) {
 	try {
+		const Location &location = config.getLocation(request.getReqTarget());
+		if (request.getBody().size() > location.getMaxBody())
+			return Response(413);
+		if (!method_map.count(request.getMethod()))
+			return Response(501);
+		const std::vector<e_methods> &allowedMethods = location.getMethods();
+		if (allowedMethods.empty() ||
+			allowedMethods.end() == find(allowedMethods.begin(), allowedMethods.end(), request.getMethod())) {
+			Response response(405);
+			response.SetHeader("Allow", translate_methods(allowedMethods));
+			return response;
+		}
 		return method_map.at(request.getMethod())(request, config);
-	} catch (const std::out_of_range& ex) {
-		return Response(501);
-	} catch(const RespException &err_rsp)
-	{
+	} catch (const RespException &err_rsp) {
 		return err_rsp.GetRsp();
-	} catch(...)
-	{
+	} catch (...) {
 		return Response(500);
 	}
 }
@@ -25,11 +39,11 @@ bool Client::response() {
 		return false;
 
 	Response rsp;
-	if(req_.isComplete())
+	if (req_.isComplete())
 		rsp = generate_response(req_, serv_);
 	else
 		rsp = Response(400);
-
+	std::cout << "============" << rsp.GetCode() << "============" << std::endl;
 	this->raw_send(rsp.Generate());
 	status_ = READY_TO_READ;
 	try {

@@ -1,23 +1,19 @@
-#include "../include/Location.h"
+#include "Location.h"
 
 Location::Location()
-		: _maxBody(DEF_MAX_BODY),
-		  _autoindex(false),
-		  _uploadEnable(false)
-{}
+	: _maxBody(DEF_MAX_BODY),
+	  _autoindex(false),
+	  _uploadEnable(false) {}
 
-Location::Location(const Location &copy)
-{
+Location::Location(const Location &copy) {
 	*this = copy;
 }
 
-Location::~Location()
-{}
+Location::~Location() {}
 
 std::vector<std::string> Location::methodsParser;
 
-void Location::initMethodsParser()
-{
+void Location::initMethodsParser() {
 	methodsParser.push_back("GET");
 	methodsParser.push_back("HEAD");
 	methodsParser.push_back("POST");
@@ -28,128 +24,107 @@ void Location::initMethodsParser()
 	methodsParser.push_back("TRACE");
 }
 
-const std::string &Location::getName() const
-{
+const std::string &Location::getName() const {
 	return _path;
 }
 
-const std::string &Location::getRoot() const
-{
+const std::string &Location::getRoot() const {
 	return _root;
 }
 
-const std::string &Location::getIndex() const
-{
+const std::string &Location::getIndex() const {
 	return _index;
 }
 
-const std::string &Location::getCgiIndex() const
-{
+const std::string &Location::getCgiIndex() const {
 	return _cgi_index;
 }
 
-const std::string &Location::getCgiPath() const
-{
+const std::string &Location::getCgiPath() const {
 	return _cgiPath;
 }
 
-const std::string &Location::getUploadPath() const
-{
+const std::string &Location::getUploadPath() const {
 	return _uploadPath;
 }
 
-size_t Location::getMaxBody() const
-{
+size_t Location::getMaxBody() const {
 	return _maxBody;
 }
 
-bool Location::getAutoindex() const
-{
+bool Location::getAutoindex() const {
 	return _autoindex;
 }
 
-bool Location::getUploadEnable() const
-{
+bool Location::getUploadEnable() const {
 	return _uploadEnable;
 }
 
-const std::vector<std::string> &Location::getCgiExtensions() const
-{
+const std::vector<std::string> &Location::getCgiExtensions() const {
 	return _cgiExtensions;
 }
 
-const std::vector<e_methods> &Location::getMethods() const
-{
+const std::vector<e_methods> &Location::getMethods() const {
 	return _methods;
 }
 
-const std::vector<std::string> &Location::getMethodsParser()
-{
+const std::vector<std::string> &Location::getMethodsParser() {
 	return methodsParser;
 }
 
-void Location::setName(const std::string &name)
-{
+void Location::setName(const std::string &name) {
 	_path = name;
 }
 
-void Location::setRoot(const std::string &root)
-{
+void Location::setRoot(const std::string &root) {
 	_root = root;
 	if (_root.back() != '/')
 		_root += '/';
 }
 
-void Location::setIndex(const std::string &index)
-{
+void Location::setIndex(const std::string &index) {
 	_index = index;
 }
 
-void Location::setCgiIndex(const std::string &index)
-{
+void Location::setCgiIndex(const std::string &index) {
 	_cgi_index = index;
 }
-void Location::setCgiPath(const std::string &cgiPath)
-{
+void Location::setCgiPath(const std::string &cgiPath) {
 	_cgiPath = cgiPath;
 }
 
-void Location::setUploadPath(const std::string &uploadPath)
-{
+void Location::setUploadPath(const std::string &uploadPath) {
 	_uploadPath = uploadPath;
 }
 
-void Location::setMaxBody(size_t maxBody)
-{
+void Location::setMaxBody(size_t maxBody) {
 	_maxBody = maxBody;
 	//TODO: check max min range?
 }
 
-void Location::setAutoindex(bool autoindex)
-{
+void Location::setAutoindex(bool autoindex) {
 	_autoindex = autoindex;
 }
 
-void Location::setUploadEnable(bool uploadEnable)
-{
+void Location::setUploadEnable(bool uploadEnable) {
 	_uploadEnable = uploadEnable;
 }
 
-void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions)
-{
+void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions) {
 	_cgiExtensions = cgiExtensions;
+	for (size_t i = 0; i < _cgiExtensions.size(); ++i) {
+		if (_cgiExtensions[i].front() != '.')
+			_cgiExtensions[i] = "." + _cgiExtensions[i];
+	}
 }
 
-void Location::setMethods(const std::vector<e_methods> &methods)
-{
+void Location::setMethods(const std::vector<e_methods> &methods) {
 	_methods = methods;
 }
 
-void Location::setMethodsFromStr(const std::vector<std::string> &methods)
-{
+void Location::setMethodsFromStr(const std::vector<std::string> &methods) {
 	std::vector<std::string>::const_iterator it;
-	for (size_t i = 0; i < methods.size(); ++i)
-	{
+	for (size_t i = 0; i < methods.size(); ++i) {
 		if ((it = find(methodsParser.begin(), methodsParser.end(), methods[i])) != methodsParser.end())
 			_methods.push_back(static_cast<e_methods>(it - methodsParser.begin()));
 		else
@@ -157,18 +132,15 @@ void Location::setMethodsFromStr(const std::vector<std::string> &methods)
 	}
 }
 
-void Location::setAutoindexFromStr(const std::string &str)
-{
+void Location::setAutoindexFromStr(const std::string &str) {
 	setAutoindex(getBoolFromStr(str));
 }
 
-void Location::setUploadEnableFromStr(const std::string &str)
-{
+void Location::setUploadEnableFromStr(const std::string &str) {
 	setUploadEnable(getBoolFromStr(str));
 }
 
-bool Location::getBoolFromStr(const std::string &str)
-{
+bool Location::getBoolFromStr(const std::string &str) {
 	if (str == "on")
 		return (true);
 	else if (str == "off")
@@ -177,17 +149,26 @@ bool Location::getBoolFromStr(const std::string &str)
 		throw LocException::WrongOnOff();
 }
 
-static std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v)
-{
+static std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v) {
 	for (size_t i = 0; i < v.size(); ++i)
 		os << "\t\t" << v[i] << std::endl;
 	return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v)
-{
-	for (size_t i = 0; i < v.size(); ++i)
-	{
+const std::string &Location::getPath() const {
+	return _path;
+}
+
+const char *Location::LocException::WrongMethod::what() const throw() {
+	return "Wrong method";
+}
+
+const char *Location::LocException::WrongOnOff::what() const throw() {
+	return "Wrong value: \"on\" or \"off\" required";
+}
+
+std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v) {
+	for (size_t i = 0; i < v.size(); ++i) {
 		std::vector<std::string>::const_iterator it;
 		std::vector<std::string> methods = Location::getMethodsParser();
 		os << "\t\t" << methods.at(v[i]) << std::endl;
@@ -195,13 +176,12 @@ std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v)
 	return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const Location &location)
-{
+std::ostream &operator<<(std::ostream &os, const Location &location) {
 	os << "\tname: " << location.getName() << std::endl;
 	os << "\troot: " << location.getRoot() << std::endl;
 	os << "\tindex: " << location.getIndex() << std::endl;
-	os << "\tindex: " << location.getCgiIndex() << std::endl;
 	os << "\tcgi_path: " << location.getCgiPath() << std::endl;
+	os << "\tcgi_index: " << location.getCgiIndex() << std::endl;
 	os << "\tupload_path: " << location.getUploadPath() << std::endl;
 	os << "\tmax body: " << location.getMaxBody() << std::endl;
 	os << "\tautoindex: " << (location.getAutoindex() ? "on" : "off") << std::endl;
@@ -211,19 +191,4 @@ std::ostream &operator<<(std::ostream &os, const Location &location)
 	const std::vector<e_methods> &m = location.getMethods();
 	os << "\tmethods: \n" << m;
 	return os;
-}
-
-const std::string &Location::getPath() const
-{
-	return _path;
-}
-
-const char *Location::LocException::WrongMethod::what() const throw()
-{
-	return "Wrong method";
-}
-
-const char *Location::LocException::WrongOnOff::what() const throw()
-{
-	return "Wrong value: \"on\" or \"off\" required";
 }

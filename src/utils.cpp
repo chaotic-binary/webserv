@@ -2,20 +2,17 @@
 #include <algorithm>
 #include "utils.h"
 
-bool ft::isalldigits(const std::string &str)
-{
+bool ft::isalldigits(const std::string &str) {
 	return (str.find_first_not_of("0123456789") == std::string::npos);
 }
 
-void ft::ws_to_tab(std::string &str)
-{
+void ft::ws_to_tab(std::string &str) {
 	for (size_t i = 0; i < str.size(); ++i)
 		if (str[i] == ' ')
 			str[i] = '\t';
 }
 
-void ft::trim(std::string &str, char c)
-{
+void ft::trim(std::string &str, char c) {
 	str.erase(0, str.find_first_not_of(c));
 	str.erase(str.find_last_not_of(c) + 1);
 }
@@ -27,8 +24,7 @@ void ft::trim(std::string &str, char c)
 			str.erase(it);
 }*/
 
-size_t ft::to_num(const std::string &str, bool hex)
-{
+size_t ft::to_num(const std::string &str, bool hex) {
 	size_t n;
 	std::stringstream ss(str);
 
@@ -41,23 +37,21 @@ size_t ft::to_num(const std::string &str, bool hex)
 	return (n);
 }
 
-std::istream &ft::getline(std::istream &ifs, std::string &line)
-{
+std::istream &ft::getline(std::istream &ifs, std::string &line) {
 	char ch;
+
 	line.clear();
 	while (ifs.get(ch) && ch != '\n')
 		line.push_back(ch);
 	return ifs;
 }
 
-std::vector<std::string> ft::split(const std::string &str, const char delim)
-{
+std::vector<std::string> ft::split(const std::string &str, const char delim) {
 	size_t start;
 	size_t end = 0;
 	std::vector<std::string> res;
 
-	while (end != std::string::npos)
-	{
+	while (end != std::string::npos) {
 		start = str.find_first_not_of(delim, end);
 		end = str.find_first_of(delim, start);
 		if (start != std::string::npos || end != std::string::npos)
@@ -66,40 +60,16 @@ std::vector<std::string> ft::split(const std::string &str, const char delim)
 	return res;
 }
 
-void ft::tolower(std::string &s)
-{
-	transform(s.begin(), s.end(), s.begin(), ::tolower);
+std::string ft::to_str(e_methods method) {
+	return Location::getMethodsParser().at(method);
 }
 
-std::string ft::to_str(e_methods m)
-{
-	return Location::getMethodsParser().at(m);
-}
-
-struct char_to_lower
-{
-  char operator()(char c)
-  {
-	  return std::tolower(c);
-  }
-};
-
-struct char_to_upper
-{
-  char operator()(char c)
-  {
-	  return std::toupper(c);
-  }
-};
-
-std::string ft::to_upper(std::string data)
-{
-	std::transform(data.begin(), data.end(), data.begin(), char_to_upper());
+std::string ft::toupper(std::string data) {
+	transform(data.begin(), data.end(), data.begin(), ::toupper);
 	return data;
 }
 
-std::string ft::to_lower(std::string data)
-{
-	std::transform(data.begin(), data.end(), data.begin(), char_to_lower());
+std::string ft::tolower(std::string data) {
+	transform(data.begin(), data.end(), data.begin(), ::tolower);
 	return data;
 }

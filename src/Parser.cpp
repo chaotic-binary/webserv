@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Parser.h"
 
 std::map<std::string, void (*)(const std::vector<std::string> &, ServConfig &)> Parser::servParser;
@@ -143,9 +144,9 @@ Parser::Parser(char *file) {
 	addMainAndDefaults(main);
 }
 
-Parser::Parser() { }
+Parser::Parser() {}
 
-Parser::~Parser() { }
+Parser::~Parser() {}
 
 Parser::Parser(const Parser &copy) {
 	*this = copy;
@@ -238,23 +239,22 @@ void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
 }
 
 void Parser::parseMaxBody(std::string &val, Location &loc) {
-	//TODO: DELETE MAGIC NUMBERS PLS ;)
+	static const size_t KB = pow(2, 10);
+	static const size_t MB = pow(2, 20);
+	static const size_t GB = pow(2, 30);
 	size_t n = 1;
 	char letter = val.back();
+
 	if (!std::isdigit(letter)) {
 		letter = toupper(letter);
 		switch (letter) {
-			case 'K':
-				n = 1024;
+			case 'K': n = KB;
 				break;
-			case 'M' :
-				n = 1048576;
+			case 'M' : n = MB;
 				break;
-			case 'G' :
-				n = 1073741824;
+			case 'G' : n = GB;
 				break;
-			default:
-				throw ParserException::InvalidData(line_num);
+			default: throw ParserException::InvalidData(line_num);
 				break;
 		}
 		val = val.substr(0, val.find_first_not_of("0123456789"));
@@ -264,15 +264,27 @@ void Parser::parseMaxBody(std::string &val, Location &loc) {
 }
 
 void Parser::addMainAndDefaults(const ServConfig &main) {
+	std::vector<Location> locs;
+
 	for (size_t i = 0; i < _servs.size(); ++i) {
-		if (_servs[i].getRoot().empty())
-			_servs[i].setRoot(main.getRoot());
 		if (_servs[i].getErrorPages().empty())
 			_servs[i].setErrorPages(main.getErrorPages());
 		if (!main.getLocations().empty()) {
-			std::vector<Location> locs = main.getLocations();
+			locs = main.getLocations();
 			for (size_t l = 0; l < locs.size(); ++l)
 				_servs[i].addLocation(locs[l]);
+		}
+		locs = _servs[i].getLocations();
+		for (size_t l = 0; l < locs.size(); ++l) {
+			if (locs[l].getRoot().empty()) {
+				if (_servs[i].getRoot().empty()) {
+					if (main.getRoot().empty())
+						throw ParserException::NoRoot();
+					else
+						_servs[i].updateLocationRoot(l, main.getRoot());
+				} else
+					_servs[i].updateLocationRoot(l, _servs[i].getRoot());
+			}
 		}
 		if (!_servs[i].getPort())
 			main.getPort() ? _servs[i].setPort(main.getPort()) : _servs[i].setPort(80);
@@ -331,4 +343,8 @@ std::ostream &operator<<(std::ostream &os, const Parser &parser) {
 
 const char *Parser::ParserException::CannotOpenFile::what() const throw() {
 	return "Cannot open file";
+}
+
+const char *Parser::ParserException::NoRoot::what() const throw() {
+	return "No root information";
 }

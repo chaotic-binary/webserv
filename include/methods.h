@@ -1,13 +1,12 @@
 #pragma once
 
 #include "GetMethod.h"
-#include "PostMethod.h"
-
 #include <map>
+
 Response GetGenerator(const Request &request, const ServConfig &config);
 Response HeadGenerator(const Request &request, const ServConfig &config);
 Response PutGenerator(const Request &request, const ServConfig &config);
-
+Response PostGenerator(const Request &request, const ServConfig &config);
 
 typedef Response (*func)(const Request&, const ServConfig&);
 

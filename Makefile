@@ -1,37 +1,50 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: mizola <mizola@student.21-school.ru>       +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2020/10/01 09:16:47 by mizola            #+#    #+#              #
-#    Updated: 2020/11/19 05:25:01 by mizola           ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+NAME		=	webserv
 
-all:
-			make -C test
-			make -C Client
-			mv test/serverV1 ./
-			mv Client/clientV1 ./
+SRC			=	main.cpp\
+				Server.cpp \
+				Parser.cpp \
+				ServConfig.cpp \
+				Location.cpp \
+				utils.cpp \
+				Cgi.cpp \
+				Request.cpp \
+				Client.cpp \
+				MimeTypes.cpp \
+				response.cpp \
+				method_utils.cpp \
+				GetMethod.cpp \
+				methods.cpp \
+				PostMethod.cpp \
+				methods.cpp \
+				HeadMethod.cpp \
+				PutMethod.cpp
+
+BIN			=	./bin
+OBJ			=	$(addprefix $(BIN)/, $(SRC:cpp=o))
+DEP			=	$(OBJ:%.o=%.d)
+CC			=	clang++
+FLAGS		=	-Wall -Wextra -Werror -std=c++98
+
+.PHONY: all clean fclean re
+
+all: $(NAME)
+
+$(BIN)/%.o:./src/%.cpp  | $(BIN)
+	$(CC) $(FLAGS) -MMD -I./include -c $< -o $@
+
+$(NAME): $(OBJ)
+	$(CC) $(FLAGS) $^ -o $@
+
+-include $(DEP)
+
+$(BIN):
+	@mkdir $(BIN)
 
 clean:
-			make -C test clean
-			make -C Client clean
-			rm -rf  *.o
+	@rm -rf $(BIN)
+	@echo "$(NAME) object files deleted"
 
-fclean:
-			make -C test fclean
-			make -C Client fclean
-			rm -rf serverV1 clientV1 a.out
+fclean: clean
+	@rm -f $(NAME)
 
-free: fclean
-			rm -rf *.o src/*.o
-
-run: all
-			./serverV1 config/test.conf
-s:
-			wc *.cpp *.h *.hpp
-
-.PHONY:		all clean fclean re s server
+re: fclean all

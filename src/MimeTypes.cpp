@@ -1,13 +1,20 @@
 #include "mimeTypes.h"
-#include <string>
 #include <map>
+#include <exception>
 
 std::string getMimeType(const std::string &file) {
 	static std::map<std::string, std::string> mimeTypes;
 	if (mimeTypes.empty())
 		initMimeType(mimeTypes); //TODO: ???
-	std::string exp = file.substr(file.rfind('.'));
-	std::string res;
+	std::string exp, res;
+	try {
+		exp = file.substr(file.rfind('.'));
+	}
+	catch (std::exception &e)
+	{
+		res = "text/plain";
+		return res;
+	}
 	if (mimeTypes.count(exp)) {
 		res = mimeTypes[exp];
 	} else
