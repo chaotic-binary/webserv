@@ -8,7 +8,7 @@
 #include "Cgi.h"
 
 Response PostGenerator(const Request &request, const ServConfig &config) {
-	Response rsp(201);
+	Response rsp(200);
 	const Location& location = config.getLocation(request.getReqTarget());
 	std::string path = checkSource(location, request.getReqTarget(), true);
 	const std::vector<std::string>& cgi_extentions = location.getCgiExtensions();
