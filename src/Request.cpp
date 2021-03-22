@@ -205,10 +205,8 @@ int Request::parse_body(const int fd, bool read_activated) {
 		}
 	} else while (!complete) {
 		ret = parse_chunk(fd, read_activated);
-		if (ret == -4)
-			return 1;
-		else if (ret == -1)
-			return ret;
+		if (ret <= 0)
+			return (ret == -4) ? 1 :  ret;
 	}
 	return ret;
 }
