@@ -206,7 +206,7 @@ int Request::parse_body(const int fd, bool read_activated) {
 	} else while (!complete) {
 		ret = parse_chunk(fd, read_activated);
 		if (ret <= 0)
-			return (ret == -4) ? 1 :  ret;
+			return (ret == -4) ? 1 : ret;
 	}
 	return ret;
 }
