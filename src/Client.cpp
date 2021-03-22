@@ -27,7 +27,7 @@ Response generate_response(const Request &request, const ServConfig &config) {
 			return response;
 		}
 		if ((request.getMethod() == PUT || request.getMethod() == POST)
-			&& request.getHeader("content-length").empty() && "transfer-encoding" != "chunked")
+			&& request.getHeader("content-length").empty() && request.getHeader("transfer-encoding") != "chunked")
 			return Response(411);
 		return method_map.at(request.getMethod())(request, config);
 	} catch (const RespException &err_rsp) {
