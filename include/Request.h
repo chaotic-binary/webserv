@@ -29,7 +29,7 @@ class Request {
 
   void	parse_headers(std::string);
   int parse_body(const int fd, bool read_activated);
-  int parse_chunk(const int fd, bool read_activated);
+  int parse_chunk(const int fd, bool &read_activated);
 
   Request();
 

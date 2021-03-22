@@ -1,7 +1,7 @@
 #include <libc.h>
 #include "Request.h"
 
-#define BUFFER_SIZE 2048
+#define BUFFER_SIZE 10000
 
 /*
 std::vector<std::string>	Request::headersList;
@@ -127,7 +127,7 @@ void Request::parse_headers(std::string str) {
 	}
 }
 
-int Request::parse_chunk(const int fd, bool read_activated) {
+int Request::parse_chunk(const int fd, bool &read_activated) {
 	int		ret;
 	char	buffer[BUFFER_SIZE + 1];
 	size_t	i;
@@ -135,11 +135,12 @@ int Request::parse_chunk(const int fd, bool read_activated) {
 	if (!contentLength) {
 		if (raw_request.find("\r\n") == std::string::npos) {
 			if (read_activated)
-				return 1;
+				return -4;
 			if ((ret = read(fd_, buffer, BUFFER_SIZE)) > 0) {
 				buffer[ret] = 0x0;
 				//std::cout << "fd: " << fd_ << " rr:" << raw_request << " :rr" << std::endl;
 				raw_request += buffer;
+				bzero(buffer, BUFFER_SIZE);
 				//std::cout << "rr: " << raw_request << " :rr" << std::endl;
 				read_activated = true;
 			} else
@@ -153,13 +154,14 @@ int Request::parse_chunk(const int fd, bool read_activated) {
 	if (contentLength) {
 		if (raw_request.size() < contentLength) {
 			if (read_activated)
-				return 1;
+				return -4;
 			size_t read_len = (contentLength - raw_request.size()) % BUFFER_SIZE;
 			read_len = read_len ? read_len : BUFFER_SIZE;
 			if ((ret = read(fd, buffer, read_len)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
 				bzero(buffer, BUFFER_SIZE);
+				//std::cout << "SIZE = " <<  raw_request.size() << std::endl;
 			} else
 				return ret;
 		}
@@ -168,6 +170,7 @@ int Request::parse_chunk(const int fd, bool read_activated) {
 				complete = true;
 			else
 				body += raw_request.substr(0, contentLength - 2);
+			//std::cout << "BOSY SIZE = " <<  body.size() << std::endl;
 			raw_request.erase(0, contentLength);
 			contentLength = 0;
 			return 1;
@@ -189,6 +192,7 @@ int Request::parse_body(const int fd, bool read_activated) {
 			if ((ret = read(fd, buffer, read_len)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
+				read_activated = true;
 				bzero(buffer, BUFFER_SIZE);
 			} else
 				return ret;
@@ -199,8 +203,13 @@ int Request::parse_body(const int fd, bool read_activated) {
 			complete = true;
 			return 1;
 		}
-	} else if (!complete)
+	} else while (!complete) {
 		ret = parse_chunk(fd, read_activated);
+		if (ret == -4)
+			return 1;
+		else if (ret == -1)
+			return ret;
+	}
 	return ret;
 }
 
