@@ -27,7 +27,7 @@ class Request {
 
   void setMethodFromStr(const std::string &);
 
-  void parse_headers(std::string);
+  void parse_headers(const std::string &str);
   int parse_body(const int fd, bool read_activated);
   int parse_chunk(const int fd, bool &read_activated);
 
