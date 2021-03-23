@@ -100,7 +100,7 @@ void Server::checkClients()
 	{
 		if (FD_ISSET((*it)->getFd(), &_readFds))
 			(*it)->receive();
-
+//TODO: one per time
 		if (FD_ISSET((*it)->getFd(), &_writeFds))
 			(*it)->response();
 

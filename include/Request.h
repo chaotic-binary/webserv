@@ -6,7 +6,7 @@
 # include <unistd.h>
 
 enum e_client_status {
-  CLOSE_CONNECTION, READY_TO_READ, READY_TO_SEND
+  CLOSE_CONNECTION, READY_TO_READ, READY_TO_SEND, SENDING
 };
 
 class Request {
