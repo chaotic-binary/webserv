@@ -7,3 +7,4 @@
 dockerCont
 bin
 /www/puts/put_test/
+*.tmp

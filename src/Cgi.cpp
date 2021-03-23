@@ -153,8 +153,6 @@ std::string CgiEx(const std::string &cgi,
 			buff[ret] = '\0';
 			total += buff; //TODO: Maybe i need only one
 		}
-
-		total.erase(0, total.find("\r\n\r\n") + 4); //TODO: PARSE! eto #kostil
 		return total;
 	}
 }

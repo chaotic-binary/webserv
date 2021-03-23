@@ -6,7 +6,7 @@
 
 class Parser {
  public:
-  Parser(char *file);
+  explicit Parser(char *file);
   Parser(const Parser &copy);
   ~Parser();
 
@@ -23,7 +23,7 @@ class Parser {
 	  UnknownParam();
 
 	 public:
-	  UnknownParam(int line) : std::logic_error("Unknown parameter: line:" + ft::to_str(line)) {};
+	  explicit UnknownParam(int line) : std::logic_error("Unknown parameter: line:" + ft::to_str(line)) {};
 	};
 
 	class InvalidData : public std::logic_error {
@@ -31,7 +31,7 @@ class Parser {
 	  InvalidData();
 
 	 public:
-	  InvalidData(int line) : std::logic_error("Invalid data format: line:" + ft::to_str(line)) {};
+	  explicit InvalidData(int line) : std::logic_error("Invalid data format: line:" + ft::to_str(line)) {};
 	};
 
 	class BraceExpected : public std::logic_error {
@@ -39,7 +39,7 @@ class Parser {
 	  BraceExpected();
 
 	 public:
-	  BraceExpected(int line) : std::logic_error("Brace expected: line:" + ft::to_str(line)) {};
+	  explicit BraceExpected(int line) : std::logic_error("Brace expected: line:" + ft::to_str(line)) {};
 	};
 
 	class NoRoot : public std::exception {

@@ -69,6 +69,9 @@ void Response::SetHeader(const std::string &title, const std::vector<std::string
 int Response::GetCode() const {
 	return code_;
 }
+void Response::SetCode(int code) {
+	code_ = code;
+}
 const Response &RespException::GetRsp() const {
 	return rsp_;
 }

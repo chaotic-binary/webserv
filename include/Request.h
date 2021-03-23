@@ -34,7 +34,7 @@ class Request {
   Request();
 
  public:
-  Request(const int fd);
+  explicit Request(const int fd);
   virtual ~Request();
 
   e_methods getMethod() const;
@@ -52,7 +52,7 @@ class Request {
 	InvalidFormat();
 
    public:
-	InvalidFormat(int line) : std::logic_error("Invalid data format: line:" + ft::to_str(line)) {};
+	explicit InvalidFormat(int line) : std::logic_error("Invalid data format: line:" + ft::to_str(line)) {};
   };
 
   class DuplicateHeader : public std::logic_error {
@@ -60,7 +60,7 @@ class Request {
 	DuplicateHeader();
 
    public:
-	DuplicateHeader(std::string name) : std::logic_error("Duplicate header: " + name) {};
+	explicit DuplicateHeader(std::string name) : std::logic_error("Duplicate header: " + name) {};
   };
 
   class HeaderNotPresent : public std::logic_error {
@@ -68,7 +68,7 @@ class Request {
 	HeaderNotPresent();
 
    public:
-	HeaderNotPresent(std::string name) : std::logic_error("Header \"" + name + "\" not present") {};
+	explicit HeaderNotPresent(std::string name) : std::logic_error("Header \"" + name + "\" not present") {};
   };
 
   int receive();
