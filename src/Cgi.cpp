@@ -67,7 +67,6 @@ std::map<std::string, std::string> CgiGenerateEnv(const Request &request, const 
 	env["AUTH_TYPE"] = authType;
 
 	env["PATH_INFO"] = request.getReqTarget();
-	//std::cerr << "PATH_INFO" << env["PATH_INFO"] << std::endl;
 	env["PATH_TRANSLATED"] = env["PATH_INFO"]; //TODO:: ?
 	env["REMOTE_ADDR"] = ""; //TODO:: ?
 	env["REMOTE_IDENT"] = ""; //TODO:: ?
@@ -111,6 +110,7 @@ bool check_fd(int fd) {
 	else
 		return false;
 }
+
 std::string CgiEx(const std::string &cgi,
 				  const std::string &script,
 				  const std::string &input,
