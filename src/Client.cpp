@@ -45,17 +45,16 @@ bool Client::response() {
 	Response rsp;
 	if (req_.isComplete())
 		rsp = generate_response(req_, serv_);
-	else
+	else {
 		rsp = Response(400);
+	}
 	if(rsp.GetCode() != 200)
 		std::cout << "============" << rsp.GetCode() << "============" << std::endl;
 	this->raw_send(rsp.Generate());
-	status_ = READY_TO_READ;
+	status_ = req_.isComplete() ? READY_TO_READ : CLOSE_CONNECTION;
 	gettimeofday(&tv_, NULL);
-	try {
-		if (req_.getHeaders().at("connection") == "close")
-			status_ = CLOSE_CONNECTION;
-	} catch (const std::out_of_range &) {}
+	if (req_.getHeader("connection") == "close")
+		status_ = CLOSE_CONNECTION;
 	req_.clear();
 	return status_ == CLOSE_CONNECTION;
 }
@@ -86,7 +85,6 @@ void Client::receive() {
 		std::cout << e.what() << std::endl;
 	}
 }
-__deprecated Client::Client(const ServConfig &serv, int fd) : serv_(serv), fd_(fd), status_(READY_TO_READ), req_(fd) {}
 
 Client::~Client() {
 	close(fd_);
@@ -96,4 +94,29 @@ Client::Client(const ServConfig &serv, int fd, const sockaddr_in &clientAddr)
 	: serv_(serv), fd_(fd), status_(READY_TO_READ), req_(fd), _clientAddr(clientAddr) {
 	gettimeofday(&tv_, NULL);
 }
+
+void Client::check() {
+	struct timeval cur;
+	gettimeofday(&cur, NULL);
+	if(cur.tv_sec  - tv_.tv_sec > 120) //TODO: delete magic number
+		status_ = CLOSE_CONNECTION;
+}
+
+void Client::raw_send(const std::string &msg) const {
+	static const size_t MAX_CHUNK_SIZE = pow(2, 20);
+	size_t sended = 0;
+	if (sended < msg.size()) {
+		ssize_t chunk_size = std::min(msg.size() - sended, MAX_CHUNK_SIZE);
+		ssize_t ret = send(fd_, &(msg.c_str()[sended]), chunk_size, 0); //TODO check send ret
+		if(ret <= 0)
+			std::cerr << "ERROR SEND: " << ret << std::endl;
+		else
+			sended += ret;
+	}
+}
+
+e_client_status Client::GetStatus() {
+	return status_;
+}
+
 
