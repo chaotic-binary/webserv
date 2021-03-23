@@ -82,37 +82,27 @@ void Request::parse_headers(const std::string &str) {
 
 	ft::trim(lines[0], '\r');
 	v = ft::split(lines[0], ' ');
-	if (v.size() != 3) {
-		raw_request.clear();
+	if (v.size() != 3)
 		throw InvalidFormat(1);
-	}
-	if (v[2].find("HTTP/") != 0) {
-		raw_request.clear();
+	if (v[2].find("HTTP/") != 0)
 		throw InvalidFormat(1);
-	}
 	setMethodFromStr(v[0]);
 	reqTarget = v[1];
 	version = v[2];
 	for (size_t i = 1; i < lines.size(); ++i) {
-		if ((newPos = lines[i].find_first_of(':')) == std::string::npos) {
-			raw_request.clear();
+		if ((newPos = lines[i].find_first_of(':')) == std::string::npos)
 			throw InvalidFormat(i + 1);
-		}
 		std::string tmp = lines[i].substr(0, newPos);
 		tmp = ft::tolower(tmp);
 		if (headers.count(tmp)) {
-			if ((tmp == "host" || tmp == "content-length")) {
-				raw_request.clear();
+			if ((tmp == "host" || tmp == "content-length"))
 				throw DuplicateHeader(tmp);
-			}
 			//TODO:other headers?
 		}
 		headers[tmp] = lines[i].substr(newPos + 2, lines[i].size() - 3 - newPos);
 	}
-	if (headers.find("host") == headers.end()) {
-		raw_request.clear();
+	if (headers.find("host") == headers.end())
 		throw HeaderNotPresent("host");
-	}
 	std::map<std::string, std::string>::const_iterator it;
 	for (it = headers.begin(); it != headers.end(); ++it) {
 		if (it->first == "content-length")
@@ -223,14 +213,15 @@ int Request::receive() {
 				read_activated = true;
 				buffer[ret] = 0x0;
 				raw_request += buffer;
-				//bzero(buffer, BUFFER_SIZE);
+				bzero(buffer, BUFFER_SIZE);
 				//std::cout << "fd: " << fd_ << " RAW<" << raw_request << ">RAW" << std::endl;
 			} else
 				return ret;
 		}
 		if ((i = raw_request.find("\r\n\r\n")) != std::string::npos) {
-			parse_headers(raw_request.substr(0, i + 2));
+			std::string headers_str = raw_request.substr(0, i + 2);
 			raw_request.erase(0, i + 4);
+			parse_headers(headers_str);
 			//	read(fd_, buffer, i + 4);
 			headersParsed = true;
 			//std::cout << "fd " << fd_ << ": !Headers parsed!" << std::endl;
