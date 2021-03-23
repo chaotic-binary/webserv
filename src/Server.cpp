@@ -47,7 +47,7 @@ void Server::initSockets()
 			throw Error("setsockopt");
 		if (bind(this->_servers[i].getSockFd(), (struct sockaddr *) &this->_servers[i].getSockAddr(), sizeof(sockaddr)) == -1)
 			throw Error("bind, maybe port busy");
-		if (listen(this->_servers[i].getSockFd(), 10) < 0)
+		if (listen(this->_servers[i].getSockFd(), -1) < 0)
 			throw Error("listen on socket");
 	}
 }
@@ -68,7 +68,7 @@ void Server::newClient(int indexServer)
 
 int Server::getMaxSockFd() const
 {
-	int maxFd = -1;
+int maxFd = -1;
 	for (size_t i = 0; i < this->_amountServers; ++i)
 		maxFd = std::max(_servers[i].getSockFd(), maxFd);
 
@@ -103,6 +103,8 @@ void Server::checkClients()
 
 		if (FD_ISSET((*it)->getFd(), &_writeFds))
 			(*it)->response();
+
+		(*it)->check();
 
 		if((*it)->GetStatus() == CLOSE_CONNECTION)
 			_clients.erase(it);

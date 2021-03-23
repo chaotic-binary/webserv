@@ -3,6 +3,7 @@
 #include <response.h>
 #include <stdexcept>
 #include <methods.h>
+#include <sys/time.h>
 
 std::vector<std::string> translate_methods(const std::vector<e_methods> &allowed_methods) {
 	std::vector<std::string> ans;
@@ -46,9 +47,11 @@ bool Client::response() {
 		rsp = generate_response(req_, serv_);
 	else
 		rsp = Response(400);
-	std::cout << "============" << rsp.GetCode() << "============" << std::endl;
+	if(rsp.GetCode() != 200)
+		std::cout << "============" << rsp.GetCode() << "============" << std::endl;
 	this->raw_send(rsp.Generate());
 	status_ = READY_TO_READ;
+	gettimeofday(&tv_, NULL);
 	try {
 		if (req_.getHeaders().at("connection") == "close")
 			status_ = CLOSE_CONNECTION;
@@ -72,8 +75,8 @@ void Client::receive() {
 		req_.receive();
 		if (req_.isComplete()) {
 			status_ = READY_TO_SEND;
-			std::cout << "<REQUEST\n" << req_ << std::endl;
-			std::cout << "REQUEST>\n"; //test
+			//std::cout << "<REQUEST\n" << req_ << std::endl;
+			//std::cout << "REQUEST>\n"; //test
 			//std::cout << "Method: " << ft::to_str(req_.getMethod()) << std::endl;//
 		}
 	}
@@ -90,5 +93,7 @@ Client::~Client() {
 }
 
 Client::Client(const ServConfig &serv, int fd, const sockaddr_in &clientAddr)
-	: serv_(serv), fd_(fd), status_(READY_TO_READ), req_(fd), _clientAddr(clientAddr) {}
+	: serv_(serv), fd_(fd), status_(READY_TO_READ), req_(fd), _clientAddr(clientAddr) {
+	gettimeofday(&tv_, NULL);
+}
 
