@@ -91,7 +91,7 @@ Client::~Client() {
 }
 
 Client::Client(const ServConfig &serv, int fd, const sockaddr_in &clientAddr)
-	: serv_(serv), fd_(fd), status_(READY_TO_READ), req_(fd), _clientAddr(clientAddr) {
+	: serv_(serv), fd_(fd), sended_(0), status_(READY_TO_READ), req_(fd),  _clientAddr(clientAddr){
 	gettimeofday(&tv_, NULL);
 }
 
@@ -103,9 +103,9 @@ void Client::check() {
 }
 
 void Client::raw_send(const std::string &msg) const {
-	static const size_t MAX_CHUNK_SIZE = pow(2, 20);
+	static const size_t MAX_CHUNK_SIZE =  pow(2, 20);
 	size_t sended = 0;
-	if (sended < msg.size()) {
+	while (sended < msg.size()) {
 		ssize_t chunk_size = std::min(msg.size() - sended, MAX_CHUNK_SIZE);
 		ssize_t ret = send(fd_, &(msg.c_str()[sended]), chunk_size, 0); //TODO check send ret
 		if(ret <= 0)

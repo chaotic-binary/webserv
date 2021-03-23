@@ -12,6 +12,7 @@ public:
 private:
 	const ServConfig &serv_;
 	const int fd_;
+	__unused size_t sended_;
 	enum e_client_status status_;
 	struct timeval tv_;
 	Request req_;

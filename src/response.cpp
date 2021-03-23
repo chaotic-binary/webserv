@@ -1,4 +1,5 @@
 #include "response.h"
+#include "utils.h"
 #include <vector>
 
 Response::Response(int code) : code_(code) {}
@@ -20,7 +21,7 @@ std::string Response::Generate() {
 }
 
 void Response::SetHeader(const std::string &title, const std::string &content) {
-	headers_[title] = content;
+	headers_[ft::tolower(title)] = content;
 }
 
 void Response::SetBody(const std::string &body) {
@@ -28,7 +29,7 @@ void Response::SetBody(const std::string &body) {
 }
 
 std::string Response::GetHeader(const std::string &title) const {
-	return headers_.at(title);
+	return headers_.at(ft::tolower(title));
 }
 
 std::string Response::GetCurDate() const {
