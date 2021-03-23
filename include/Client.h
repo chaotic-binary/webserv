@@ -12,15 +12,17 @@ public:
 private:
 	const ServConfig &serv_;
 	const int fd_;
-	__unused size_t sended_;
+	e_client_status next_status;
+	size_t sended_;
+	std::string raw_msg;
 	enum e_client_status status_;
 	struct timeval tv_;
 	Request req_;
 	__unused sockaddr_in				_clientAddr;
 public:
 	void receive();
-	bool response();
-	void raw_send(const std::string& msg) const;
+	void response();
+	void raw_send();
 	void check();
 	e_client_status GetStatus();
 	const ServConfig &getServ() const;

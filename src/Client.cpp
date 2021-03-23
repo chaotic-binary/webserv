@@ -38,25 +38,29 @@ Response generate_response(const Request &request, const ServConfig &config) {
 	}
 }
 
-bool Client::response() {
-	if (status_ != READY_TO_SEND)
-		return false;
-
+void Client::response() {
+	if (status_ != READY_TO_SEND && status_ != SENDING)
+		return;
+	if (status_ == SENDING) {
+		this->raw_send();
+		return;
+	}
 	Response rsp;
 	if (req_.isComplete())
 		rsp = generate_response(req_, serv_);
 	else {
 		rsp = Response(400);
 	}
-	if(rsp.GetCode() != 200)
+	if (rsp.GetCode() != 200)
 		std::cout << "============" << rsp.GetCode() << "============" << std::endl;
-	this->raw_send(rsp.Generate());
-	status_ = req_.isComplete() ? READY_TO_READ : CLOSE_CONNECTION;
+	raw_msg = rsp.Generate();
+	status_ = SENDING;
+	next_status = req_.isComplete() ? READY_TO_READ : CLOSE_CONNECTION;
 	gettimeofday(&tv_, NULL);
 	if (req_.getHeader("connection") == "close")
-		status_ = CLOSE_CONNECTION;
+		next_status = CLOSE_CONNECTION;
 	req_.clear();
-	return status_ == CLOSE_CONNECTION;
+	//return status_ == CLOSE_CONNECTION;
 }
 
 const ServConfig &Client::getServ() const {
@@ -91,28 +95,31 @@ Client::~Client() {
 }
 
 Client::Client(const ServConfig &serv, int fd, const sockaddr_in &clientAddr)
-	: serv_(serv), fd_(fd), sended_(0), status_(READY_TO_READ), req_(fd),  _clientAddr(clientAddr){
+	: serv_(serv), fd_(fd), sended_(0), status_(READY_TO_READ), req_(fd), _clientAddr(clientAddr) {
 	gettimeofday(&tv_, NULL);
 }
 
 void Client::check() {
 	struct timeval cur;
 	gettimeofday(&cur, NULL);
-	if(cur.tv_sec  - tv_.tv_sec > 120) //TODO: delete magic number
+	if (cur.tv_sec - tv_.tv_sec > 120) //TODO: delete magic number
 		status_ = CLOSE_CONNECTION;
 }
 
-void Client::raw_send(const std::string &msg) const {
-	static const size_t MAX_CHUNK_SIZE =  pow(2, 20);
-	size_t sended = 0;
-	while (sended < msg.size()) {
-		ssize_t chunk_size = std::min(msg.size() - sended, MAX_CHUNK_SIZE);
-		ssize_t ret = send(fd_, &(msg.c_str()[sended]), chunk_size, 0); //TODO check send ret
-		if(ret <= 0)
+void Client::raw_send() {
+	static const size_t MAX_CHUNK_SIZE = pow(2, 20);
+	//size_t sended = 0;
+	if (sended_ < raw_msg.size()) {
+		ssize_t chunk_size = std::min(raw_msg.size() - sended_, MAX_CHUNK_SIZE);
+		ssize_t ret = send(fd_, &(raw_msg.c_str()[sended_]), chunk_size, 0); //TODO check send ret
+		if (ret <= 0)
 			std::cerr << "ERROR SEND: " << ret << std::endl;
 		else
-			sended += ret;
+			sended_ += ret;
 	}
+
+	if(sended_ == raw_msg.size())
+		status_ = next_status;
 }
 
 e_client_status Client::GetStatus() {
