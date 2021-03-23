@@ -10,13 +10,10 @@ int main(int ac, char **av)
 	server.initSockets();
 	while (loop)
 	{
-		//FD_SET(server.getMaxSockFd(), &readFds); //TODO: WHY?!
 		int ret = server.Select();
-//		std::cout << "wait select" << std::endl;
 		if ( ret == -1 )
-			throw Server::Error("select");
-		if ( ret == 0 )
-		{
+			throw Server::Error("select SUPER MSG");
+		if ( ret == 0 ) {
 			continue ;
 		}
 		server.checkSockets();
