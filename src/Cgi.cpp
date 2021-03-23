@@ -120,7 +120,7 @@ std::string CgiEx(const std::string &cgi,
 	Pipe Opipe;
 	Opipe.Create();
 	std::string tmp_file_path(getcwd(buff, BUFF_SIZE)); //TODO: check ret
-	tmp_file_path += "tmp_kinginx.tmp";
+	tmp_file_path += "/tmp_kinginx.tmp";
 	int fd_bla = open(tmp_file_path.c_str(), O_TRUNC | O_CREAT | O_WRONLY, 0666);
 	write(fd_bla, input.c_str(), input.size());
 	close(fd_bla);
