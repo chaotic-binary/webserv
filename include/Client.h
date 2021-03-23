@@ -3,10 +3,10 @@
 #include "ServConfig.h"
 #include "Request.h"
 #include <sys/time.h>
+#include <cmath>
 
 class Client {
 public:
-	Client(const ServConfig& serv, int fd);
 	Client(const ServConfig& serv, int fd, const sockaddr_in& clientAddr);
 	~Client();
 private:
@@ -19,24 +19,9 @@ private:
 public:
 	void receive();
 	bool response();
-	void raw_send(const std::string& msg){
-		size_t sended = 0;
-		while (sended < msg.size())
-			if(msg.size() - sended < 1024)
-				sended += send(fd_, &(msg.c_str()[sended]), msg.size() - sended,0); //TODO check send ret
-			else
-				sended += send(fd_, &(msg.c_str()[sended]), 1024,0); //TODO check send ret
-	}
-	void check()
-	{
-		struct timeval cur;
-		gettimeofday(&cur, NULL);
-		if(cur.tv_sec  - tv_.tv_sec > 120) //TODO: delete magic number
-			status_ = CLOSE_CONNECTION;
-	}
-	e_client_status GetStatus() {
-		return status_;
-	}
+	void raw_send(const std::string& msg) const;
+	void check();
+	e_client_status GetStatus();
 	const ServConfig &getServ() const;
 	int getFd() const;
 };
