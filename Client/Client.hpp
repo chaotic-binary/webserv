@@ -12,7 +12,7 @@
 
 class Client {
 public:
-	Client(const std::string& ip, short port);
+	Client(const std::string& ip, short port, const std::string& target);
 	void start();
 private:
 	int _sockfd;
