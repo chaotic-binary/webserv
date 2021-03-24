@@ -1,0 +1,198 @@
+Welcome in this little webserver tester.
+Passing the test here is the minimum before going to an evaluation.
+
+press enter to continue
+THIS TEST IS NOT MEANT TO BE THE ONLY TEST IN THE EVALUATION!!!
+
+press enter to continue
+Before starting please follow the next few steps (files content can be anything and will be shown to you by the test):
+- Download the cgi_test executable on the host
+- Create a directory YoupiBanane with:
+	-a file name youpi.bad_extension
+	-a file name youpi.bla
+	-a sub directory called nop
+		-a file name youpi.bad_extension in nop
+		-a file name other.pouic in nop
+	-a sub directory called Yeah
+		-a file name not_happy.bad_extension in Yeah
+press enter to continue
+Setup the configuration file as follow:
+- / must answer to GET request ONLY
+- /put_test/* must answer to PUT request and save files to a directory of your choice
+- any file with .bla as extension must answer to POST request by calling the cgi_test executable
+- /post_body must answer anything to POST request with a maxBody of 100
+- /directory/ must answer to GET request and the root of it would be the repository YoupiBanane and if no file are requested, it should search for youpi.bad_extension files
+
+press enter to continue
+Before starting please verify that the server is launched
+press enter to continue
+
+Test GET http://localhost:1234/
+content returned: <!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>kinGinx team</title>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Махмуд Эго — веб-разработчик и верстальщик">
+	<meta name="keywords" content="не создание сайтов">
+	<link rel="canoncial" href="https://www.makhmudego.ru/">
+	<link rel="preload" href="fonts/roboto/roboto-v19-cyrillic_latin-regular.woff2" as="font">
+	<link rel="preload" href="fonts/roboto/roboto-v19-cyrillic_latin-900.woff2" as="font">
+	<link rel="stylesheet" type="text/css" href="style/style.css">
+	<script src="script/jquery-3.3.1.min.js"></script>
+	<script src="script/script.js"></script>
+</head>
+<body>
+	<div class="popup-container">
+		<div class="recall-popup">
+			<h2 class="popup__title all-title">Заказать звонок</h2>
+
+			<form class="form" action="popo.php" method="post" > <!--action="popo.php" method="post"-->
+				<input class="form__item" type="text" name="name" value="" placeholder=" Илон Маск" required>
+
+				<input class="form__item" type="text" name="phone" value="" placeholder=" 79XXXXXXXXX" required>
+
+				<input class="form__item" type="text" name="email" value="" placeholder=" mail@mail.ru" required>
+
+				<input id="confid" type="checkbox" name="confid" required="required">
+				<label for="confid" class="label-check">
+					Я согласен с условиями обработки персональных данных
+				</label>
+
+				<button class="popup__button">Отправить</button>
+			</form>
+		</div>
+	</div>
+
+	<header class="header fixed-container">
+		<div class="wrap-menu">
+			<button class="menu-button" type="button" name="menu-mob" aria-label="меню">
+				<span class="menu-button--type-line-1 menu-button--type-line"></span>
+
+				<span class="menu-button--type-line-2 menu-button--type-line"></span>
+
+				<span class="menu-button--type-line-3 menu-button--type-line"></span>
+			</button>
+		</div>
+
+		<nav class="navigation">
+			<ul class="category-list navigation__category-list">
+				<li class="category-list__item">
+					<a class="category-list__link category-list__link--active category-list__link--hover" href="#skills-link"> Услуги</a>
+				</li>
+
+				<li class="category-list__item">
+					<a class="category-list__link category-list__link--active category-list__link--hover" href="#portfolio-link"> Портфолио</a>
+				</li>
+
+				<li class="category-list__item">
+					<a class="category-list__link category-list__link--active category-list__link--hover" href="#price-link"> Стоимость</a>
+				</li>
+			</ul>
+		</nav>
+
+		<a class="number-phone header__number-phone" href="tel:+79255505450">+7 (925) 550-54-50</a>
+
+		<button class="request-button category-list__link--desktop category-list__link--mobile request-button--hover header__request-button" type="button">Заказать звонок</button>
+	</header>
+
+	<main class="main">
+		<a href="hello">
+			<section class="block-about-me">
+				<ul class="tag-list block-about-me__tag-list">
+					<li class="tag-list__item">{ }</li>
+
+					<li class="tag-list__item">&lt;div&gt;</li>
+
+					<li class="tag-list__item">#</li>
+
+					<li class="tag-list__item">&lt;div&gt;</li>
+
+					<li class="tag-list__item">&lt;/&gt;</li>
+				</ul>
+
+				<div class="profile block-about-me__profile">
+					<h1 class="profile__title all-title">
+						KinGinx team
+						<span class="profile__desciption">!(Frontend-разработчик и веб-верстальщик)</span>
+					</h1>
+
+					<button class="info-button info-button--hover profile__info-button" onclick="document.location='#skills-link'" type="button">Узнать больше</button>
+				</div>
+
+				<img class="prfile__img-man" src="img/man.webp" alt="I">
+			</section>
+		</a>
+
+		<section class="block-skills" id="skills-link">
+			<div class="fixed-container">
+				<h2 class="block-skills__title all-title"> Что мы делаем</h2>
+
+				<ul class="skills-list block-skills__skills-list">
+					<li class="skills-list__item skills-list__item--bg-1">
+						<a class="skill-list__link" href="">NOTHING YOU CAN IMAGINE</a>
+					</li>
+
+					<li class="skills-list__item skills-list__item--bg-2">
+						<a class="skill-list__link" href="">NOTHING YOU CAN IMAGINE</a>
+					</li>
+
+					<li class="skills-list__item skills-list__item--bg-3">
+						<a class="skill-list__link" href="">NOTHING YOU CAN IMAGINE</a>
+					</li>
+
+					<li class="skills-list__item skills-list__item--bg-4">
+						<a class="skill-list__link" href=""> Исправление и доработка существующей NOTHING YOU CAN IMAGINE</a>
+					</li>
+				</ul>
+
+				<button class="info-button info-button--hover block-skills__info-button" onclick="document.location='#price-link'" type="button">Узнать стоимость</button>
+			</div>
+		</section>
+
+		<section class="block-portfolio" id="portfolio-link">
+			<div class="fixed-container slider">
+				<h2 class="portfolio__title all-title">Примеры наших работ</h2>
+
+				<ul class="slider-list">
+					<li class="slider-list__item">
+						<button class="slider-list--type-button-prev slider-list--type-arrow" type="button" aria-hidden="true"></button>
+					</li>
+
+					<li class="slider-list__item">
+						<button class="slider-list--type-button-next slider-list--type-arrow" type="button" aria-hidden="true"></button>
+					</li>
+				</ul>
+
+				<div class="examples-my-work portfolio__examples-my-work">
+					<figure class="examples-my-work__item">
+						<img class="examples-my-work__img" src="img/21.png" alt="454">
+					    <figcaption class="examples-my-work__title">
+						<a class="examples-my-work__link" href="http://21-school.ru">Взлом Инновационной школы 21</a>
+					    </figcaption>
+				   </figure>
+
+					<figure class="examples-my-work__item">
+					    <img class="examples-my-work__img" src="img/ex2.webp" alt="454">
+					    <figcaption class="examples-my-work__title">
+						<a class="examples-my-work__link" href="">DDos магазина детской одежды</a>
+					    </figcaption>
+				   </figure>
+
+					<figure class="examples-my-work__item">
+					<img class="examples-my-work__img" src="img/ex3.webp" alt="454">
+						<figcaption class="examples-my-work__title">
+							<a class="examples-my-work__link" href="">Кража данных магазина «Рыболов»</a>
+						</figcaption>
+				   </figure>
+				</div>
+
+				<button class="info-button info-button--hover block-portfolio__info-button" type="button">Заказать проект</button>
+			</div>
+		</section>
+
+		<section class="block-price" id="price-link">
+			<ul class="tags-list block-price__tags-list">
+				<li class="tags-l

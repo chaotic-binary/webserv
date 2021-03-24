@@ -4,16 +4,19 @@
 
 Response::Response(int code) : code_(code) {}
 
-std::string Response::Generate() {
+void Response::SetDefaultContent() {
 	if (code_ >= 400)
 		generate_error_page(code_);
 	SetHeader("Date", GetCurDate());
 	SetHeader("Server", "KingGinx");
 	if (GetHeader("Content-length").empty())
 		SetHeader("Content-Length", body_.length());
+}
+
+std::string Response::toString() const {
 	std::ostringstream str_out;
 	str_out << "HTTP/1.1 " << code_ << " " << g_resp_codes.at(code_) << "\r\n";
-	for (Headers::iterator it = headers_.begin(); it != headers_.end(); it++)
+	for (Headers::const_iterator it = headers_.begin(); it != headers_.end(); it++)
 		str_out << it->first << ": " << it->second << "\r\n";
 	str_out << "\r\n";
 	str_out << body_;
@@ -40,7 +43,7 @@ std::string Response::GetHeader(const std::string &title) const {
 	}
 }
 
-std::string Response::GetCurDate() const {
+std::string Response::GetCurDate() {
 	timeval time;
 	tm date;
 	char buff[1024];
@@ -60,16 +63,16 @@ void Response::generate_error_page(int code) {
 				  << "<h1>" << "Сервера ответ!" << "</h2>\r\n"
 				  << "<em><small>king's server</small></em>\r\n";
 	SetBody(response_body.str());
-	headers_["Content-Type"] = "text/html";
+	SetHeader("Content-Type", "text/html");
 }
 
 void Response::SetHeader(const std::string &title, const std::vector<std::string> &multi_content) {
-	typedef std::vector<std::string>::const_iterator tmpIterator;
+	typedef std::vector<std::string>::const_iterator vectorIterator;
+
 	std::string content;
-	for (tmpIterator it = multi_content.begin();
-		 it != multi_content.end(); it++) {
+	for (vectorIterator it = multi_content.begin(); it != multi_content.end(); it++) {
 		if (it != multi_content.begin())
-			content += " ,";
+			content += ", ";
 		content += *it;
 	}
 	SetHeader(title, content);

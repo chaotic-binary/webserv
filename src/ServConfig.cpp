@@ -121,7 +121,7 @@ const Location &ServConfig::getLocation(const std::string &reqPath) const {
 	}
 	if (locationIndex == -1)
 		throw RespException(Response(404));
-	return _locations[locationIndex];
+	return _locations.at(locationIndex);
 }
 
 void	ServConfig::updateLocationRoot(int index, const std::string &root) {
