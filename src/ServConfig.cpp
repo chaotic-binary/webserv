@@ -2,7 +2,7 @@
 #include "ServConfig.h"
 
 ServConfig::ServConfig() :
-	_port(0) {}
+	_port(-1) {}
 
 ServConfig::~ServConfig() {}
 
@@ -29,16 +29,20 @@ void ServConfig::setNames(const std::vector<std::string> &names) {
 }
 
 void ServConfig::setHost(const std::string &host) {
+	if (!_host.empty())
+		throw std::runtime_error("Double listen instruction");
 	_host = host;
-	//TODO: notValid? turn to num value while parsing?
 }
 
 void ServConfig::setPort(size_t port) {
+	if (_port != -1)
+		throw std::runtime_error("Double listen instruction");
 	_port = port;
-	//TODO: check max min range?
 }
 
 void ServConfig::setRoot(const std::string &root) {
+	if (!_root.empty())
+		throw std::runtime_error("Double root instruction");
 	_root = root;
 	if (_root.back() != '/')
 		_root += '/';

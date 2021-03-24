@@ -39,7 +39,7 @@ class ServConfig {
  private:
   std::vector<std::string> _names;
   std::string _host;
-  size_t _port;
+  long long _port;
   std::string _root;
   std::vector<Location> _locations;
   std::map<int, std::string> _errorPages;

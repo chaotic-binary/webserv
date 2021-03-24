@@ -14,9 +14,6 @@ class Parser {
 
   class ParserException : public std::exception {
    public:
-	class CannotOpenFile : public std::exception {
-	  virtual const char *what() const throw();
-	};
 
 	class UnknownParam : public std::logic_error {
 	 private:
@@ -42,10 +39,6 @@ class Parser {
 	  explicit BraceExpected(int line) : std::logic_error("Brace expected: line:" + ft::to_str(line)) {};
 	};
 
-	class NoRoot : public std::exception {
-	  virtual const char *what() const throw();
-	};
-	//virtual const char* what() const throw();
   };
 
  private:

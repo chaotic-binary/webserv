@@ -56,18 +56,6 @@ class Location {
 
   static void initMethodsParser();
 
-  class LocException : public std::exception {
-   public:
-	class WrongMethod : public std::exception {
-	  virtual const char *what() const throw();
-	};
-
-	class WrongOnOff : public std::exception {
-	  virtual const char *what() const throw();
-	};
-	//virtual const char* what() const throw();
-  };
-
  private:
   std::string _root;
   std::string _index;

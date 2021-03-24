@@ -77,6 +77,8 @@ void Location::setName(const std::string &name) {
 }
 
 void Location::setRoot(const std::string &root) {
+	if (!_root.empty())
+		throw std::runtime_error("Double root instruction");
 	_root = root;
 	if (_root.back() != '/')
 		_root += '/';
@@ -128,7 +130,7 @@ void Location::setMethodsFromStr(const std::vector<std::string> &methods) {
 		if ((it = find(methodsParser.begin(), methodsParser.end(), methods[i])) != methodsParser.end())
 			_methods.push_back(static_cast<e_methods>(it - methodsParser.begin()));
 		else
-			throw LocException::WrongMethod();
+			throw std::runtime_error("Wrong method");
 	}
 }
 
@@ -146,7 +148,7 @@ bool Location::getBoolFromStr(const std::string &str) {
 	else if (str == "off")
 		return (false);
 	else
-		throw LocException::WrongOnOff();
+		throw std::runtime_error("Wrong value: \"on\" or \"off\" required");
 }
 
 static std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v) {
@@ -157,14 +159,6 @@ static std::ostream &operator<<(std::ostream &os, const std::vector<std::string>
 
 const std::string &Location::getPath() const {
 	return _path;
-}
-
-const char *Location::LocException::WrongMethod::what() const throw() {
-	return "Wrong method";
-}
-
-const char *Location::LocException::WrongOnOff::what() const throw() {
-	return "Wrong value: \"on\" or \"off\" required";
 }
 
 std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v) {
