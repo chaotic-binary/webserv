@@ -99,7 +99,7 @@ Client::Client(const ServConfig &serv, int fd, const sockaddr_in &clientAddr)
 void Client::check() {
 	struct timeval cur;
 	gettimeofday(&cur, NULL);
-	if (cur.tv_sec - tv_.tv_sec > 120) //TODO: delete magic number
+	if (cur.tv_sec - tv_.tv_sec > 8000) //TODO: delete magic number
 		status_ = CLOSE_CONNECTION;
 }
 
@@ -115,8 +115,12 @@ void Client::raw_send() {
 			sended_ += ret;
 	}
 
-	if(sended_ == raw_msg.size())
+	if(sended_ == raw_msg.size()) {
+		static int i = 0;
+		std::cerr << "File: " <<  i++ << std::endl;
+		sended_ = 0;
 		status_ = next_status;
+	}
 }
 
 e_client_status Client::GetStatus() {

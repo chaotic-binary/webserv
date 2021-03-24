@@ -35,7 +35,6 @@ public:
 private:
 	std::vector<ServConfig>								_servers;
 	const size_t										_amountServers;
-//	std::vector<int>									_clientsFd;
 	std::vector<SharedPtr<Client> >						_clients;
 	char												_buffer[2048];
 	fd_set												_readFds;

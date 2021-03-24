@@ -21,7 +21,7 @@ std::string Response::Generate() {
 }
 
 void Response::SetHeader(const std::string &title, const std::string &content) {
-	headers_[ft::tolower(title)] = content;
+	headers_[title] = content;
 }
 
 void Response::SetBody(const std::string &body) {
