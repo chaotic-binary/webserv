@@ -79,7 +79,7 @@ void Location::setName(const std::string &name) {
 
 void Location::setRoot(const std::string &root) {
 	if (_parsed & 1)
-		throw DuplicateInstruction("root");
+		throw DuplicateDirective("root");
 	_root = root;
 	_parsed |= 1;
 	if (_root.back() != '/')
@@ -88,48 +88,48 @@ void Location::setRoot(const std::string &root) {
 
 void Location::setIndex(const std::string &index) {
 	if (_parsed & 2)
-		throw DuplicateInstruction("index");
+		throw DuplicateDirective("index");
 	_index = index;
 	_parsed |= 2;
 }
 
 void Location::setCgiIndex(const std::string &index) {
 	if (_parsed & 4)
-		throw DuplicateInstruction("cgi index");
+		throw DuplicateDirective("cgi index");
 	_cgi_index = index;
 	_parsed |= 4;
 }
 void Location::setCgiPath(const std::string &cgiPath) {
 	if (_parsed & 8)
-		throw DuplicateInstruction("cgi path");
+		throw DuplicateDirective("cgi path");
 	_cgiPath = cgiPath;
 	_parsed |= 8;
 }
 
 void Location::setUploadPath(const std::string &uploadPath) {
 	if (_parsed & 16)
-		throw DuplicateInstruction("upload path");
+		throw DuplicateDirective("upload path");
 	_uploadPath = uploadPath;
 	_parsed |= 16;
 }
 
 void Location::setMaxBody(size_t maxBody) {
 	if (_parsed & 32)
-		throw DuplicateInstruction("client max body size");
+		throw DuplicateDirective("client max body size");
 	_maxBody = maxBody;
 	_parsed |= 32;
 }
 
 void Location::setAutoindex(bool autoindex) {
 	if (_parsed & 64)
-		throw DuplicateInstruction("autoindex");
+		throw DuplicateDirective("autoindex");
 	_autoindex = autoindex;
 	_parsed |= 64;
 }
 
 void Location::setUploadEnable(bool uploadEnable) {
 	if (_parsed & 128)
-		throw DuplicateInstruction("upload enable");
+		throw DuplicateDirective("upload enable");
 	_uploadEnable = uploadEnable;
 	_parsed |= 128;
 }

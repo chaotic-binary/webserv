@@ -56,12 +56,12 @@ class Location {
 
   static void initMethodsParser();
 
-  class DuplicateInstruction : public std::logic_error {
+  class DuplicateDirective : public std::logic_error {
    private:
-	DuplicateInstruction();
+	DuplicateDirective();
 
    public:
-	explicit DuplicateInstruction(const std::string &name) : std::logic_error("Duplicate instruction: " + name) {};
+	explicit DuplicateDirective(const std::string &name) : std::logic_error("Duplicate directive: " + name) {};
   };
 
  private:

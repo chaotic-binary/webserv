@@ -31,21 +31,21 @@ void ServConfig::setNames(const std::vector<std::string> &names) {
 
 void ServConfig::setHost(const std::string &host) {
 	if (_parsed & 1)
-		throw DuplicateInstruction("listen");
+		throw DuplicateDirective("listen");
 	_host = host;
 	_parsed |= 1;
 }
 
 void ServConfig::setPort(size_t port) {
 	if (_parsed & 2)
-		throw DuplicateInstruction("listen");
+		throw DuplicateDirective("listen");
 	_port = port;
 	_parsed |= 2;
 }
 
 void ServConfig::setRoot(const std::string &root) {
 	if (_parsed & 4)
-		throw DuplicateInstruction("root");
+		throw DuplicateDirective("root");
 	_root = root;
 	_parsed |= 4;
 	if (_root.back() != '/')
