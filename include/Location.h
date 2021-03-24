@@ -56,16 +56,12 @@ class Location {
 
   static void initMethodsParser();
 
-  class LocException : public std::exception {
-   public:
-	class WrongMethod : public std::exception {
-	  virtual const char *what() const throw();
-	};
+  class DuplicateDirective : public std::logic_error {
+   private:
+	DuplicateDirective();
 
-	class WrongOnOff : public std::exception {
-	  virtual const char *what() const throw();
-	};
-	//virtual const char* what() const throw();
+   public:
+	explicit DuplicateDirective(const std::string &name) : std::logic_error("Duplicate directive: " + name) {};
   };
 
  private:
@@ -83,6 +79,8 @@ class Location {
 
   static bool getBoolFromStr(const std::string &str);
   static std::vector<std::string> methodsParser;
+
+  int _parsed;
 };
 
 std::ostream &operator<<(std::ostream &os, const Location &location);

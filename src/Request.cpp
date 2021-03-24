@@ -224,7 +224,7 @@ int Request::receive() {
 			parse_headers(headers_str);
 			//	read(fd_, buffer, i + 4);
 			headersParsed = true;
-			//std::cout << "fd " << fd_ << ": !Headers parsed!" << std::endl;
+			//std::cout << "fd " << fd_ << ": !Headers _parsed!" << std::endl;
 		}
 	}
 	if (headersParsed) {

@@ -15,13 +15,14 @@ class Response {
 	void SetHeader(const std::string &title, const std::vector<std::string> &multi_content);
 	void SetHeader(const std::string &title, const std::string &content);
 	void SetHeader(const std::string &title, size_t content);
+	void SetCode(int code);
 	std::string GetHeader(const std::string &title) const;
 	void SetBody(const std::string &body);
 	void SetDefaultContent();
 	int GetCode() const;
 
  private:
-	static std::string GetCurDate() ;
+	static std::string GetCurDate();
 	void generate_error_page(int code);
 	int code_;
 	Headers headers_;

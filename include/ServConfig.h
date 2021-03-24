@@ -36,6 +36,14 @@ class ServConfig {
   sockaddr_in getSockAddr() const;
   sockaddr_in &getSockAddr();
 
+  class DuplicateDirective : public std::logic_error {
+   private:
+	DuplicateDirective();
+
+   public:
+	explicit DuplicateDirective(const std::string &name) : std::logic_error("Duplicate directive: " + name) {};
+  };
+
  private:
   std::vector<std::string> _names;
   std::string _host;
@@ -46,5 +54,7 @@ class ServConfig {
 
   int _sockFd;
   sockaddr_in _sockAddr;
+
+  int _parsed;
 };
 

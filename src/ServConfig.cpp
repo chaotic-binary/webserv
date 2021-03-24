@@ -2,7 +2,8 @@
 #include "ServConfig.h"
 
 ServConfig::ServConfig() :
-	_port(0) {}
+	_port(0),
+	_parsed(0) {}
 
 ServConfig::~ServConfig() {}
 
@@ -29,17 +30,24 @@ void ServConfig::setNames(const std::vector<std::string> &names) {
 }
 
 void ServConfig::setHost(const std::string &host) {
+	if (_parsed & 1)
+		throw DuplicateDirective("listen");
 	_host = host;
-	//TODO: notValid? turn to num value while parsing?
+	_parsed |= 1;
 }
 
 void ServConfig::setPort(size_t port) {
+	if (_parsed & 2)
+		throw DuplicateDirective("listen");
 	_port = port;
-	//TODO: check max min range?
+	_parsed |= 2;
 }
 
 void ServConfig::setRoot(const std::string &root) {
+	if (_parsed & 4)
+		throw DuplicateDirective("root");
 	_root = root;
+	_parsed |= 4;
 	if (_root.back() != '/')
 		_root += '/';
 }

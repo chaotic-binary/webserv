@@ -3,7 +3,8 @@
 Location::Location()
 	: _maxBody(DEF_MAX_BODY),
 	  _autoindex(false),
-	  _uploadEnable(false) {}
+	  _uploadEnable(false),
+	  _parsed(0) {}
 
 Location::Location(const Location &copy) {
 	*this = copy;
@@ -77,37 +78,60 @@ void Location::setName(const std::string &name) {
 }
 
 void Location::setRoot(const std::string &root) {
+	if (_parsed & 1)
+		throw DuplicateDirective("root");
 	_root = root;
+	_parsed |= 1;
 	if (_root.back() != '/')
 		_root += '/';
 }
 
 void Location::setIndex(const std::string &index) {
+	if (_parsed & 2)
+		throw DuplicateDirective("index");
 	_index = index;
+	_parsed |= 2;
 }
 
 void Location::setCgiIndex(const std::string &index) {
+	if (_parsed & 4)
+		throw DuplicateDirective("cgi index");
 	_cgi_index = index;
+	_parsed |= 4;
 }
 void Location::setCgiPath(const std::string &cgiPath) {
+	if (_parsed & 8)
+		throw DuplicateDirective("cgi path");
 	_cgiPath = cgiPath;
+	_parsed |= 8;
 }
 
 void Location::setUploadPath(const std::string &uploadPath) {
+	if (_parsed & 16)
+		throw DuplicateDirective("upload path");
 	_uploadPath = uploadPath;
+	_parsed |= 16;
 }
 
 void Location::setMaxBody(size_t maxBody) {
+	if (_parsed & 32)
+		throw DuplicateDirective("client max body size");
 	_maxBody = maxBody;
-	//TODO: check max min range?
+	_parsed |= 32;
 }
 
 void Location::setAutoindex(bool autoindex) {
+	if (_parsed & 64)
+		throw DuplicateDirective("autoindex");
 	_autoindex = autoindex;
+	_parsed |= 64;
 }
 
 void Location::setUploadEnable(bool uploadEnable) {
+	if (_parsed & 128)
+		throw DuplicateDirective("upload enable");
 	_uploadEnable = uploadEnable;
+	_parsed |= 128;
 }
 
 void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions) {
@@ -128,7 +152,7 @@ void Location::setMethodsFromStr(const std::vector<std::string> &methods) {
 		if ((it = find(methodsParser.begin(), methodsParser.end(), methods[i])) != methodsParser.end())
 			_methods.push_back(static_cast<e_methods>(it - methodsParser.begin()));
 		else
-			throw LocException::WrongMethod();
+			throw std::runtime_error("Wrong method");
 	}
 }
 
@@ -146,7 +170,7 @@ bool Location::getBoolFromStr(const std::string &str) {
 	else if (str == "off")
 		return (false);
 	else
-		throw LocException::WrongOnOff();
+		throw std::runtime_error("Wrong value: \"on\" or \"off\" required");
 }
 
 static std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v) {
@@ -157,14 +181,6 @@ static std::ostream &operator<<(std::ostream &os, const std::vector<std::string>
 
 const std::string &Location::getPath() const {
 	return _path;
-}
-
-const char *Location::LocException::WrongMethod::what() const throw() {
-	return "Wrong method";
-}
-
-const char *Location::LocException::WrongOnOff::what() const throw() {
-	return "Wrong value: \"on\" or \"off\" required";
 }
 
 std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v) {
