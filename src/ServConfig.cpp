@@ -2,7 +2,8 @@
 #include "ServConfig.h"
 
 ServConfig::ServConfig() :
-	_port(-1) {}
+	_port(0),
+	_parsed(0) {}
 
 ServConfig::~ServConfig() {}
 
@@ -29,21 +30,24 @@ void ServConfig::setNames(const std::vector<std::string> &names) {
 }
 
 void ServConfig::setHost(const std::string &host) {
-	if (!_host.empty())
-		throw std::runtime_error("Double listen instruction");
+	if (_parsed & 1)
+		throw DuplicateInstruction("listen");
 	_host = host;
+	_parsed |= 1;
 }
 
-void ServConfig::setPort(long long port) {
-	if (_port != -1)
+void ServConfig::setPort(size_t port) {
+	if (_parsed & 2)
 		throw std::runtime_error("Double or wrong listen instruction");
 	_port = port;
+	_parsed |= 2;
 }
 
 void ServConfig::setRoot(const std::string &root) {
-	if (!_root.empty())
-		throw std::runtime_error("Double root instruction");
+	if (_parsed & 4)
+		throw DuplicateInstruction("root");
 	_root = root;
+	_parsed |= 4;
 	if (_root.back() != '/')
 		_root += '/';
 }
@@ -72,7 +76,7 @@ const std::string &ServConfig::getHost() const {
 	return _host;
 }
 
-long long ServConfig::getPort() const {
+size_t ServConfig::getPort() const {
 	return _port;
 }
 

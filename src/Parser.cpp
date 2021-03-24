@@ -34,7 +34,7 @@ void Parser::line_to_serv(std::vector<std::string> &v, ServConfig &serv) {
 		try {
 			(*it->second)(v, serv);
 		} catch (std::exception &e) {
-			std::cout << e.what() << std::endl;
+			std::cerr << e.what() << std::endl;
 			throw ParserException::InvalidData(line_num);
 		}
 	} else
@@ -50,7 +50,7 @@ void Parser::line_to_loc(std::vector<std::string> &v, Location &loc) {
 		try {
 			(loc.*ita->second)(v);
 		} catch (std::exception &e) {
-			std::cout << e.what() << std::endl;
+			std::cerr << e.what() << std::endl;
 			throw ParserException::InvalidData(line_num);
 		}
 	} else {
@@ -61,7 +61,7 @@ void Parser::line_to_loc(std::vector<std::string> &v, Location &loc) {
 			try {
 				(loc.*it->second)(v[1]);
 			} catch (std::exception &e) {
-				std::cout << e.what() << std::endl;
+				std::cerr << e.what() << std::endl;
 				throw ParserException::InvalidData(line_num);
 			}
 		} else if (v[0] == "client_max_body_size")
@@ -136,7 +136,6 @@ Parser::Parser(char *file) {
 	line_num = 0;
 	ServConfig main;
 	while (ft::getline(ifs, line) || !line.empty()) {
-		//std::cout << line << std::endl << std::endl;
 		++line_num;
 		ft::ws_to_tab(line);
 		ft::trim(line, '\t');
@@ -285,8 +284,8 @@ void Parser::addMainAndDefaults(const ServConfig &main) {
 					_servs[i].updateLocationRoot(l, _servs[i].getRoot());
 			}
 		}
-		if (_servs[i].getPort() == -1)
-			(main.getPort() != -1) ? _servs[i].setPort(main.getPort()) : _servs[i].setPort(80);
+		if (!_servs[i].getPort())
+			main.getPort() ? _servs[i].setPort(main.getPort()) : _servs[i].setPort(80);
 		if (_servs[i].getHost().empty())
 			main.getHost().empty() ? _servs[i].setHost(LOCALHOST) : _servs[i].setHost(main.getHost());
 	}

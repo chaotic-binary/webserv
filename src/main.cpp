@@ -20,7 +20,7 @@ int main(int ac, char **av)
 			server.checkClients();
 		}
 	} catch (std::exception &e) {
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
 //	TODO:: close all sockets;
 	return (0);

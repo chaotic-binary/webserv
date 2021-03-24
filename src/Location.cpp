@@ -3,7 +3,8 @@
 Location::Location()
 	: _maxBody(DEF_MAX_BODY),
 	  _autoindex(false),
-	  _uploadEnable(false) {}
+	  _uploadEnable(false),
+	  _parsed(0) {}
 
 Location::Location(const Location &copy) {
 	*this = copy;
@@ -77,39 +78,60 @@ void Location::setName(const std::string &name) {
 }
 
 void Location::setRoot(const std::string &root) {
-	if (!_root.empty())
-		throw std::runtime_error("Double root instruction");
+	if (_parsed & 1)
+		throw DuplicateInstruction("root");
 	_root = root;
+	_parsed |= 1;
 	if (_root.back() != '/')
 		_root += '/';
 }
 
 void Location::setIndex(const std::string &index) {
+	if (_parsed & 2)
+		throw DuplicateInstruction("index");
 	_index = index;
+	_parsed |= 2;
 }
 
 void Location::setCgiIndex(const std::string &index) {
+	if (_parsed & 4)
+		throw DuplicateInstruction("cgi index");
 	_cgi_index = index;
+	_parsed |= 4;
 }
 void Location::setCgiPath(const std::string &cgiPath) {
+	if (_parsed & 8)
+		throw DuplicateInstruction("cgi path");
 	_cgiPath = cgiPath;
+	_parsed |= 8;
 }
 
 void Location::setUploadPath(const std::string &uploadPath) {
+	if (_parsed & 16)
+		throw DuplicateInstruction("upload path");
 	_uploadPath = uploadPath;
+	_parsed |= 16;
 }
 
 void Location::setMaxBody(size_t maxBody) {
+	if (_parsed & 32)
+		throw DuplicateInstruction("client max body size");
 	_maxBody = maxBody;
-	//TODO: check max min range?
+	_parsed |= 32;
 }
 
 void Location::setAutoindex(bool autoindex) {
+	if (_parsed & 64)
+		throw DuplicateInstruction("autoindex");
 	_autoindex = autoindex;
+	_parsed |= 64;
 }
 
 void Location::setUploadEnable(bool uploadEnable) {
+	if (_parsed & 128)
+		throw DuplicateInstruction("upload enable");
 	_uploadEnable = uploadEnable;
+	_parsed |= 128;
 }
 
 void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions) {

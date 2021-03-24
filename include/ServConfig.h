@@ -14,7 +14,7 @@ class ServConfig {
 
   void setNames(const std::vector<std::string> &names);
   void setHost(const std::string &host);
-  void setPort(long long port);
+  void setPort(size_t port);
   void setRoot(const std::string &root);
   void setLocations(const std::vector<Location> &locations);
   void setErrorPages(const std::map<int, std::string> &errorPages);
@@ -28,7 +28,7 @@ class ServConfig {
 
   const std::vector<std::string> &getNames() const;
   const std::string &getHost() const;
-  long long int getPort() const;
+  size_t getPort() const;
   const std::string &getRoot() const;
   const std::vector<Location> &getLocations() const;
   const std::map<int, std::string> &getErrorPages() const;
@@ -36,15 +36,25 @@ class ServConfig {
   sockaddr_in getSockAddr() const;
   sockaddr_in &getSockAddr();
 
+  class DuplicateInstruction : public std::logic_error {
+   private:
+	DuplicateInstruction();
+
+   public:
+	explicit DuplicateInstruction(const std::string &name) : std::logic_error("Duplicate instruction: " + name) {};
+  };
+
  private:
   std::vector<std::string> _names;
   std::string _host;
-  long long _port;
+  size_t _port;
   std::string _root;
   std::vector<Location> _locations;
   std::map<int, std::string> _errorPages;
 
   int _sockFd;
   sockaddr_in _sockAddr;
+
+  int _parsed;
 };
 

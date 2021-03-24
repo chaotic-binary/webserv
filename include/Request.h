@@ -60,7 +60,7 @@ class Request {
 	DuplicateHeader();
 
    public:
-	explicit DuplicateHeader(std::string name) : std::logic_error("Duplicate header: " + name) {};
+	explicit DuplicateHeader(const std::string &name) : std::logic_error("Duplicate header: " + name) {};
   };
 
   class HeaderNotPresent : public std::logic_error {
@@ -68,7 +68,7 @@ class Request {
 	HeaderNotPresent();
 
    public:
-	explicit HeaderNotPresent(std::string name) : std::logic_error("Header \"" + name + "\" not present") {};
+	explicit HeaderNotPresent(const std::string &name) : std::logic_error("Header \"" + name + "\" not present") {};
   };
 
   int receive();
