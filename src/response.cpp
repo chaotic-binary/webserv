@@ -9,8 +9,8 @@ std::string Response::Generate() {
 		generate_error_page(code_);
 	SetHeader("Date", GetCurDate());
 	SetHeader("Server", "KingGinx");
-	//TODO: Allow
-	SetHeader("Content-Length", std::to_string(body_.length()));
+	if (GetHeader("Content-length").empty())
+		SetHeader("Content-Length", body_.length());
 	std::ostringstream str_out;
 	str_out << "HTTP/1.1 " << code_ << " " << g_resp_codes.at(code_) << "\r\n";
 	for (Headers::iterator it = headers_.begin(); it != headers_.end(); it++)
@@ -21,7 +21,11 @@ std::string Response::Generate() {
 }
 
 void Response::SetHeader(const std::string &title, const std::string &content) {
-	headers_[title] = content;
+	headers_[ft::tolower(title)] = content;
+}
+
+void Response::SetHeader(const std::string &title, size_t content) {
+	headers_[ft::tolower(title)] = ft::to_str(content);
 }
 
 void Response::SetBody(const std::string &body) {
@@ -29,7 +33,11 @@ void Response::SetBody(const std::string &body) {
 }
 
 std::string Response::GetHeader(const std::string &title) const {
-	return headers_.at(ft::tolower(title));
+	try {
+		return headers_.at(ft::tolower(title));
+	} catch (const std::out_of_range &) {
+		return "";
+	}
 }
 
 std::string Response::GetCurDate() const {
@@ -49,17 +57,18 @@ void Response::generate_error_page(int code) {
 	response_body << "<title> Error " << code << "</title>\r\n";
 	response_body << "<h1>Code: " << code << "</h1>"
 				  << "<h2>" << g_resp_codes.at(code_) << "</h2>\r\n"
+				  << "<h1>" << "Сервера ответ!" << "</h2>\r\n"
 				  << "<em><small>king's server</small></em>\r\n";
 	SetBody(response_body.str());
 	headers_["Content-Type"] = "text/html";
 }
 
 void Response::SetHeader(const std::string &title, const std::vector<std::string> &multi_content) {
+	typedef std::vector<std::string>::const_iterator tmpIterator;
 	std::string content;
-	for(std::vector<std::string>::const_iterator it = multi_content.begin();
-	it != multi_content.end(); it++)
-	{
-		if(it != multi_content.begin())
+	for (tmpIterator it = multi_content.begin();
+		 it != multi_content.end(); it++) {
+		if (it != multi_content.begin())
 			content += " ,";
 		content += *it;
 	}
@@ -69,10 +78,12 @@ void Response::SetHeader(const std::string &title, const std::vector<std::string
 int Response::GetCode() const {
 	return code_;
 }
+
 const Response &RespException::GetRsp() const {
 	return rsp_;
 }
-RespException::RespException(const Response &rsp) throw() : rsp_(rsp) {}
+
+RespException::RespException(const Response &rsp) throw(): rsp_(rsp) {}
 const char *RespException::what() const throw() {
 	return "HTTP ERRROR";
 }

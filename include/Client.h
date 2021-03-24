@@ -6,10 +6,10 @@
 #include <cmath>
 
 class Client {
-public:
-	Client(const ServConfig& serv, int fd, const sockaddr_in& clientAddr);
+ public:
+	Client(const ServConfig &serv, int fd, const sockaddr_in &clientAddr);
 	~Client();
-private:
+ private:
 	const ServConfig &serv_;
 	const int fd_;
 	e_client_status next_status;
@@ -18,8 +18,8 @@ private:
 	enum e_client_status status_;
 	struct timeval tv_;
 	Request req_;
-	__unused sockaddr_in				_clientAddr;
-public:
+	__unused sockaddr_in _clientAddr;
+ public:
 	void receive();
 	void response();
 	void raw_send();
