@@ -123,7 +123,7 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 	}
 }
 
-Parser::Parser(char *file) {
+const std::vector<ServConfig> &Parser::parse(char *file) {
 	std::ifstream ifs(file);
 	if (!ifs)
 		throw std::runtime_error("Cannot open file");
@@ -148,6 +148,7 @@ Parser::Parser(char *file) {
 	if (_servs.empty())
 		throw std::runtime_error("Empty configuration file");
 	addMainAndDefaults(main);
+	return _servs;
 }
 
 Parser::Parser() {}

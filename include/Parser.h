@@ -6,10 +6,11 @@
 
 class Parser {
  public:
-  explicit Parser(char *file);
+  Parser();
   Parser(const Parser &copy);
   ~Parser();
 
+  const std::vector<ServConfig> &parse(char *file);
   const std::vector<ServConfig> &getServs() const;
 
   class ParserException : public std::exception {
@@ -42,7 +43,6 @@ class Parser {
   };
 
  private:
-  Parser();
   Parser &operator=(const Parser &copy);
 
   std::vector<ServConfig> _servs;
