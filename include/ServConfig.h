@@ -14,7 +14,7 @@ class ServConfig {
 
   void setNames(const std::vector<std::string> &names);
   void setHost(const std::string &host);
-  void setPort(size_t port);
+  void setPort(long long port);
   void setRoot(const std::string &root);
   void setLocations(const std::vector<Location> &locations);
   void setErrorPages(const std::map<int, std::string> &errorPages);
@@ -28,7 +28,7 @@ class ServConfig {
 
   const std::vector<std::string> &getNames() const;
   const std::string &getHost() const;
-  size_t getPort() const;
+  long long int getPort() const;
   const std::string &getRoot() const;
   const std::vector<Location> &getLocations() const;
   const std::map<int, std::string> &getErrorPages() const;

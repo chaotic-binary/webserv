@@ -34,9 +34,9 @@ void ServConfig::setHost(const std::string &host) {
 	_host = host;
 }
 
-void ServConfig::setPort(size_t port) {
+void ServConfig::setPort(long long port) {
 	if (_port != -1)
-		throw std::runtime_error("Double listen instruction");
+		throw std::runtime_error("Double or wrong listen instruction");
 	_port = port;
 }
 
@@ -72,7 +72,7 @@ const std::string &ServConfig::getHost() const {
 	return _host;
 }
 
-size_t ServConfig::getPort() const {
+long long ServConfig::getPort() const {
 	return _port;
 }
 

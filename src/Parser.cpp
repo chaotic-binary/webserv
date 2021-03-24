@@ -256,8 +256,10 @@ void Parser::parseMaxBody(std::string &val, Location &loc) {
 		}
 		val = val.substr(0, val.find_first_not_of("0123456789"));
 	}
-	loc.setMaxBody(n * to_num(val));
-	//TODO: overflow manage
+	size_t val_num = to_num(val);
+	if (std::numeric_limits<size_t>::max() /  n < val_num)
+		throw std::runtime_error("line: " + ft::to_str(line_num) + ": value too big");
+	loc.setMaxBody(n * val_num);
 }
 
 void Parser::addMainAndDefaults(const ServConfig &main) {
@@ -283,8 +285,8 @@ void Parser::addMainAndDefaults(const ServConfig &main) {
 					_servs[i].updateLocationRoot(l, _servs[i].getRoot());
 			}
 		}
-		if (!_servs[i].getPort())
-			main.getPort() ? _servs[i].setPort(main.getPort()) : _servs[i].setPort(80);
+		if (_servs[i].getPort() == -1)
+			(main.getPort() != -1) ? _servs[i].setPort(main.getPort()) : _servs[i].setPort(80);
 		if (_servs[i].getHost().empty())
 			main.getHost().empty() ? _servs[i].setHost(LOCALHOST) : _servs[i].setHost(main.getHost());
 	}
