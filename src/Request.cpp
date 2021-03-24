@@ -75,40 +75,31 @@ const std::string &Request::GetQueryString() const {
 
 bool Request::isComplete() const { return complete; }
 
-void Request::parse_headers(std::string str) {
-	std::string line;
+void Request::parse_headers(const std::string &str) {
 	std::vector<std::string> v;
+	std::vector<std::string> lines = ft::split(str, '\n');
 	size_t newPos;
-	int line_num = 0;
 
-	while ((newPos = str.find_first_of('\r')) != std::string::npos) {
-		line.clear();
-		line = str.substr(0, newPos);
-		str.erase(0, newPos + 2);
-		if (!line_num && line.empty())
-			continue;
-		++line_num;
-		if (line_num == 1) {
-			v = ft::split(line, ' ');
-			if (v.size() != 3)
-				throw InvalidFormat(line_num);
-			if (v[2].find("HTTP/") != 0)
-				throw InvalidFormat(line_num);
-			setMethodFromStr(v[0]);
-			reqTarget = v[1];
-			version = v[2];
-		} else {
-			if ((newPos = line.find_first_of(':')) == std::string::npos)
-				throw InvalidFormat(line_num);
-			std::string tmp = line.substr(0, newPos);
-			tmp = ft::tolower(tmp);
-			if (headers.count(tmp)) {
-				if ((tmp == "host" || tmp == "content-length"))
-					throw DuplicateHeader(tmp);
-				//TODO:other headers?
-			}
-			headers[tmp] = line.substr(newPos + 2, line.size() - 1);
+	ft::trim(lines[0], '\r');
+	v = ft::split(lines[0], ' ');
+	if (v.size() != 3)
+		throw InvalidFormat(1);
+	if (v[2].find("HTTP/") != 0)
+		throw InvalidFormat(1);
+	setMethodFromStr(v[0]);
+	reqTarget = v[1];
+	version = v[2];
+	for (size_t i = 1; i < lines.size(); ++i) {
+		if ((newPos = lines[i].find_first_of(':')) == std::string::npos)
+			throw InvalidFormat(i + 1);
+		std::string tmp = lines[i].substr(0, newPos);
+		tmp = ft::tolower(tmp);
+		if (headers.count(tmp)) {
+			if ((tmp == "host" || tmp == "content-length"))
+				throw DuplicateHeader(tmp);
+			//TODO:other headers?
 		}
+		headers[tmp] = lines[i].substr(newPos + 2, lines[i].size() - 3 - newPos);
 	}
 	if (headers.find("host") == headers.end())
 		throw HeaderNotPresent("host");
@@ -122,7 +113,7 @@ void Request::parse_headers(std::string str) {
 	uri_ = reqTarget;
 	size_t i;
 	if ((i = reqTarget.find('?')) != std::string::npos) {
-		queryString = reqTarget.substr(i + 1, reqTarget.size());
+		queryString = reqTarget.substr(i + 1);
 		reqTarget.erase(i, reqTarget.size());
 	}
 }
@@ -228,8 +219,9 @@ int Request::receive() {
 				return ret;
 		}
 		if ((i = raw_request.find("\r\n\r\n")) != std::string::npos) {
-			parse_headers(raw_request.substr(0, i + 2));
+			std::string headers_str = raw_request.substr(0, i + 2);
 			raw_request.erase(0, i + 4);
+			parse_headers(headers_str);
 			//	read(fd_, buffer, i + 4);
 			headersParsed = true;
 			//std::cout << "fd " << fd_ << ": !Headers parsed!" << std::endl;

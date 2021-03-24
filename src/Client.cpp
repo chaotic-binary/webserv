@@ -29,8 +29,11 @@ Response generate_response(const Request &request, const ServConfig &config) {
 			Response response(405);
 			response.SetHeader("Allow", translate_methods(allowedMethods));
 			return response;
-		} else
-			return method_map.at(request.getMethod())(request, config);
+		}
+		if ((request.getMethod() == PUT || request.getMethod() == POST)
+			&& request.getHeader("content-length").empty() && request.getHeader("transfer-encoding") != "chunked")
+			return Response(411);
+		return method_map.at(request.getMethod())(request, config);
 	} catch (const RespException &err_rsp) {
 		return err_rsp.GetRsp();
 	} catch (...) {
