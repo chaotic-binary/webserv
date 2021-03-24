@@ -4,17 +4,6 @@
 #include "GetMethod.h"
 #include "ServConfig.h"
 
-static bool methodNotAllowed(e_methods method, const std::vector<e_methods> &methodsAllowed)
-{
-	//TODO::перенести?
-	for (size_t i = 0; i < methodsAllowed.size(); ++i)
-	{
-		if (methodsAllowed[i] == method)
-			return (false);
-	}
-	return (true);
-}
-
 Response GetGenerator(const Request &request, const ServConfig &config) {
 	Response rsp(200);
 	const Location &location = config.getLocation(request.getReqTarget());

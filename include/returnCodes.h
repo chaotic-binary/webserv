@@ -30,7 +30,7 @@ inline std::map<int, std::string> generate_map_codes() {
 	result[307] = "Temporary Redirect";
 	result[308] = "Permanent Redirect";
 	//4×× Client Error
-	result[400] =  "Bad Reques";
+	result[400] =  "Bad Request";
 	result[401] =  "Unauthorized";
 	result[402] =  "Payment Required";
 	result[403] =  "Forbidden";

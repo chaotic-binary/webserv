@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <libc.h>
+#include <cmath>
 #include "returnCodes.h"
 
 
@@ -13,8 +14,8 @@ public:
 	explicit Response(int code = 500);
 	std::string Generate();
 	void SetHeader(const std::string &title, const std::string &content);
-  	void SetHeader(const std::string &title, const std::vector<std::string>& multi_content);
-	void SetBody(const std::string& body);
+	void SetHeader(const std::string &title, const std::vector<std::string> &multi_content);
+	void SetBody(const std::string &body);
 	std::string GetHeader(const std::string &title) const;
 private:
 	std::string GetCurDate() const;
