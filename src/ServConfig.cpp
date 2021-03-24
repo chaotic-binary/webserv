@@ -38,7 +38,7 @@ void ServConfig::setHost(const std::string &host) {
 
 void ServConfig::setPort(size_t port) {
 	if (_parsed & 2)
-		throw std::runtime_error("Double or wrong listen instruction");
+		throw DuplicateInstruction("listen");
 	_port = port;
 	_parsed |= 2;
 }
