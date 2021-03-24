@@ -98,10 +98,10 @@ void Server::checkClients()
 	std::vector< SharedPtr<Client> >::iterator it;
 	for (it = _clients.begin(); it != _clients.end();)
 	{
-		if (FD_ISSET((*it)->getFd(), &_readFds))
+		if (FD_ISSET((*it)->getFd(), &_readFds) &&
+			(*it)->GetStatus() == READY_TO_READ)
 			(*it)->receive();
-//TODO: one per time
-		if (FD_ISSET((*it)->getFd(), &_writeFds))
+		else if(FD_ISSET((*it)->getFd(), &_writeFds))
 			(*it)->response();
 
 		(*it)->check();
