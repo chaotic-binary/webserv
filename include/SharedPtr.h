@@ -2,7 +2,7 @@
 
 template<class T>
 class SharedPtr {
-public:
+ public:
 	explicit SharedPtr(T *ptr = 0) : counter(new int), ptr_(ptr) {
 		*counter = 1;
 	}
@@ -56,7 +56,7 @@ public:
 		return ptr_;
 	}
 
-private:
+ private:
 	int *counter;
 	T *ptr_;
 };

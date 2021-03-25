@@ -2,17 +2,14 @@
 #include "ServConfig.h"
 
 ServConfig::ServConfig() :
-	_port(0) {}
+	_port(0),
+	_parsed(0) {}
 
 ServConfig::~ServConfig() {}
 
-ServConfig::ServConfig(const ServConfig &copy) :
-	_names(copy._names),
-	_host(copy._host),
-	_port(copy._port),
-	_root(copy._root),
-	_locations(copy._locations),
-	_errorPages(copy._errorPages) {}
+ServConfig::ServConfig(const ServConfig &copy) {
+	*this = copy;
+}
 
 ServConfig &ServConfig::operator=(const ServConfig &copy) {
 	this->_names = copy._names;
@@ -21,6 +18,9 @@ ServConfig &ServConfig::operator=(const ServConfig &copy) {
 	this->_root = copy._root;
 	this->_locations = copy._locations;
 	this->_errorPages = copy._errorPages;
+	this->_sockFd = copy._sockFd;
+	this->_sockAddr = copy._sockAddr;
+	this->_parsed = copy._parsed;
 	return (*this);
 }
 
@@ -29,17 +29,24 @@ void ServConfig::setNames(const std::vector<std::string> &names) {
 }
 
 void ServConfig::setHost(const std::string &host) {
+	if (_parsed & 1)
+		throw DuplicateDirective("listen");
 	_host = host;
-	//TODO: notValid? turn to num value while parsing?
+	_parsed |= 1;
 }
 
 void ServConfig::setPort(size_t port) {
+	if (_parsed & 2)
+		throw DuplicateDirective("listen");
 	_port = port;
-	//TODO: check max min range?
+	_parsed |= 2;
 }
 
 void ServConfig::setRoot(const std::string &root) {
+	if (_parsed & 4)
+		throw DuplicateDirective("root");
 	_root = root;
+	_parsed |= 4;
 	if (_root.back() != '/')
 		_root += '/';
 }
@@ -121,9 +128,9 @@ const Location &ServConfig::getLocation(const std::string &reqPath) const {
 	}
 	if (locationIndex == -1)
 		throw RespException(Response(404));
-	return _locations[locationIndex];
+	return _locations.at(locationIndex);
 }
 
 void	ServConfig::updateLocationRoot(int index, const std::string &root) {
-	this->_locations.at(index).setRoot(root);
+	this->_locations.at(index).updateRoot(root);
 }

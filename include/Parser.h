@@ -6,50 +6,43 @@
 
 class Parser {
  public:
-  explicit Parser(char *file);
+  Parser();
   Parser(const Parser &copy);
   ~Parser();
 
+  const std::vector<ServConfig> &parse(char *file);
   const std::vector<ServConfig> &getServs() const;
 
   class ParserException : public std::exception {
    public:
-	class CannotOpenFile : public std::exception {
-	  virtual const char *what() const throw();
-	};
 
-	class UnknownParam : public std::logic_error {
+	class UnknownParam : public std::runtime_error {
 	 private:
 	  UnknownParam();
 
 	 public:
-	  explicit UnknownParam(int line) : std::logic_error("Unknown parameter: line:" + ft::to_str(line)) {};
+	  explicit UnknownParam(int line) : std::runtime_error("Unknown parameter: line:" + ft::to_str(line)) {};
 	};
 
-	class InvalidData : public std::logic_error {
+	class InvalidData : public std::runtime_error {
 	 private:
 	  InvalidData();
 
 	 public:
-	  explicit InvalidData(int line) : std::logic_error("Invalid data format: line:" + ft::to_str(line)) {};
+	  explicit InvalidData(int line) : std::runtime_error("Invalid data format: line:" + ft::to_str(line)) {};
 	};
 
-	class BraceExpected : public std::logic_error {
+	class BraceExpected : public std::runtime_error {
 	 private:
 	  BraceExpected();
 
 	 public:
-	  explicit BraceExpected(int line) : std::logic_error("Brace expected: line:" + ft::to_str(line)) {};
+	  explicit BraceExpected(int line) : std::runtime_error("Brace expected: line:" + ft::to_str(line)) {};
 	};
 
-	class NoRoot : public std::exception {
-	  virtual const char *what() const throw();
-	};
-	//virtual const char* what() const throw();
   };
 
  private:
-  Parser();
   Parser &operator=(const Parser &copy);
 
   std::vector<ServConfig> _servs;

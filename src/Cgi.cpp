@@ -97,47 +97,35 @@ void partial_write(int fd, const std::string &msg) {
 	}
 }
 
-bool check_fd(int fd) {
-	fd_set test;
-	FD_ZERO(&test);
-	FD_SET(fd, &test);
-	struct timeval tv;
-	tv.tv_sec = 1;
-	tv.tv_usec = 0;
-	select(fd, &test, NULL, NULL, &tv);
-	if (FD_ISSET(fd, &test))
-		return true;
-	else
-		return false;
-}
-
 std::string CgiEx(const std::string &cgi,
 				  const std::string &script,
 				  const std::string &input,
 				  const EnvironMap &env_map) {
 	static const size_t BUFF_SIZE = 1024;
 	char buff[BUFF_SIZE + 1];
+	const std::string tmp_file_path = getcwd(buff, BUFF_SIZE) + std::string("/.buffer_file_kinGinx.tmp");
+	int fileBufferFd = open(tmp_file_path.c_str(), O_TRUNC | O_CREAT | O_WRONLY, 0666);
+	write(fileBufferFd, input.c_str(), input.size());
+	close(fileBufferFd);
+	fileBufferFd = open(tmp_file_path.c_str(), O_RDONLY); // TODO: OMG  This is piece of sh... code
+
 	Pipe Opipe;
 	Opipe.Create();
-	std::string tmp_file_path(getcwd(buff, BUFF_SIZE)); //TODO: check ret
-	tmp_file_path += "/tmp_kinginx.tmp";
-	int fd_bla = open(tmp_file_path.c_str(), O_TRUNC | O_CREAT | O_WRONLY, 0666);
-	write(fd_bla, input.c_str(), input.size());
-	close(fd_bla);
-	fd_bla = open(tmp_file_path.c_str(), O_RDONLY); // TODO: OMG  This is piece of sh... code
+
+
 	pid_t pid = fork();
 	if (pid == -1)
 		throw std::runtime_error("FORK ERROR");
 	else if (pid == 0) {
 		dup2(Opipe.WriteFd(), 1);
-		dup2(fd_bla, 0);
+		dup2(fileBufferFd, 0);
 		Opipe.Close();
 		char *const args[3] = {strdup(cgi.c_str()), strdup(script.c_str()), NULL};
 		char *const *envp = map2envp(env_map);
 		execve(cgi.c_str(), args, envp);
 		exit(1);
 	} else {
-		close(fd_bla);
+		close(fileBufferFd);
 		close(Opipe.WriteFd());
 		int ret;
 		std::string total;

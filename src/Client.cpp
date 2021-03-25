@@ -14,14 +14,17 @@ std::vector<std::string> translate_methods(const std::vector<e_methods> &allowed
 }
 
 Response generate_response(const Request &request, const ServConfig &config) {
+	if (!request.isComplete())
+		return Response(400);
 	try {
 		const Location &location = config.getLocation(request.getReqTarget());
+		const std::vector<e_methods> &allowedMethods = location.getMethods();
+
 		if (request.getBody().size() > location.getMaxBody())
 			return Response(413);
-		if (!method_map.count(request.getMethod()))
+		else if (!method_map.count(request.getMethod()))
 			return Response(501);
-		const std::vector<e_methods> &allowedMethods = location.getMethods();
-		if (allowedMethods.empty() ||
+		else if (allowedMethods.empty() ||
 			allowedMethods.end() == find(allowedMethods.begin(), allowedMethods.end(), request.getMethod())) {
 			Response response(405);
 			response.SetHeader("Allow", translate_methods(allowedMethods));
@@ -38,6 +41,14 @@ Response generate_response(const Request &request, const ServConfig &config) {
 	}
 }
 
+Response get_response(const Request &request, const ServConfig &config) {
+	Response response = generate_response(request, config);
+	response.SetDefaultContent();
+	if (request.getMethod() == HEAD)
+		response.SetBody("");
+	return response;
+}
+
 void Client::response() {
 	if (status_ != READY_TO_SEND && status_ != SENDING)
 		return;
@@ -45,22 +56,16 @@ void Client::response() {
 		this->raw_send();
 		return;
 	}
-	Response rsp;
-	if (req_.isComplete())
-		rsp = generate_response(req_, serv_);
-	else {
-		rsp = Response(400);
-	}
+	Response rsp = get_response(req_, serv_);
 	if (rsp.GetCode() != 200)
 		std::cout << "============" << rsp.GetCode() << "============" << std::endl;
-	raw_msg = rsp.Generate();
+	raw_msg = rsp.toString();
 	status_ = SENDING;
 	next_status = req_.isComplete() ? READY_TO_READ : CLOSE_CONNECTION;
 	gettimeofday(&tv_, NULL);
 	if (req_.getHeader("connection") == "close")
 		next_status = CLOSE_CONNECTION;
 	req_.clear();
-	//return status_ == CLOSE_CONNECTION;
 }
 
 const ServConfig &Client::getServ() const {
@@ -118,9 +123,9 @@ void Client::raw_send() {
 			sended_ += ret;
 	}
 
-	if(sended_ == raw_msg.size()) {
+	if (sended_ == raw_msg.size()) {
 		static int i = 0;
-		std::cerr << "File: " <<  i++ << std::endl;
+		std::cerr << "File: " << i++ << std::endl;
 		sended_ = 0;
 		status_ = next_status;
 	}

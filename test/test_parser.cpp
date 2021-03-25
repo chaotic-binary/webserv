@@ -8,9 +8,10 @@ int main(int ac, char **av) {
 		return (1);
 	}
 	try {
-		Parser p = Parser(av[1]);
 
-		std::cout << p;//test
+		Parser p;
+		p.parse(av[1]);
+		std::cout <<  p;//test
 
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
