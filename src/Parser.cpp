@@ -126,7 +126,7 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 const std::vector<ServConfig> &Parser::parse(char *file) {
 	std::ifstream ifs(file);
 	if (!ifs)
-		throw std::runtime_error("Cannot open file");
+		throw std::runtime_error("Cannot open configuration file");
 	initServParser();
 	initLocParser();
 	initLocArrParser();

@@ -43,7 +43,7 @@ Response generate_response(const Request &request, const ServConfig &config) {
 
 Response get_response(const Request &request, const ServConfig &config) {
 	Response response = generate_response(request, config);
-	response.SetDefaultContent();
+	response.SetDefaultContent(config.getErrorPages());
 	if (request.getMethod() == HEAD)
 		response.SetBody("");
 	return response;
