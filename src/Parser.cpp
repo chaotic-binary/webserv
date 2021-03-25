@@ -275,12 +275,11 @@ void Parser::addMainAndDefaults(const ServConfig &main) {
 		}
 		locs = _servs[i].getLocations();
 		for (size_t l = 0; l < locs.size(); ++l) {
-			if (_servs[i].getRoot().empty()) {
-				if (!main.getRoot().empty())
-					_servs[i].updateLocationRoot(l, main.getRoot());
-			} else
+			if (!_servs[i].getRoot().empty())
 				_servs[i].updateLocationRoot(l, _servs[i].getRoot());
-			if (_servs[i].getLocations()[l].getRoot().empty())
+			else if (!main.getRoot().empty())
+				_servs[i].updateLocationRoot(l, main.getRoot());
+			else if (locs[l].getRoot().empty())
 				throw std::runtime_error("No root information");
 		}
 		if (!_servs[i].getPort())
