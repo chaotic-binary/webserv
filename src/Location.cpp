@@ -87,10 +87,10 @@ void Location::setRoot(const std::string &root) {
 }
 
 void Location::updateRoot(const std::string &root_prefix) {
-	if (root_prefix.back() == '/')
-		_root = root_prefix.substr(0, root_prefix.size() - 1) + _root;
+	if (_root.empty())
+		_root = root_prefix;
 	else
-		_root = root_prefix + _root;
+		_root = root_prefix.substr(0, root_prefix.size() - 1) + _root;
 }
 
 void Location::setIndex(const std::string &index) {
