@@ -24,7 +24,9 @@ void Server::initSockets() {
 		if (this->_servers[i].getSockFd() == -1)
 			throw Error("create socket");
 		int opt = 1;
-		if (setsockopt(this->_servers[i].getSockFd(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+		if (setsockopt(this->_servers[i].getSockFd(), SOL_SOCKET,  SO_REUSEADDR  , &opt, sizeof(opt)) == -1)
+			throw Error("setsockopt");
+		if (setsockopt(this->_servers[i].getSockFd(), SOL_SOCKET,  SO_NOSIGPIPE  , &opt, sizeof(opt)) == -1)
 			throw Error("setsockopt");
 		if (bind(this->_servers[i].getSockFd(), (struct sockaddr *) &this->_servers[i].getSockAddr(), sizeof(sockaddr))
 			== -1)

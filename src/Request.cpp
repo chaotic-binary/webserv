@@ -133,8 +133,10 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				raw_request += buffer;
 				//std::cout << "rr: " << raw_request << " :rr" << std::endl;
 				read_activated = true;
-			} else
+			} else {
+				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
 				return ret;
+			}
 		}
 		if ((i = raw_request.find("\r\n")) != std::string::npos) {
 			contentLength = ft::to_num(raw_request, true) + 2;
@@ -151,8 +153,10 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
 				//std::cout << "SIZE = " <<  raw_request.size() << std::endl;
-			} else
+			} else {
+				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
 				return ret;
+			}
 		}
 		if (raw_request.size() >= contentLength) {
 			if (contentLength == 2)
