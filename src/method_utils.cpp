@@ -12,7 +12,7 @@ std::string checkSource(const Location &location, std::string reqTarget, bool cg
 
 	pathObj = location.getRoot();
 	if (reqTarget != location.getPath())
-		pathObj += reqTarget.erase(0, location.getPath().size() + 1);
+		pathObj += reqTarget.erase(0, location.getPath().size());
 	stat(pathObj.c_str(), &sb);
 	if (S_ISDIR(sb.st_mode)) {
 		pathObj += (pathObj.back() != '/') ? "/" : "";
