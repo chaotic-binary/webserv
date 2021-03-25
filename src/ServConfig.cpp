@@ -13,7 +13,8 @@ ServConfig::ServConfig(const ServConfig &copy) :
 	_port(copy._port),
 	_root(copy._root),
 	_locations(copy._locations),
-	_errorPages(copy._errorPages) {}
+	_errorPages(copy._errorPages),
+	_parsed(copy._parsed) {}
 
 ServConfig &ServConfig::operator=(const ServConfig &copy) {
 	this->_names = copy._names;
@@ -48,8 +49,8 @@ void ServConfig::setRoot(const std::string &root) {
 		throw DuplicateDirective("root");
 	_root = root;
 	_parsed |= 4;
-	if (_root.back() != '/')
-		_root += '/';
+	//if (_root.back() != '/')
+	//	_root += '/';
 }
 
 void ServConfig::setLocations(const std::vector<Location> &locations) {
@@ -133,5 +134,5 @@ const Location &ServConfig::getLocation(const std::string &reqPath) const {
 }
 
 void	ServConfig::updateLocationRoot(int index, const std::string &root) {
-	this->_locations.at(index).setRoot(root);
+	this->_locations.at(index).updateRoot(root);
 }

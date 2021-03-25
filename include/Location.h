@@ -39,6 +39,8 @@ class Location {
   void setAutoindexFromStr(const std::string &str);
   void setUploadEnableFromStr(const std::string &str);
 
+  void updateRoot(const std::string &root_prefix);
+
   const std::string &getName() const;
   const std::string &getRoot() const;
   const std::string &getIndex() const;
