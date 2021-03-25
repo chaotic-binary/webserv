@@ -12,9 +12,409 @@ int main(int ac, char **av)
 	}
 	int port = atoi(av[1]);
 	int count = atoi(av[2]);
-	for (int i = 0; i < count; ++i)
+	for (int i = 0; i < count; i += 100)
 	{
-		Client client("127.0.0.1", port++);
-		client.start();
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		{
+			Client client("127.0.0.1", port, av[3]);
+			client.start();
+		}
+		std::cout << i << std::endl;
+
 	}
 }

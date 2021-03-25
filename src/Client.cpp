@@ -117,8 +117,10 @@ void Client::raw_send() {
 	if (sended_ < raw_msg.size()) {
 		ssize_t chunk_size = std::min(raw_msg.size() - sended_, MAX_CHUNK_SIZE);
 		ssize_t ret = send(fd_, &(raw_msg.c_str()[sended_]), chunk_size, 0); //TODO check send ret
-		if (ret <= 0)
+		if (ret <= 0) {
 			std::cerr << "ERROR SEND: " << ret << std::endl;
+			status_ = CLOSE_CONNECTION;
+		}
 		else
 			sended_ += ret;
 	}
