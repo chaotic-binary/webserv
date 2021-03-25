@@ -22,7 +22,6 @@ add_executable(test_parser
         src/methods.cpp
         src/PostMethod.cpp
         src/methods.cpp
-        src/HeadMethod.cpp
         src/PutMethod.cpp
         )
 
@@ -43,5 +42,4 @@ add_executable(test_server
         src/methods.cpp
         src/PostMethod.cpp
         src/methods.cpp
-        src/HeadMethod.cpp
         src/PutMethod.cpp)
