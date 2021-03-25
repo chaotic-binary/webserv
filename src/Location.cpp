@@ -86,6 +86,13 @@ void Location::setRoot(const std::string &root) {
 		_root += '/';
 }
 
+void Location::updateRoot(const std::string &root_prefix) {
+	if (_root.empty())
+		_root = root_prefix;
+	else
+		_root = root_prefix.substr(0, root_prefix.size() - 1) + _root;
+}
+
 void Location::setIndex(const std::string &index) {
 	if (_parsed & 2)
 		throw DuplicateDirective("index");

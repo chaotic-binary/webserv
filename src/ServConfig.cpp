@@ -7,13 +7,9 @@ ServConfig::ServConfig() :
 
 ServConfig::~ServConfig() {}
 
-ServConfig::ServConfig(const ServConfig &copy) :
-	_names(copy._names),
-	_host(copy._host),
-	_port(copy._port),
-	_root(copy._root),
-	_locations(copy._locations),
-	_errorPages(copy._errorPages) {}
+ServConfig::ServConfig(const ServConfig &copy) {
+	*this = copy;
+}
 
 ServConfig &ServConfig::operator=(const ServConfig &copy) {
 	this->_names = copy._names;
@@ -22,6 +18,9 @@ ServConfig &ServConfig::operator=(const ServConfig &copy) {
 	this->_root = copy._root;
 	this->_locations = copy._locations;
 	this->_errorPages = copy._errorPages;
+	this->_sockFd = copy._sockFd;
+	this->_sockAddr = copy._sockAddr;
+	this->_parsed = copy._parsed;
 	return (*this);
 }
 
@@ -133,5 +132,5 @@ const Location &ServConfig::getLocation(const std::string &reqPath) const {
 }
 
 void	ServConfig::updateLocationRoot(int index, const std::string &root) {
-	this->_locations.at(index).setRoot(root);
+	this->_locations.at(index).updateRoot(root);
 }

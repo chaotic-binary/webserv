@@ -6,7 +6,7 @@ int main(int ac, char **av)
 	if (ac < 2)
 		return 1;
 	try {
-		Server server(Parser(av[1]).getServs());
+		Server server(Parser().parse(av[1]));
 		server.initSockets();
 		while (loop)
 		{
