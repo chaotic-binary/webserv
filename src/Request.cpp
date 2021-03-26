@@ -80,11 +80,10 @@ void Request::parse_headers(const std::string &str) {
 	std::vector<std::string> lines = ft::split(str, '\n');
 	size_t newPos;
 
-	ft::trim(lines[0], '\r');
 	v = ft::split(lines[0], ' ');
 	if (v.size() != 3)
 		throw InvalidFormat(1);
-	if (v[2].find("HTTP/") != 0)
+	if (v[2] != "HTTP/1.1\r" && v[2] != "HTTP/1.0\r") //TODO оставить только 1.1?
 		throw InvalidFormat(1);
 	setMethodFromStr(v[0]);
 	reqTarget = v[1];
@@ -97,9 +96,10 @@ void Request::parse_headers(const std::string &str) {
 		if (headers.count(tmp)) {
 			if ((tmp == "host" || tmp == "content-length"))
 				throw DuplicateHeader(tmp);
-			//TODO:other headers?
+			//TODO: забили
 		}
-		headers[tmp] = lines[i].substr(newPos + 2, lines[i].size() - 3 - newPos);
+		newPos = (lines[i][newPos + 1] == ' ') ? newPos + 2 : newPos + 1;
+		headers[tmp] = lines[i].substr(newPos, lines[i].size() - 3 - newPos);
 	}
 	if (headers.find("host") == headers.end())
 		throw HeaderNotPresent("host");

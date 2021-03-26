@@ -14,11 +14,10 @@ static std::map<std::string, std::string> parse_headers(const std::string &str) 
 			throw std::runtime_error("Invalid format"); //TODO:where we catch it?
 		std::string tmp = lines[i].substr(0, newPos);
 		tmp = ft::tolower(tmp);
-		/*if (headers.count(tmp)) {
-			if ((tmp == "host" || tmp == "content-length"))
-				throw DuplicateHeader(tmp);
-		}*/
-		headers[tmp] = lines[i].substr(newPos + 2, lines[i].size() - 3 - newPos);
+		if (headers.count(tmp))
+			throw std::runtime_error("Duplicate header: " + tmp);
+		newPos = (lines[i][newPos + 1] == ' ') ? newPos + 2 : newPos + 1;
+		headers[tmp] = lines[i].substr(newPos, lines[i].size() - 3 - newPos);
 	}
 	return headers;
 }
