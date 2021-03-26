@@ -73,6 +73,10 @@ const std::string &Request::GetQueryString() const {
 	return queryString;
 }
 
+bool Request::isChunked() const {
+	return chunked;
+}
+
 bool Request::isComplete() const { return complete; }
 
 void Request::parse_headers(const std::string &str) {
@@ -81,9 +85,10 @@ void Request::parse_headers(const std::string &str) {
 	size_t newPos;
 
 	v = ft::split(lines[0], ' ');
-	if (v.size() != 3)
+	if (v.size() != 3 || v[2].size() != 9)
 		throw InvalidFormat(1);
-	if (v[2] != "HTTP/1.1\r" && v[2] != "HTTP/1.0\r") //TODO оставить только 1.1?
+	ft::trim(v[2], '\r');
+	if (v[2].find("HTTP/") != 0 || !(isdigit(v[2][5]) && isdigit(v[2][7])) || v[2][6] != '.') //TODO оставить только 1.1?
 		throw InvalidFormat(1);
 	setMethodFromStr(v[0]);
 	reqTarget = v[1];

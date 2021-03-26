@@ -46,6 +46,7 @@ class Request {
   const std::string &GetQueryString() const;
   const std::string &getBody() const;
   bool isComplete() const;
+  bool isChunked() const;
 
   class InvalidFormat : public std::logic_error {
    private:
