@@ -17,7 +17,7 @@ static std::map<std::string, std::string> parse_headers(const std::string &str) 
 		if (headers.count(tmp))
 			throw std::runtime_error("Duplicate header: " + tmp);
 		newPos = (lines[i][newPos + 1] == ' ') ? newPos + 2 : newPos + 1;
-		headers[tmp] = lines[i].substr(newPos, lines[i].size() - 3 - newPos);
+		headers[tmp] = lines[i].substr(newPos, lines[i].size() - 1 - newPos);
 	}
 	return headers;
 }

@@ -99,7 +99,7 @@ void Request::parse_headers(const std::string &str) {
 			//TODO: забили
 		}
 		newPos = (lines[i][newPos + 1] == ' ') ? newPos + 2 : newPos + 1;
-		headers[tmp] = lines[i].substr(newPos, lines[i].size() - 3 - newPos);
+		headers[tmp] = lines[i].substr(newPos, lines[i].size() - 1 - newPos);
 	}
 	if (headers.find("host") == headers.end())
 		throw HeaderNotPresent("host");
