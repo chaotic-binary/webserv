@@ -43,9 +43,10 @@ Response PostGenerator(const Request &request, const ServConfig &config) {
 
 	size_t i = total.find("\r\n\r\n");
 	std::map<std::string, std::string> headers = parse_headers(total.substr(0, i + 2));
-	//if (!headers.count("status"))
-	//	throw TODO:?
-	rsp.SetCode(ft::to_num(headers["status"]));
+	if (headers.count("status"))
+		rsp.SetCode(ft::to_num(headers["status"]));
+	else
+		rsp.SetCode(200);
 	std::map<std::string, std::string>::const_iterator it;
 	for (it = headers.begin(); it != headers.end(); ++it) {
 		if (it->first != "status")
