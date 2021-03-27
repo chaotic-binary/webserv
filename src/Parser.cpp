@@ -232,7 +232,7 @@ void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
 		throw ParserException::BraceExpected(line_num);
 	if (size != 3)
 		throw ParserException::InvalidData(line_num);
-	loc.setName(args[1]);
+	loc.setPath(args[1]);
 }
 
 void Parser::parseMaxBody(std::string &val, Location &loc) {

@@ -1,4 +1,4 @@
-#include <response.h>
+#include "response.h"
 #include "ServConfig.h"
 
 ServConfig::ServConfig() :
@@ -112,6 +112,29 @@ sockaddr_in &ServConfig::getSockAddr() {
 }
 
 const Location &ServConfig::getLocation(const std::string &reqPath) const {
+#ifdef BONUS
+
+	std::cmatch match;
+	std::string matched_part;
+	int locationIndex = -1;
+	std::vector<Location>::const_iterator it = _locations.begin();
+
+	for (int res = 0; it != _locations.end(); it++, res++) {
+		std::regex regex(it->getPathR());
+		if (std::regex_search(reqPath.c_str(), match, regex)) {
+			if (match.str(0).size() > matched_part.size()) {
+				matched_part = match.str(0);
+				locationIndex = res;
+			}
+		}
+	}
+	if (locationIndex == -1)
+		throw RespException(Response(404));
+	const_cast< Location& >(_locations.at(locationIndex)).updatePath(matched_part);
+	return _locations.at(locationIndex);
+
+#else
+
 	std::vector<Location>::const_iterator it = _locations.begin();
 	size_t maxCoincidence = 0;
 	int locationIndex = -1;
@@ -129,6 +152,8 @@ const Location &ServConfig::getLocation(const std::string &reqPath) const {
 	if (locationIndex == -1)
 		throw RespException(Response(404));
 	return _locations.at(locationIndex);
+
+#endif
 }
 
 void	ServConfig::updateLocationRoot(int index, const std::string &root) {
