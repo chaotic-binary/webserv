@@ -44,4 +44,6 @@ add_executable(test_server
         src/PostMethod.cpp
         src/methods.cpp
         src/HeadMethod.cpp
-        src/PutMethod.cpp)
+        src/PutMethod.cpp
+        src/response_generator.cpp
+        src/base64.cpp)

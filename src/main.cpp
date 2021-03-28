@@ -1,8 +1,15 @@
 #include "Server.h"
+#include "base64.h"
+
 volatile bool loop = true;
 
 int main(int ac, char **av)
 {
+    std::cout <<"Encoded: " << base64_encode("HELLON") << std::endl;
+    std::cout <<"Encoded: " << base64_encode("HELLONA") << std::endl;
+    std::cout <<"Encoded: " << base64_encode("HELLONAB") << std::endl;
+    std::cout <<"Encoded: " << base64_encode("HELLONABC") << std::endl;
+
 	if (ac < 2)
 		return 1;
 	try {

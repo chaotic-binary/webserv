@@ -3,12 +3,15 @@
 #include <mimeTypes.h>
 #include "GetMethod.h"
 #include "ServConfig.h"
+#include "Cgi.h"
 
 Response GetGenerator(const Request &request, const ServConfig &config) {
+    if(!request.GetQueryString().empty()) {
+        return CgiResponse(request, config);
+    }
 	Response rsp(200);
 	const Location &location = config.getLocation(request.getReqTarget());
 	const std::string obj = checkSource(location, request.getReqTarget());
-	//TODO::перенести общее для всех методов
 
 	std::ifstream file(obj);
 	std::stringstream ss;

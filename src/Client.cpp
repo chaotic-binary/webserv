@@ -2,52 +2,8 @@
 #include <iostream>
 #include <response.h>
 #include <stdexcept>
-#include <methods.h>
 #include <sys/time.h>
-
-std::vector<std::string> translate_methods(const std::vector<e_methods> &allowed_methods) {
-	std::vector<std::string> ans;
-
-	for (size_t i = 0; i < allowed_methods.size(); i++)
-		ans.push_back(ft::to_str(allowed_methods[i]));
-	return ans;
-}
-
-Response generate_response(const Request &request, const ServConfig &config) {
-	if (!request.isComplete())
-		return Response(400);
-	try {
-		const Location &location = config.getLocation(request.getReqTarget());
-		const std::vector<e_methods> &allowedMethods = location.getMethods();
-
-		if (request.getBody().size() > location.getMaxBody())
-			return Response(413);
-		else if (!method_map.count(request.getMethod()))
-			return Response(501);
-		else if (allowedMethods.empty() ||
-			allowedMethods.end() == find(allowedMethods.begin(), allowedMethods.end(), request.getMethod())) {
-			Response response(405);
-			response.SetHeader("Allow", translate_methods(allowedMethods));
-			return response;
-		}
-		if ((request.getMethod() == PUT || request.getMethod() == POST)
-			&& request.getHeader("content-length").empty() && request.getHeader("transfer-encoding") != "chunked")
-			return Response(411);
-		return method_map.at(request.getMethod())(request, config);
-	} catch (const RespException &err_rsp) {
-		return err_rsp.GetRsp();
-	} catch (...) {
-		return Response(500);
-	}
-}
-
-Response get_response(const Request &request, const ServConfig &config) {
-	Response response = generate_response(request, config);
-	response.SetDefaultContent();
-	if (request.getMethod() == HEAD)
-		response.SetBody("");
-	return response;
-}
+#include "response_generator.h"
 
 void Client::response() {
 	if (status_ != READY_TO_SEND && status_ != SENDING)
@@ -113,7 +69,6 @@ void Client::check() {
 
 void Client::raw_send() {
 	static const size_t MAX_CHUNK_SIZE = pow(2, 20);
-	//size_t sended = 0;
 	if (sended_ < raw_msg.size()) {
 		ssize_t chunk_size = std::min(raw_msg.size() - sended_, MAX_CHUNK_SIZE);
 		ssize_t ret = send(fd_, &(raw_msg.c_str()[sended_]), chunk_size, 0); //TODO check send ret
