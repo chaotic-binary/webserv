@@ -16,7 +16,6 @@ SRC			=	main.cpp\
 				methods.cpp \
 				PostMethod.cpp \
 				methods.cpp \
-				HeadMethod.cpp \
 				PutMethod.cpp
 
 BIN			=	./bin
