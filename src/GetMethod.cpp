@@ -10,13 +10,30 @@ Response GetGenerator(const Request &request, const ServConfig &config) {
 	const std::string obj = checkSource(location, request.getReqTarget());
 	//TODO::перенести общее для всех методов
 
-	std::ifstream file(obj);
-	std::stringstream ss;
-	ss << file.rdbuf();
-	file.close();
+//	std::ifstream file(obj);
+//	std::stringstream ss;
+//	ss << file.rdbuf();
+//	file.close();
+//	std::ifstream file(obj, std::ios::binary);
+//	std::streambuf* raw_buffer = file.rdbuf();
+//
+//	char* block = new char[size];
+//	raw_buffer->sgetn(block, size);
+//	delete[] block;
+//	rsp.SetBody(ss.str());
 
-	rsp.SetBody(ss.str());
 
+	FILE* f = fopen(obj.c_str(), "r");
+
+	// Determine file size
+	fseek(f, 0, SEEK_END);
+	size_t size = ftell(f);
+
+	std::string body;
+	body.reserve(size);
+	rewind(f);
+	fread(const_cast<char *>(body.data()), sizeof(char), size, f);
+	fclose(f);
 	//tmp part
 	{
 		struct stat sb;
@@ -29,11 +46,10 @@ Response GetGenerator(const Request &request, const ServConfig &config) {
 		rsp.SetHeader("Last-Modified", buff);
 
 		size_t i;
-		i =  ss.str().find("<html lang=");
-		rsp.SetHeader("Content-Language", i != std::string::npos ? ss.str().substr(i + 12,  2) : "");
+		i =  body.find("<html lang=");
+		rsp.SetHeader("Content-Language", i != std::string::npos ? body.substr(i + 12,  2) : "");
 	}
 
 	rsp.SetHeader("content-type", getMimeType(obj));
 	return rsp;
-
 }

@@ -139,7 +139,7 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				//std::cout << "rr: " << raw_request << " :rr" << std::endl;
 				read_activated = true;
 			} else {
-				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
+//				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
 				return ret;
 			}
 		}
@@ -159,7 +159,7 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				raw_request += buffer;
 				//std::cout << "SIZE = " <<  raw_request.size() << std::endl;
 			} else {
-				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
+//				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
 				return ret;
 			}
 		}

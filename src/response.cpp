@@ -30,8 +30,7 @@ std::string Response::toString() const {
 	for (Headers::const_iterator it = headers_.begin(); it != headers_.end(); it++)
 		str_out << it->first << ": " << it->second << "\r\n";
 	str_out << "\r\n";
-	str_out << body_;
-	return str_out.str();
+	return str_out.str() + body_;
 }
 
 void Response::SetHeader(const std::string &title, const std::string &content) {
