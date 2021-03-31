@@ -134,6 +134,11 @@ void Location::setAutoindex(bool autoindex) {
 	_parsed |= 64;
 }
 
+void Location::setAuthorization(const std::string &authorization) {
+    _authorization = authorization;
+}
+
+
 void Location::setUploadEnable(bool uploadEnable) {
 	if (_parsed & 128)
 		throw DuplicateDirective("upload enable");
@@ -188,6 +193,10 @@ static std::ostream &operator<<(std::ostream &os, const std::vector<std::string>
 
 const std::string &Location::getPath() const {
 	return _path;
+}
+
+const std::string &Location::getAuthorization() const {
+    return _authorization;
 }
 
 std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v) {

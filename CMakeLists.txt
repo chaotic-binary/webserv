@@ -21,7 +21,6 @@ add_executable(test_parser
         src/GetMethod.cpp
         src/methods.cpp
         src/PostMethod.cpp
-        src/methods.cpp
         src/HeadMethod.cpp
         src/PutMethod.cpp
         )
@@ -42,8 +41,8 @@ add_executable(test_server
         src/GetMethod.cpp
         src/methods.cpp
         src/PostMethod.cpp
-        src/methods.cpp
         src/HeadMethod.cpp
         src/PutMethod.cpp
         src/response_generator.cpp
-        src/base64.cpp)
+        src/base64.cpp
+        )

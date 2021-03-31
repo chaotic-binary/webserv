@@ -46,9 +46,7 @@ std::string base64_encode(const std::string& raw_msg) {
             ret += '=';
 
     }
-
     return ret;
-
 }
 std::string base64_decode(std::string const& encoded_string) {
     int in_len = encoded_string.size();

@@ -35,6 +35,7 @@ class Location {
   void setUploadEnable(bool uploadEnable);
   void setCgiExtensions(const std::vector<std::string> &cgiExtensions);
   void setMethods(const std::vector<e_methods> &methods);
+  void setAuthorization(const std::string& authorization);
   void setMethodsFromStr(const std::vector<std::string> &methods);
   void setAutoindexFromStr(const std::string &str);
   void setUploadEnableFromStr(const std::string &str);
@@ -48,6 +49,7 @@ class Location {
   const std::string &getCgiPath() const;
   const std::string &getUploadPath() const;
   const std::string &getPath() const;
+  const std::string &getAuthorization() const;
   size_t getMaxBody() const;
   bool getAutoindex() const;
   bool getUploadEnable() const;
@@ -78,11 +80,12 @@ class Location {
   std::vector<e_methods> _methods;
   std::string _cgi_index;
   std::string _path;
+  std::string _authorization;
 
   static bool getBoolFromStr(const std::string &str);
   static std::vector<std::string> methodsParser;
-
   int _parsed;
+public:
 };
 
 std::ostream &operator<<(std::ostream &os, const Location &location);
