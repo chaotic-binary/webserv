@@ -24,7 +24,8 @@ class Location {
   Location(const Location &copy);
   ~Location();
 
-  void setName(const std::string &name);
+  void setPath(const std::string &path);
+  void updatePath(const std::string &path);
   void setRoot(const std::string &root);
   void setIndex(const std::string &index);
   void setCgiIndex(const std::string &index);
@@ -49,6 +50,7 @@ class Location {
   const std::string &getCgiPath() const;
   const std::string &getUploadPath() const;
   const std::string &getPath() const;
+  const std::string &getPathR() const;
   const std::string &getAuthorization() const;
   size_t getMaxBody() const;
   bool getAutoindex() const;
@@ -81,11 +83,11 @@ class Location {
   std::string _cgi_index;
   std::string _path;
   std::string _authorization;
+  std::string _pathR;
 
   static bool getBoolFromStr(const std::string &str);
   static std::vector<std::string> methodsParser;
   int _parsed;
-public:
 };
 
 std::ostream &operator<<(std::ostream &os, const Location &location);

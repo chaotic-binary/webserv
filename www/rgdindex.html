@@ -1,34 +1,4 @@
-Welcome in this little webserver tester.
-Passing the test here is the minimum before going to an evaluation.
-
-press enter to continue
-THIS TEST IS NOT MEANT TO BE THE ONLY TEST IN THE EVALUATION!!!
-
-press enter to continue
-Before starting please follow the next few steps (files content can be anything and will be shown to you by the test):
-- Download the cgi_test executable on the host
-- Create a directory YoupiBanane with:
-	-a file name youpi.bad_extension
-	-a file name youpi.bla
-	-a sub directory called nop
-		-a file name youpi.bad_extension in nop
-		-a file name other.pouic in nop
-	-a sub directory called Yeah
-		-a file name not_happy.bad_extension in Yeah
-press enter to continue
-Setup the configuration file as follow:
-- / must answer to GET request ONLY
-- /put_test/* must answer to PUT request and save files to a directory of your choice
-- any file with .bla as extension must answer to POST request by calling the cgi_test executable
-- /post_body must answer anything to POST request with a maxBody of 100
-- /directory/ must answer to GET request and the root of it would be the repository YoupiBanane and if no file are requested, it should search for youpi.bad_extension files
-
-press enter to continue
-Before starting please verify that the server is launched
-press enter to continue
-
-Test GET http://localhost:1234/
-content returned: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 	<title>kinGinx team</title>
@@ -51,28 +21,28 @@ content returned: <!DOCTYPE html>
 
 			<form class="form" action="popo.php" method="post" > <!--action="popo.php" method="post"-->
 				<input class="form__item" type="text" name="name" value="" placeholder=" Илон Маск" required>
-
+				
 				<input class="form__item" type="text" name="phone" value="" placeholder=" 79XXXXXXXXX" required>
-
+				
 				<input class="form__item" type="text" name="email" value="" placeholder=" mail@mail.ru" required>
-
+				
 				<input id="confid" type="checkbox" name="confid" required="required">
 				<label for="confid" class="label-check">
 					Я согласен с условиями обработки персональных данных
 				</label>
-
+				
 				<button class="popup__button">Отправить</button>
 			</form>
 		</div>
 	</div>
-
+	
 	<header class="header fixed-container">
 		<div class="wrap-menu">
 			<button class="menu-button" type="button" name="menu-mob" aria-label="меню">
 				<span class="menu-button--type-line-1 menu-button--type-line"></span>
-
+				
 				<span class="menu-button--type-line-2 menu-button--type-line"></span>
-
+				
 				<span class="menu-button--type-line-3 menu-button--type-line"></span>
 			</button>
 		</div>
@@ -92,7 +62,7 @@ content returned: <!DOCTYPE html>
 				</li>
 			</ul>
 		</nav>
-
+		
 		<a class="number-phone header__number-phone" href="tel:+79255505450">+7 (925) 550-54-50</a>
 
 		<button class="request-button category-list__link--desktop category-list__link--mobile request-button--hover header__request-button" type="button">Заказать звонок</button>
@@ -125,11 +95,13 @@ content returned: <!DOCTYPE html>
 				<img class="prfile__img-man" src="img/man.webp" alt="I">
 			</section>
 		</a>
+		<h1 style=" color: #31293c;margin-left: 28%;margin-right: 50%; margin-top: 100px; margin-bottom: 50px">❤️ ДОВОЛЬНЫЕ КЛИЕНТЫ ❤️</h1>
+		<img class="5"  style="display: block; margin-left: 15%; margin-bottom: 30px; border-radius: 50%" src="img/hello.jpg" alt="I">
 
 		<section class="block-skills" id="skills-link">
 			<div class="fixed-container">
 				<h2 class="block-skills__title all-title"> Что мы делаем</h2>
-
+				
 				<ul class="skills-list block-skills__skills-list">
 					<li class="skills-list__item skills-list__item--bg-1">
 						<a class="skill-list__link" href="">NOTHING YOU CAN IMAGINE</a>
@@ -147,8 +119,8 @@ content returned: <!DOCTYPE html>
 						<a class="skill-list__link" href=""> Исправление и доработка существующей NOTHING YOU CAN IMAGINE</a>
 					</li>
 				</ul>
-
-				<button class="info-button info-button--hover block-skills__info-button" onclick="document.location='#price-link'" type="button">Узнать стоимость</button>
+				
+				<button class="info-button info-button--hover block-skills__info-button" onclick="document.location='#price-link'" type="button">Узнать стоимость</button>	
 			</div>
 		</section>
 
@@ -165,24 +137,24 @@ content returned: <!DOCTYPE html>
 						<button class="slider-list--type-button-next slider-list--type-arrow" type="button" aria-hidden="true"></button>
 					</li>
 				</ul>
-
+				
 				<div class="examples-my-work portfolio__examples-my-work">
 					<figure class="examples-my-work__item">
-						<img class="examples-my-work__img" src="img/21.png" alt="454">
+					   	<img class="examples-my-work__img" src="img/21.png" alt="454">
 					    <figcaption class="examples-my-work__title">
-						<a class="examples-my-work__link" href="http://21-school.ru">Взлом Инновационной школы 21</a>
-					    </figcaption>
+				   	    	<a class="examples-my-work__link" href="http://21-school.ru">Взлом Инновационной школы 21</a>
+				   	    </figcaption>			   
+				   </figure>
+						
+					<figure class="examples-my-work__item">
+					    <img class="examples-my-work__img" src="img/ex2.webp" alt="454">				    	
+					    <figcaption class="examples-my-work__title">
+				   	    	<a class="examples-my-work__link" href="">DDos магазина детской одежды</a>
+				   	    </figcaption>
 				   </figure>
 
 					<figure class="examples-my-work__item">
-					    <img class="examples-my-work__img" src="img/ex2.webp" alt="454">
-					    <figcaption class="examples-my-work__title">
-						<a class="examples-my-work__link" href="">DDos магазина детской одежды</a>
-					    </figcaption>
-				   </figure>
-
-					<figure class="examples-my-work__item">
-					<img class="examples-my-work__img" src="img/ex3.webp" alt="454">
+				    	<img class="examples-my-work__img" src="img/ex3.webp" alt="454">
 						<figcaption class="examples-my-work__title">
 							<a class="examples-my-work__link" href="">Кража данных магазина «Рыболов»</a>
 						</figcaption>
@@ -195,4 +167,85 @@ content returned: <!DOCTYPE html>
 
 		<section class="block-price" id="price-link">
 			<ul class="tags-list block-price__tags-list">
-				<li class="tags-l
+				<li class="tags-list__item">{ }</li>
+				
+				<li class="tags-list__item">#</li>
+
+				<li class="tags-list__item">&lt;div&gt;</li>
+								
+				<li class="tags-list__item">&lt;/&gt;</li>
+				
+				<li class="tags-list__item">{ }</li>
+			</ul>
+			
+			<div class="fixed-container">
+				<h2 class="block-price__title">DDos от 1000 рублей на 1 час.*</h2>
+				
+				<p class="block-price__text">
+					<small>* Срок и стоимость могут отличаться от заявленных и рассчитываются  индивидуально, в зависимости от сложности задач.</small>
+				</p>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="fixed-container flex-objects">
+			<ul class="footer-category-list footer__footer-category-list">
+				<li class="footer-category-list__item">
+					<a href="">Услуги</a>
+				</li>
+				
+				<li class="footer-category-list__item">
+					<a href="">Портфолио</a>
+				</li>
+				
+				<li class="footer-category-list__item">
+					<a href="">Стоимость</a>
+				</li>
+			</ul>
+			
+			<ul class="contact-list">
+				<li class="contact-list__item">
+					<a class="contact-list__item__icon-phone" href="tel:+79255505450"> +7 (925) 550-54-50</a>
+				</li>
+				
+				<li class="contact-list__item">
+					<a class="contact-list__item__icon-mail" href="mailto:dmitry@alekseev.com"> kingGinx@localhost.com</a>
+				</li>
+			</ul>
+
+			<div class="social">
+				<button class="request-ft-button request-ft-button--hover" type="button">Заказать звонок</button>
+				
+				<ul class="social-list social__social-list">
+					<li class="social-list__item">
+						<a class="social-list__link--icon-vk social-list__link--icon-social" href="" aria-label="social-vk"></a>
+					</li>
+					
+					<li class="social-list__item">
+						<a class="social-list__link--icon-fb social-list__link--icon-social" href="" aria-label="social-fb"></a>
+					</li>
+					
+					<li class="social-list__item">
+						<a class="social-list__link--icon-tw social-list__link--icon-social" href="" aria-label="social-tw"></a>
+					</li>
+					
+					<li class="social-list__item">
+						<a class="social-list__link--icon-in social-list__link--icon-social" href="" aria-label="social-in"></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div>
+			<form action="" method="put">
+				<input type="file">
+			</form>
+		</div>
+
+		<p class="copyrite">
+			<small>&copy; KinGinx team, 2021–2077</small>
+		</p>
+	</footer>
+</body>
+</html>

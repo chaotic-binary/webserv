@@ -18,12 +18,13 @@ class Response {
 	void SetCode(int code);
 	std::string GetHeader(const std::string &title) const;
 	void SetBody(const std::string &body);
-	void SetDefaultContent();
+	void SetDefaultContent(const std::map<int, std::string> &errorPages);
 	int GetCode() const;
 
  private:
 	static std::string GetCurDate();
 	void generate_error_page(int code);
+	void get_error_page_from_file(const std::string &file);
 	int code_;
 	Headers headers_;
 	std::string body_;

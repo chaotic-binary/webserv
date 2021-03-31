@@ -17,11 +17,10 @@ add_executable(test_parser
         src/Client.cpp
         src/MimeTypes.cpp
         src/response.cpp
-        src/method_utils.cpp
         src/GetMethod.cpp
         src/methods.cpp
         src/PostMethod.cpp
-        src/HeadMethod.cpp
+        src/methods.cpp
         src/PutMethod.cpp
         )
 
@@ -37,11 +36,9 @@ add_executable(test_server
         src/Client.cpp
         src/MimeTypes.cpp
         src/response.cpp
-        src/method_utils.cpp
         src/GetMethod.cpp
         src/methods.cpp
         src/PostMethod.cpp
-        src/HeadMethod.cpp
         src/PutMethod.cpp
         src/response_generator.cpp
         src/base64.cpp

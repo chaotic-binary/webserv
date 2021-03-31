@@ -73,6 +73,10 @@ const std::string &Request::GetQueryString() const {
 	return queryString;
 }
 
+bool Request::isChunked() const {
+	return chunked;
+}
+
 bool Request::isComplete() const { return complete; }
 
 void Request::parse_headers(const std::string &str) {
@@ -80,11 +84,11 @@ void Request::parse_headers(const std::string &str) {
 	std::vector<std::string> lines = ft::split(str, '\n');
 	size_t newPos;
 
-	ft::trim(lines[0], '\r');
 	v = ft::split(lines[0], ' ');
-	if (v.size() != 3)
+	if (v.size() != 3 || v[2].size() != 9)
 		throw InvalidFormat(1);
-	if (v[2].find("HTTP/") != 0)
+	ft::trim(v[2], '\r');
+	if (v[2].find("HTTP/") != 0 || !(isdigit(v[2][5]) && isdigit(v[2][7])) || v[2][6] != '.') //TODO оставить только 1.1?
 		throw InvalidFormat(1);
 	setMethodFromStr(v[0]);
 	reqTarget = v[1];
@@ -97,9 +101,10 @@ void Request::parse_headers(const std::string &str) {
 		if (headers.count(tmp)) {
 			if ((tmp == "host" || tmp == "content-length"))
 				throw DuplicateHeader(tmp);
-			//TODO:other headers?
+			//TODO: забили
 		}
-		headers[tmp] = lines[i].substr(newPos + 2, lines[i].size() - 3 - newPos);
+		newPos = (lines[i][newPos + 1] == ' ') ? newPos + 2 : newPos + 1;
+		headers[tmp] = lines[i].substr(newPos, lines[i].size() - 1 - newPos);
 	}
 	if (headers.find("host") == headers.end())
 		throw HeaderNotPresent("host");
@@ -134,7 +139,7 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				//std::cout << "rr: " << raw_request << " :rr" << std::endl;
 				read_activated = true;
 			} else {
-				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
+//				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
 				return ret;
 			}
 		}
@@ -154,7 +159,7 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				raw_request += buffer;
 				//std::cout << "SIZE = " <<  raw_request.size() << std::endl;
 			} else {
-				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
+//				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
 				return ret;
 			}
 		}

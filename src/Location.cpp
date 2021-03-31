@@ -73,8 +73,13 @@ const std::vector<std::string> &Location::getMethodsParser() {
 	return methodsParser;
 }
 
-void Location::setName(const std::string &name) {
-	_path = name;
+void Location::setPath(const std::string &path) {
+	_path = path;
+	_pathR = path;
+}
+
+void Location::updatePath(const std::string &path) {
+	_path = path;
 }
 
 void Location::setRoot(const std::string &root) {
@@ -193,6 +198,10 @@ static std::ostream &operator<<(std::ostream &os, const std::vector<std::string>
 
 const std::string &Location::getPath() const {
 	return _path;
+}
+
+const std::string &Location::getPathR() const {
+	return _pathR;
 }
 
 const std::string &Location::getAuthorization() const {

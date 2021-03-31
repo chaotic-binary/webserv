@@ -35,11 +35,13 @@ Response generate_response(const Request &request, const ServConfig &config) {
     try {
         const Location &location = config.getLocation(request.getReqTarget());
         const std::vector<e_methods> &allowedMethods = location.getMethods();
+        if (request.getVersion() != "HTTP/1.1")
+            return Response(505); //TODO: are lower versions supported?
         if (!autentificate(request, location)) {
             Response rsp(401);
             rsp.SetHeader("WWW-Authenticate", "Basic realm=\"Access to the staging site\", charset=\"UTF-8\"");
             return rsp;
-        }
+        } //TODO:move down
         if (request.getBody().size() > location.getMaxBody())
             return Response(413);
         else if (!method_map.count(request.getMethod()))
@@ -51,7 +53,7 @@ Response generate_response(const Request &request, const ServConfig &config) {
             return response;
         }
         if ((request.getMethod() == PUT || request.getMethod() == POST)
-            && request.getHeader("content-length").empty() && request.getHeader("transfer-encoding") != "chunked")
+            && request.getHeader("content-length").empty() && !request.isChunked())
             return Response(411);
         return method_map.at(request.getMethod())(request, config);
     } catch (const RespException &err_rsp) {
@@ -61,9 +63,10 @@ Response generate_response(const Request &request, const ServConfig &config) {
     }
 }
 
+
 Response get_response(const Request &request, const ServConfig &config) {
     Response response = generate_response(request, config);
-    response.SetDefaultContent();
+    response.SetDefaultContent(config.getErrorPages());
     if (request.getMethod() == HEAD)
         response.SetBody("");
     return response;

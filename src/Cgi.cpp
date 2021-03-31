@@ -3,7 +3,7 @@
 #include <utils.h>
 #include <Request.h>
 #include <ServConfig.h>
-#include <method_utils.h>
+#include <cmath>
 #include <libc.h>
 #include <response.h>
 #include "Cgi.h"
@@ -99,16 +99,16 @@ static char **map2envp(const EnvironMap &env_map) {
 }
 
 std::string CgiEx(const std::string &cgi,
-                  const std::string &script,
-                  const std::string &input,
-                  const EnvironMap &env_map) {
-    static const size_t BUFF_SIZE = 1024;
-    char buff[BUFF_SIZE + 1];
-    const std::string tmp_file_path = getcwd(buff, BUFF_SIZE) + std::string("/.buffer_file_kinGinx.tmp");
-    int fileBufferFd = open(tmp_file_path.c_str(), O_TRUNC | O_CREAT | O_WRONLY, 0666);
-    write(fileBufferFd, input.c_str(), input.size());
-    close(fileBufferFd);
-    fileBufferFd = open(tmp_file_path.c_str(), O_RDONLY); // TODO: OMG  This is piece of sh... code
+				  const std::string &script,
+				  const std::string &input,
+				  const EnvironMap &env_map) {
+	static const size_t BUFF_SIZE = pow(2, 20);
+	char buff[BUFF_SIZE + 1];
+	const std::string tmp_file_path = getcwd(buff, BUFF_SIZE) + std::string("/.buffer_file_kinGinx.tmp");
+	int fileBufferFd = open(tmp_file_path.c_str(), O_TRUNC | O_CREAT | O_WRONLY, 0666);
+	write(fileBufferFd, input.c_str(), input.size());
+	close(fileBufferFd);
+	fileBufferFd = open(tmp_file_path.c_str(), O_RDONLY); // TODO: OMG  This is piece of sh... code
 
     Pipe Opipe;
     Opipe.Create();

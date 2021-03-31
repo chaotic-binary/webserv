@@ -127,7 +127,7 @@ void Parser::parse_line(std::string &line, int &brace, ServConfig &main) {
 const std::vector<ServConfig> &Parser::parse(char *file) {
 	std::ifstream ifs(file);
 	if (!ifs)
-		throw std::runtime_error("Cannot open file");
+		throw std::runtime_error("Cannot open configuration file");
 	initServParser();
 	initLocParser();
 	initLocArrParser();
@@ -233,7 +233,7 @@ void Parser::parseLocName(const std::vector<std::string> &args, Location &loc) {
 		throw ParserException::BraceExpected(line_num);
 	if (size != 3)
 		throw ParserException::InvalidData(line_num);
-	loc.setName(args[1]);
+	loc.setPath(args[1]);
 }
 
 void Parser::parseMaxBody(std::string &val, Location &loc) {
@@ -278,9 +278,9 @@ void Parser::addMainAndDefaults(const ServConfig &main) {
 		for (size_t l = 0; l < locs.size(); ++l) {
 			if (!_servs[i].getRoot().empty())
 				_servs[i].updateLocationRoot(l, _servs[i].getRoot());
-			else if (!main.getRoot().empty())
+			if (!main.getRoot().empty())
 				_servs[i].updateLocationRoot(l, main.getRoot());
-			else if (locs[l].getRoot().empty())
+			if (_servs[i].getLocations()[l].getRoot().empty())
 				throw std::runtime_error("No root information");
 		}
 		if (!_servs[i].getPort())

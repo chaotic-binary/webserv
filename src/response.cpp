@@ -1,12 +1,23 @@
 #include "response.h"
 #include "utils.h"
 #include <vector>
+#include <fstream>
 
 Response::Response(int code) : code_(code) {}
 
-void Response::SetDefaultContent() {
-	if (code_ >= 400 && body_.empty())
-		generate_error_page(code_);
+void Response::SetDefaultContent(const std::map<int, std::string> &errorPages) {
+	if (code_ >= 400 && body_.empty()) {
+		if (errorPages.count(code_)) {
+			try {
+				get_error_page_from_file(errorPages.at(code_));
+			} catch (std::runtime_error &e) {
+				std::cerr << e.what() << std::endl;
+				generate_error_page(code_);
+			}
+		}
+		else
+			generate_error_page(code_);
+	}
 	SetHeader("Date", GetCurDate());
 	SetHeader("Server", "KingGinx");
 	if (GetHeader("Content-length").empty())
@@ -19,8 +30,7 @@ std::string Response::toString() const {
 	for (Headers::const_iterator it = headers_.begin(); it != headers_.end(); it++)
 		str_out << it->first << ": " << it->second << "\r\n";
 	str_out << "\r\n";
-	str_out << body_;
-	return str_out.str();
+	return str_out.str() + body_;
 }
 
 void Response::SetHeader(const std::string &title, const std::string &content) {
@@ -63,6 +73,21 @@ void Response::generate_error_page(int code) {
 				  << "<h1>" << "Сервера ответ!" << "</h2>\r\n"
 				  << "<em><small>king's server</small></em>\r\n";
 	SetBody(response_body.str());
+	SetHeader("Content-Type", "text/html");
+}
+
+void Response::get_error_page_from_file(const std::string &file) {
+	std::string content;
+	std::ifstream ifs(file);
+	if (!ifs)
+		throw std::runtime_error("Cannot open error page file");
+	ifs.seekg(0,std::ios::end);
+	std::streampos len = ifs.tellg();
+	ifs.seekg(0,std::ios::beg);
+	content.resize(len);
+	ifs.read(&content[0], len);
+	ifs.close();
+	SetBody(content);
 	SetHeader("Content-Type", "text/html");
 }
 
