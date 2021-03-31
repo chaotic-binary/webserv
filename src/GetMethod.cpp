@@ -56,23 +56,24 @@ std::string generateIndexPage(const char* obj) {
 
 static std::string checkSource(const Location &location, std::string reqTarget,  bool cgi = false)
 {
-	std::string	pathObj;
+	std::string	pathObj, pathAutoIndex;
 	struct stat	sb;
+	bool isDir;
 
 	pathObj = location.getRoot();
 	if (reqTarget != location.getPath())
 		pathObj += reqTarget.erase(0, location.getPath().size());
 	stat(pathObj.c_str(), &sb);
-	if (S_ISDIR(sb.st_mode)) {
+	if ((isDir = S_ISDIR(sb.st_mode))) {
+		pathAutoIndex = pathObj;
 		pathObj += (pathObj.back() != '/') ? "/" : "";
-		pathObj += cgi ? location.getCgiIndex() : location.getIndex(); //TODO: what if cgiindex or index is empty?!
+		pathObj += cgi ? location.getCgiIndex() : location.getIndex();
 	}
-	std::ifstream file(pathObj);
-	if (!file && !location.getAutoindex() && location.getIndex().empty())
+	int ret = stat(pathObj.c_str(), &sb);
+	if (ret == -1 && location.getAutoindex())
+		return (pathAutoIndex);
+	if (ret == -1)
 		throw RespException(Response(404));
-	if (!location.getAutoindex() && !location.getIndex().empty())
-		throw RespException(Response(403));
-	file.close();
 	return (pathObj);
 }
 
@@ -93,21 +94,25 @@ Response GetGenerator(const Request &request, const ServConfig &config) {
 	Response rsp(200);
 	const Location &location = config.getLocation(request.getReqTarget());
 	const std::string obj = checkSource(location, request.getReqTarget());
+	struct stat	sb;
 
 	std::ifstream file(obj);
 	std::stringstream ss;
 	ss << file.rdbuf();
 	file.close();
-	std::string bodyAutoIndex = generateIndexPage(location.getRoot().c_str());
-	if (location.getAutoindex() && request.getReqTarget() == location.getPath() && !bodyAutoIndex.empty())
+	stat(obj.c_str(), &sb);
+	std::string bodyAutoIndex = S_ISDIR(sb.st_mode) ? generateIndexPage(obj.c_str()) : "";
+	if (location.getAutoindex() && !bodyAutoIndex.empty()) {
 		rsp.SetBody(bodyAutoIndex);
-	else
+		rsp.SetHeader("content-type", "text/html");
+	} else {
 		rsp.SetBody(ss.str());
+		rsp.SetHeader("content-type", getMimeType(obj));
+	}
 
 	rsp.SetHeader("Last-Modified", getTimeFormat(obj.c_str()));
 	size_t i =  ss.str().find("<html lang=");
 	if (i != std::string::npos)
 		rsp.SetHeader("Content-Language", ss.str().substr(i + 12,  2));
-	rsp.SetHeader("content-type", getMimeType(obj));
 	return rsp;
 }
