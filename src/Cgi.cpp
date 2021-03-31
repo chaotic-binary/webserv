@@ -53,7 +53,7 @@ static std::string getHttpEnv(std::string title) {
     return "HTTP_" + title;
 }
 
-std::map<std::string, std::string> CgiGenerateEnv(const Request &request, const ServConfig &config) {
+std::map<std::string, std::string> CgiGenerateEnv(const Request &request, const ServConfig &config, const std::string& path) {
     std::map<std::string, std::string> env;
     env["CONTENT_LENGTH"] = std::to_string(request.getBody().size());
     env["CONTENT_TYPE"] = request.getHeader("content-type");
@@ -64,7 +64,8 @@ std::map<std::string, std::string> CgiGenerateEnv(const Request &request, const 
     env["SERVER_SOFTWARE"] = "KinGinx/0.42";
     env["GATEWAY_INTERFACE"] = "CGI/1.1";
     env["SERVER_NAME"] = request.getHeader("host");
-    env["SCRIPT_NAME"] = request.getReqTarget();
+    env["SCRIPT_NAME"] = path;
+	env["SCRIPT_FILENAME"] = path; //FOR PHP_CGI;
     env["REQUEST_URI"] = request.GetUri();
 
     std::string authType = request.getHeader("Authorization");
@@ -78,6 +79,7 @@ std::map<std::string, std::string> CgiGenerateEnv(const Request &request, const 
     env["REMOTE_ADDR"] = ""; //TODO:: ?
     env["REMOTE_IDENT"] = ""; //TODO:: ?
     env["REMOTE_USER"] = ""; //TODO:: ?
+    env["REDIRECT_STATUS"] = "YA NAGNUL PHP_CGI";
     std::map<std::string, std::string>::const_iterator it = request.getHeaders().begin();
     for (; it != request.getHeaders().end(); it++)
         env[getHttpEnv(it->first)] = it->second;
@@ -193,7 +195,7 @@ Response CgiResponse(const Request &request, const ServConfig &config) {
     std::string path = request.getReqTarget();
     path.erase(0, location.getPath().size() + 1);
     path = location.getRoot() + path;
-    EnvironMap tmp = CgiGenerateEnv(request, config);
+    EnvironMap tmp = CgiGenerateEnv(request, config, path);
     std::string cgi_raw_response = CgiEx(location.getCgiPath(), path, request.getBody(), tmp);
     SetResponse(rsp, cgi_raw_response);
     return rsp;

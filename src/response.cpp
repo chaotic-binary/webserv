@@ -5,7 +5,7 @@
 Response::Response(int code) : code_(code) {}
 
 void Response::SetDefaultContent() {
-	if (code_ >= 400)
+	if (code_ >= 400 && body_.empty())
 		generate_error_page(code_);
 	SetHeader("Date", GetCurDate());
 	SetHeader("Server", "KingGinx");
