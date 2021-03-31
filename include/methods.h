@@ -1,7 +1,8 @@
 #pragma once
 
-#include "GetMethod.h"
-#include <map>
+#include "response.h"
+#include "Request.h"
+#include "ServConfig.h"
 
 Response GetGenerator(const Request &request, const ServConfig &config);
 Response PutGenerator(const Request &request, const ServConfig &config);

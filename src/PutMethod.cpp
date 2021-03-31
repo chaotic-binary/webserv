@@ -1,7 +1,7 @@
 #include <fstream>
-#include "GetMethod.h"
 #include "ServConfig.h"
-#include <sys/stat.h>
+#include "response.h"
+#include "Request.h"
 
 Response PutGenerator(const Request &request, const ServConfig &config)
 {

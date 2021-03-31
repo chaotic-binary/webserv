@@ -3,7 +3,6 @@
 #include <utils.h>
 #include <Request.h>
 #include <ServConfig.h>
-#include <method_utils.h>
 #include <libc.h>
 #include "Cgi.h"
 
@@ -96,7 +95,7 @@ void partial_write(int fd, const std::string &msg) {
 		sended += write(fd, &(msg.c_str()[sended]), send_len); //TODO: check write ret
 	}
 }
-
+#include <cmath>
 std::string CgiEx(const std::string &cgi,
 				  const std::string &script,
 				  const std::string &input,

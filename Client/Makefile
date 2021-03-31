@@ -14,7 +14,7 @@ CLIENT_NAME = clientV1
 CLIENT_SRC = main.cpp Client.cpp
 CLIENT_0SRC = $(CLIENT_SRC:.cpp=.o)
 
-FLAGS =		clang++ -Wall -Wextra -Werror
+FLAGS =		clang++ #-Wall -Wextra -Werror
 
 all:		$(CLIENT_NAME)
 
