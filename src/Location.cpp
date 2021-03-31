@@ -3,7 +3,6 @@
 Location::Location()
 	: _maxBody(DEF_MAX_BODY),
 	  _autoindex(false),
-	  _uploadEnable(false),
 	  _parsed(0) {}
 
 Location::Location(const Location &copy) {
@@ -55,10 +54,6 @@ size_t Location::getMaxBody() const {
 
 bool Location::getAutoindex() const {
 	return _autoindex;
-}
-
-bool Location::getUploadEnable() const {
-	return _uploadEnable;
 }
 
 const std::vector<std::string> &Location::getCgiExtensions() const {
@@ -140,15 +135,7 @@ void Location::setAutoindex(bool autoindex) {
 }
 
 void Location::setAuthorization(const std::string &authorization) {
-    _authorization = authorization;
-}
-
-
-void Location::setUploadEnable(bool uploadEnable) {
-	if (_parsed & 128)
-		throw DuplicateDirective("upload enable");
-	_uploadEnable = uploadEnable;
-	_parsed |= 128;
+	_authorization = authorization;
 }
 
 void Location::setCgiExtensions(const std::vector<std::string> &cgiExtensions) {
@@ -177,10 +164,6 @@ void Location::setAutoindexFromStr(const std::string &str) {
 	setAutoindex(getBoolFromStr(str));
 }
 
-void Location::setUploadEnableFromStr(const std::string &str) {
-	setUploadEnable(getBoolFromStr(str));
-}
-
 bool Location::getBoolFromStr(const std::string &str) {
 	if (str == "on")
 		return (true);
@@ -205,7 +188,7 @@ const std::string &Location::getPathR() const {
 }
 
 const std::string &Location::getAuthorization() const {
-    return _authorization;
+	return _authorization;
 }
 
 std::ostream &operator<<(std::ostream &os, const std::vector<e_methods> &v) {
@@ -226,7 +209,6 @@ std::ostream &operator<<(std::ostream &os, const Location &location) {
 	os << "\tupload_path: " << location.getUploadPath() << std::endl;
 	os << "\tmax body: " << location.getMaxBody() << std::endl;
 	os << "\tautoindex: " << (location.getAutoindex() ? "on" : "off") << std::endl;
-	os << "\tupload enable: " << (location.getUploadEnable() ? "on" : "off") << std::endl;
 	const std::vector<std::string> &v = location.getCgiExtensions();
 	os << "\tcgi extensions: \n" << v;
 	const std::vector<e_methods> &m = location.getMethods();

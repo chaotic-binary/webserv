@@ -19,9 +19,8 @@ void Parser::initLocParser() {
 	locParser["cgi_path"] = &Location::setCgiPath;
 	locParser["index"] = &Location::setIndex;
 	locParser["cgi_index"] = &Location::setCgiIndex;
-    locParser["authorization"] = &Location::setAuthorization;
+	locParser["authorization"] = &Location::setAuthorization;
 	locParser["autoindex"] = &Location::setAutoindexFromStr;
-	locParser["upload_enable"] = &Location::setUploadEnableFromStr;
 }
 
 void Parser::initLocArrParser() {
@@ -258,7 +257,7 @@ void Parser::parseMaxBody(std::string &val, Location &loc) {
 		val = val.substr(0, val.find_first_not_of("0123456789"));
 	}
 	size_t val_num = to_num(val);
-	if (std::numeric_limits<size_t>::max() /  n < val_num)
+	if (std::numeric_limits<size_t>::max() / n < val_num)
 		throw std::runtime_error("line: " + ft::to_str(line_num) + ": value too big");
 	loc.setMaxBody(n * val_num);
 }
