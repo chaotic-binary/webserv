@@ -3,10 +3,6 @@
 #include "Location.h"
 #include <arpa/inet.h>
 
-#ifdef BONUS
-#include <regex>
-#endif
-
 #define LOCALHOST "127.0.0.1"
 
 class ServConfig {

@@ -3,31 +3,6 @@
 
 #define BUFFER_SIZE 10000
 
-/*
-std::vector<std::string>	Request::headersList;
-
-void	Request::headersListInit() {
-	headersList.push_back("accept-charsets:");
-	headersList.push_back("accept-language:");
-	headersList.push_back("authorization:");
-	headersList.push_back("content-language:");
-	headersList.push_back("content-length:");
-	headersList.push_back("content-type:");
-	headersList.push_back("date:");
-	headersList.push_back("host:");
-	headersList.push_back("referer:");
-	headersList.push_back("transfer-encoding:");
-	headersList.push_back("user-agent:");*/
-
-/*	headersList.push_back("server:");
-	headersList.push_back("www-authenticate:");
-	headersList.push_back("allow:");
-	headersList.push_back("content-location:");
-	headersList.push_back("retry-after:");
-	headersList.push_back("location:");
-	headersList.push_back("last-modified:");*/
-//};
-
 Request::Request(const int fd)
 	: method(OTHER),
 	  contentLength(0),
@@ -88,7 +63,8 @@ void Request::parse_headers(const std::string &str) {
 	if (v.size() != 3 || v[2].size() != 9)
 		throw InvalidFormat(1);
 	ft::trim(v[2], '\r');
-	if (v[2].find("HTTP/") != 0 || !(isdigit(v[2][5]) && isdigit(v[2][7])) || v[2][6] != '.') //TODO оставить только 1.1?
+	if (v[2].find("HTTP/") != 0 || !(isdigit(v[2][5]) && isdigit(v[2][7]))
+		|| v[2][6] != '.')
 		throw InvalidFormat(1);
 	setMethodFromStr(v[0]);
 	reqTarget = v[1];
@@ -101,7 +77,6 @@ void Request::parse_headers(const std::string &str) {
 		if (headers.count(tmp)) {
 			if ((tmp == "host" || tmp == "content-length"))
 				throw DuplicateHeader(tmp);
-			//TODO: забили
 		}
 		newPos = (lines[i][newPos + 1] == ' ') ? newPos + 2 : newPos + 1;
 		headers[tmp] = lines[i].substr(newPos, lines[i].size() - 1 - newPos);
@@ -134,12 +109,9 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				return -4;
 			if ((ret = read(fd_, buffer, BUFFER_SIZE)) > 0) {
 				buffer[ret] = 0x0;
-				//std::cout << "fd: " << fd_ << " rr:" << raw_request << " :rr" << std::endl;
 				raw_request += buffer;
-				//std::cout << "rr: " << raw_request << " :rr" << std::endl;
 				read_activated = true;
 			} else {
-//				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
 				return ret;
 			}
 		}
@@ -157,9 +129,7 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 			if ((ret = read(fd, buffer, read_len)) > 0) {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
-				//std::cout << "SIZE = " <<  raw_request.size() << std::endl;
 			} else {
-//				std::cerr << "READ_ERROR: ret: " << ret << std::endl;
 				return ret;
 			}
 		}
@@ -168,7 +138,6 @@ int Request::parse_chunk(const int fd, bool &read_activated) {
 				complete = true;
 			else
 				body += raw_request.substr(0, contentLength - 2);
-			//std::cout << "BOSY SIZE = " <<  body.size() << std::endl;
 			raw_request.erase(0, contentLength);
 			contentLength = 0;
 			return 1;
@@ -223,7 +192,6 @@ int Request::receive() {
 				buffer[ret] = 0x0;
 				raw_request += buffer;
 				bzero(buffer, BUFFER_SIZE);
-				//std::cout << "fd: " << fd_ << " RAW<" << raw_request << ">RAW" << std::endl;
 			} else
 				return ret;
 		}
@@ -231,9 +199,7 @@ int Request::receive() {
 			std::string headers_str = raw_request.substr(0, i + 2);
 			raw_request.erase(0, i + 4);
 			parse_headers(headers_str);
-			//	read(fd_, buffer, i + 4);
 			headersParsed = true;
-			//std::cout << "fd " << fd_ << ": !Headers _parsed!" << std::endl;
 		}
 	}
 	if (headersParsed) {
@@ -252,7 +218,6 @@ void Request::clear() {
 	headers.clear();
 	body.clear();
 	version.clear();
-	//raw_request.clear();
 	uri_.clear();
 	contentLength = 0;
 	headersParsed = false;

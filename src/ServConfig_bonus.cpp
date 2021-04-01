@@ -1,5 +1,6 @@
 #include "response.h"
 #include "ServConfig.h"
+#include <regex>
 
 ServConfig::ServConfig() :
 	_port(0),
@@ -112,24 +113,27 @@ sockaddr_in &ServConfig::getSockAddr() {
 }
 
 const Location &ServConfig::getLocation(const std::string &reqPath) const {
-	std::vector<Location>::const_iterator it = _locations.begin();
-	size_t maxCoincidence = 0;
+	std::cmatch match;
+	std::string matched_part;
 	int locationIndex = -1;
+	std::vector<Location>::const_iterator it = _locations.begin();
 
 	for (int res = 0; it != _locations.end(); it++, res++) {
-		if (reqPath.compare(0, it->getPath().size(), it->getPath()) == 0
-			&& (reqPath[it->getPath().size()] == '/' || reqPath == it->getPath() || it->getPath() == "/")) {
-			if (it->getPath().size() < maxCoincidence)
-				continue;
-			locationIndex = res;
-			maxCoincidence = it->getPath().size();
+		std::regex regex(it->getPathR());
+		if (std::regex_search(reqPath.c_str(), match, regex)) {
+			if (match.str(0).size() > matched_part.size()) {
+				matched_part = match.str(0);
+				locationIndex = res;
+			}
 		}
 	}
 	if (locationIndex == -1)
 		throw RespException(Response(404));
+	const_cast< Location & >(_locations.at(locationIndex)).updatePath(matched_part);
 	return _locations.at(locationIndex);
 }
 
 void ServConfig::updateLocationRoot(int index, const std::string &root) {
 	this->_locations.at(index).updateRoot(root);
 }
+
