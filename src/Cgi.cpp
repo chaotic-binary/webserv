@@ -76,9 +76,6 @@ std::map<std::string, std::string> CgiGenerateEnv(const Request &request, const 
 
     env["PATH_INFO"] = request.getReqTarget();
     env["PATH_TRANSLATED"] = env["PATH_INFO"];
-    env["REMOTE_ADDR"] = ""; //TODO:: ?
-    env["REMOTE_IDENT"] = ""; //TODO:: ?
-    env["REMOTE_USER"] = ""; //TODO:: ?
     env["REDIRECT_STATUS"] = "YA NAGNUL PHP_CGI";
     std::map<std::string, std::string>::const_iterator it = request.getHeaders().begin();
     for (; it != request.getHeaders().end(); it++)
@@ -108,11 +105,10 @@ std::string CgiEx(const std::string &cgi,
 	int fileBufferFd = open(tmp_file_path.c_str(), O_TRUNC | O_CREAT | O_WRONLY, 0666);
 	write(fileBufferFd, input.c_str(), input.size());
 	close(fileBufferFd);
-	fileBufferFd = open(tmp_file_path.c_str(), O_RDONLY); // TODO: OMG  This is piece of sh... code
+	fileBufferFd = open(tmp_file_path.c_str(), O_RDONLY);
 
     Pipe Opipe;
     Opipe.Create();
-
 
     pid_t pid = fork();
     if (pid == -1)
@@ -186,15 +182,34 @@ void SetResponse(Response &response, const std::string &cgi_raw_response) {
     response.SetBody(cgi_raw_response.substr(eo_headers_position + 4));
 }
 
+
+std::string getTargetPath(const Location& location, const std::string& request_target)
+{
+    std::string path = request_target;
+    path.erase(0, location.getPath().size() + 1);
+    path = location.getRoot() + path;
+
+    struct stat sb;
+    stat(path.c_str(), &sb);
+    if ((S_ISDIR(sb.st_mode))) {
+        path += (path.back() != '/') ? "/" : "";
+        path += location.getCgiIndex();
+    }
+    const std::vector<std::string> &cgi_extensions = location.getCgiExtensions();
+    size_t dot = path.find('.');
+    if(dot == std::string::npos)
+        throw Response(404);
+    std::string extension = path.substr(dot);
+    if(find(cgi_extensions.begin(), cgi_extensions.end(),extension) == cgi_extensions.end())
+        throw Response(404);
+    return path;
+}
+
 Response CgiResponse(const Request &request, const ServConfig &config) {
     Response rsp(200);
     const Location &location = config.getLocation(request.getReqTarget());
-    //TODO: is this cgi Correct?!
-    __unused    const std::vector<std::string> &cgi_extentions = location.getCgiExtensions();
 
-    std::string path = request.getReqTarget();
-    path.erase(0, location.getPath().size() + 1);
-    path = location.getRoot() + path;
+    std::string path = getTargetPath(location, request.getReqTarget());
     EnvironMap tmp = CgiGenerateEnv(request, config, path);
     std::string cgi_raw_response = CgiEx(location.getCgiPath(), path, request.getBody(), tmp);
     SetResponse(rsp, cgi_raw_response);

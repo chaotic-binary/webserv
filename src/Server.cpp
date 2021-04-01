@@ -44,7 +44,7 @@ void Server::newClient(int indexServer) {
 							(struct sockaddr *) &clientAddr,
 							(socklen_t *) &addrlen);
 	if (connection == -1)
-		throw Error("connection"); //TODO: move it in client? throw?
+		throw Error("connection");
 	SharedPtr<Client> new_client(new Client(_servers[indexServer], connection, clientAddr));
 	_clients.push_back(new_client);
 
@@ -73,19 +73,21 @@ void Server::reloadFdSets() {
 		FD_SET((*client)->getFd(), &_writeFds);
 	}
 	for (size_t i = 0; i < _servers.size(); ++i)
-		FD_SET(_servers[i].getSockFd(), &_readFds); //TODO add writeFds if not working
+		FD_SET(_servers[i].getSockFd(), &_readFds);
 }
 
 void Server::checkClients() {
 	std::vector<SharedPtr<Client> >::iterator it;
+	bool acted = false;
 	for (it = _clients.begin(); it != _clients.end();) {
 		if (FD_ISSET((*it)->getFd(), &_readFds) &&
 			(*it)->GetStatus() == READY_TO_READ)
-			(*it)->receive();
+			acted = acted || (*it)->receive();
 		else if (FD_ISSET((*it)->getFd(), &_writeFds))
-			(*it)->response();
+			acted = acted || (*it)->response();
 
-		(*it)->check();
+		if(!acted)
+		    (*it)->check();
 
 		if ((*it)->GetStatus() == CLOSE_CONNECTION)
 			_clients.erase(it);

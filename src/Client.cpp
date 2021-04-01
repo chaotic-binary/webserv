@@ -5,12 +5,12 @@
 #include <sys/time.h>
 #include "response_generator.h"
 
-void Client::response() {
+bool Client::response() {
 	if (status_ != READY_TO_SEND && status_ != SENDING)
-		return;
+		return false;
 	if (status_ == SENDING) {
 		this->raw_send();
-		return;
+		return true;
 	}
 	Response rsp = get_response(req_, serv_);
 	if (rsp.GetCode() != 200)
@@ -22,26 +22,21 @@ void Client::response() {
 	if (req_.getHeader("connection") == "close")
 		next_status = CLOSE_CONNECTION;
 	req_.clear();
-}
-
-const ServConfig &Client::getServ() const {
-	return serv_;
+    return true;
 }
 
 int Client::getFd() const {
 	return fd_;
 }
 
-void Client::receive() {
+bool Client::receive() {
 	if (status_ != READY_TO_READ)
-		return;
+		return false;
 	try {
-		req_.receive();
+		if(req_.receive() <= 0)
+            return false;
 		if (req_.isComplete()) {
 			status_ = READY_TO_SEND;
-			//std::cout << "<REQUEST\n" << req_ << std::endl;
-			//std::cout << "REQUEST>\n"; //test
-			//std::cout << "Method: " << ft::to_str(req_.getMethod()) << std::endl;//
 		}
 	}
 	catch (std::exception &e) {
@@ -49,6 +44,7 @@ void Client::receive() {
 		status_ = READY_TO_SEND;
 		std::cout << e.what() << std::endl;
 	}
+    return true;
 }
 
 Client::~Client() {
@@ -63,7 +59,7 @@ Client::Client(const ServConfig &serv, int fd, const sockaddr_in &clientAddr)
 void Client::check() {
 	struct timeval cur;
 	gettimeofday(&cur, NULL);
-	if (cur.tv_sec - tv_.tv_sec > 8000) //TODO: delete magic number
+	if (cur.tv_sec - tv_.tv_sec > 800)
 		status_ = CLOSE_CONNECTION;
 }
 
@@ -71,18 +67,20 @@ void Client::raw_send() {
 	static const size_t MAX_CHUNK_SIZE = pow(2, 20);
 	if (sended_ < raw_msg.size()) {
 		ssize_t chunk_size = std::min(raw_msg.size() - sended_, MAX_CHUNK_SIZE);
-		ssize_t ret = send(fd_, &(raw_msg.c_str()[sended_]), chunk_size, 0); //TODO check send ret
+		ssize_t ret = send(fd_, &(raw_msg.c_str()[sended_]), chunk_size, 0);
 		if (ret <= 0) {
-			std::cerr << "ERROR SEND: " << ret << std::endl;
+			//std::cerr << "ERROR SEND: " << ret << std::endl;
 			status_ = CLOSE_CONNECTION;
 		}
-		else
-			sended_ += ret;
+		else {
+            gettimeofday(&tv_, NULL);
+            sended_ += ret;
+        }
 	}
 
 	if (sended_ == raw_msg.size()) {
 		static int i = 0;
-		std::cerr << "File: " << i++ << std::endl;
+		std::cerr << "Response counter: " << i++ << std::endl;
 		sended_ = 0;
 		status_ = next_status;
 	}

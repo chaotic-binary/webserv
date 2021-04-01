@@ -20,8 +20,8 @@ class Client {
 	Request req_;
 	__unused sockaddr_in _clientAddr;
  public:
-	void receive();
-	void response();
+	bool receive();
+	bool response();
 	void raw_send();
 	void check();
 	e_client_status GetStatus();
