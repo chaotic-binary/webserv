@@ -70,7 +70,7 @@ void Response::generate_error_page(int code) {
 	response_body << "<title> Error " << code << "</title>\r\n";
 	response_body << "<h1>Code: " << code << "</h1>"
 				  << "<h2>" << g_resp_codes.at(code_) << "</h2>\r\n"
-				  << "<h1>" << "Сервера ответ!" << "</h2>\r\n"
+				  << "<h1>" << "Server response!" << "</h2>\r\n"
 				  << "<em><small>king's server</small></em>\r\n";
 	SetBody(response_body.str());
 	SetHeader("Content-Type", "text/html");

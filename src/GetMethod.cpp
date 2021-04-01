@@ -7,21 +7,27 @@
 #include "Request.h"
 #include <sys/stat.h>
 
-std::string generateIndexPage(const char* obj) {
+std::string generateIndexPage(const char* obj, const std::string& root) {
 	std::string res, tmp;
 	struct dirent *dir_el;
 	DIR		*dir;
 
+	std::string relativePath = obj;
+	relativePath.erase(0, root.size());
+	relativePath += relativePath.back() != '/' ? '/' : 0;
 	if ((dir = opendir(obj))) {
-		res += "<title>KinGinx AutoIndex</title><style>a{text-decoration: none; color: black; font-size: 25px;}"
-		 "body {"
+		res += "<title>KinGinx AutoIndex</title>"
+		"<style>"
+		"a{"
+		"	text-decoration: none;"
+		"	color: black; font-size: 25px;}"
+		"body {"
 		"	background: rgb(238,174,202);"
 		"	background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);}"
 		"ul {"
 		"	display: flex;"
 		"	flex-wrap: wrap;"
 		"	flex-direction: column;"
-//		"	border: 2px solid blue;"
 		"	border-radius: 5px;"
 		"	text-align: center;"
 		"	padding-left: 0;}"
@@ -29,13 +35,11 @@ std::string generateIndexPage(const char* obj) {
 		"	display: block;"
 		"	border-bottom: 1px solid #673ab7;"
 		"	padding-bottom: 5px;}"
-//		"h1 footer {"
-//		"	color:b; }"
-//   ".dir li:last-child {border-bottom: none}"
-   "</style>";
+		"</style>";
 		res += "<ul class=\"dir\"><li><h1>KinGinx Index</h1><p></li>";
 		while ((dir_el = readdir(dir))) {
 			res += "<li><a href=\"/";
+			res += relativePath.size() != 1 ? relativePath : "";
 			res += dir_el->d_name;
 			res += "\">";
 			res += dir_el->d_name;
@@ -59,13 +63,12 @@ static std::string checkSource(const Location &location, std::string reqTarget, 
 {
 	std::string	pathObj, pathAutoIndex;
 	struct stat	sb;
-	bool isDir;
 
 	pathObj = location.getRoot();
 	if (reqTarget != location.getPath())
 		pathObj += reqTarget.erase(0, location.getPath().size());
 	stat(pathObj.c_str(), &sb);
-	if ((isDir = S_ISDIR(sb.st_mode))) {
+	if (S_ISDIR(sb.st_mode)) {
 		pathAutoIndex = pathObj;
 		pathObj += (pathObj.back() != '/') ? "/" : "";
 		pathObj += cgi ? location.getCgiIndex() : location.getIndex();
@@ -105,7 +108,7 @@ Response GetGenerator(const Request &request, const ServConfig &config) {
 	ss << file.rdbuf();
 	file.close();
 	stat(obj.c_str(), &sb);
-	std::string bodyAutoIndex = S_ISDIR(sb.st_mode) ? generateIndexPage(obj.c_str()) : "";
+	std::string bodyAutoIndex = S_ISDIR(sb.st_mode) ? generateIndexPage(obj.c_str(), location.getRoot()) : "";
 	if (location.getAutoindex() && !bodyAutoIndex.empty()) {
 		rsp.SetBody(bodyAutoIndex);
 		rsp.SetHeader("content-type", "text/html");

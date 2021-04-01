@@ -193,7 +193,7 @@ Response CgiResponse(const Request &request, const ServConfig &config) {
     __unused    const std::vector<std::string> &cgi_extentions = location.getCgiExtensions();
 
     std::string path = request.getReqTarget();
-    path.erase(0, location.getPath().size() + 1);
+    path.erase(0, location.getPath().size());
     path = location.getRoot() + path;
     EnvironMap tmp = CgiGenerateEnv(request, config, path);
     std::string cgi_raw_response = CgiEx(location.getCgiPath(), path, request.getBody(), tmp);

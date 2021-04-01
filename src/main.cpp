@@ -5,13 +5,12 @@ volatile bool loop = true;
 
 int main(int ac, char **av)
 {
-    std::cout <<"Encoded: " << base64_encode("HELLON") << std::endl;
-    std::cout <<"Encoded: " << base64_encode("HELLONA") << std::endl;
-    std::cout <<"Encoded: " << base64_encode("HELLONAB") << std::endl;
-    std::cout <<"Encoded: " << base64_encode("HELLONABC") << std::endl;
-
-	if (ac < 2)
+	if (ac < 2) {
+		std::cerr << "\033[1;31mNo Config, Please ADD!\033[0m" << std::endl;
 		return 1;
+	}
+	std::cout << std::endl << "\033[1;31m" << "WELCOME TO KINGINX" << "\033[0m" << std::endl << std::endl;
+
 	try {
 		Server server(Parser().parse(av[1]));
 		server.initSockets();
