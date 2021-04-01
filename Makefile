@@ -13,7 +13,6 @@ SRC_M		=	main.cpp\
 				MimeTypes.cpp\
 				response.cpp\
 				GetMethod.cpp\
-				methods.cpp\
 				PostMethod.cpp\
 				PutMethod.cpp\
 				response_generator.cpp\
@@ -31,7 +30,6 @@ SRC_B		=	main.cpp\
 				MimeTypes.cpp\
 				response.cpp\
 				GetMethod.cpp\
-				methods.cpp\
 				PostMethod.cpp\
 				PutMethod.cpp\
 				response_generator.cpp\

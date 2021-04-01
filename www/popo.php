@@ -25,7 +25,7 @@ $email = trim($email);
 //echo "<br>";
 //echo $email;
 if (mail("makhmudego@yandex.ru", "Заявка с сайта", "ФИО: ".$name. ". телефон: ".$phone.". E-mail: ".$email ,"From: makhmudego@yandex.ru \r\n"))
- {     echo "сообщение успешно отправлено"; 
+ {     echo "сообщение успешно отправлено";
 } else { 
     echo "при отправке сообщения возникли ошибки";
 }?>
