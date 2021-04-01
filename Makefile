@@ -50,7 +50,7 @@ all: $(NAME)
 $(BIN)/%.o:./src/%.cpp  | $(BIN)
 	$(CC) $(FLAGS) -MMD -I./include -c $< -o $@
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ_M)
 	$(CC) $(FLAGS) $^ -o $@
 
 bonus: $(NAME_B)
@@ -70,5 +70,12 @@ clean:
 fclean: clean
 	@rm -f $(NAME)
 	@rm -f $(NAME_B)
+
+test: run
+	./tester http://localhost:1234
+
+run: all
+	./webserv config/mizola.conf &
+	./tester http://localhost:1234
 
 re: fclean all

@@ -10,3 +10,4 @@ bin
 *.tmp
 /www/puts/file_should_exist_after
 /www/puts/multiple_same
+test
