@@ -25,9 +25,6 @@ Response PutGenerator(const Request &request, const ServConfig &config)
 		of.open(absPath, std::ios::app);
 	else
 		of.open(absPath);
-	size_t n = 1;
-	while (of.fail())
-		of.open(absPath + '_' + std::to_string(n++));
 	of << request.getBody();
 	of.close();
 	return rsp;
