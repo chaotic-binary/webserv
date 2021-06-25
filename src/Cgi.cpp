@@ -185,7 +185,10 @@ void SetResponse(Response &response, const std::string &cgi_raw_response) {
 std::string getTargetPath(const Location& location, const std::string& request_target)
 {
     std::string path = request_target;
-    path.erase(0, location.getPath().size() + 1);
+    path.erase(0, location.getPath().size());
+    if(path.size() != 0 && path.front() == '/') {
+    	path.erase(path.begin());
+    }
     path = location.getRoot() + path;
 
     struct stat sb;
@@ -201,6 +204,7 @@ std::string getTargetPath(const Location& location, const std::string& request_t
     std::string extension = path.substr(dot);
     if(find(cgi_extensions.begin(), cgi_extensions.end(),extension) == cgi_extensions.end())
         throw Response(404);
+    std::cerr << path << std::endl;
     return path;
 }
 

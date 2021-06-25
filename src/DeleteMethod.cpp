@@ -13,7 +13,10 @@ Response DeleteGenerator(const Request &request, const ServConfig &config)
 
 	if(remove(absPath.c_str()) == 0)
 		return rsp;
-	else if(errno == EACCES || errno == ENOTDIR || errno == EROFS)
+	else if(errno == EACCES || errno == ENOTDIR || errno == EROFS || errno == ENOTEMPTY)
 		return Response(403);
+	else if (errno == ENOENT) {
+		return Response(404);
+	}
 	return Response(500);
 }

@@ -16,7 +16,8 @@ SRC_M		=	main.cpp\
 				PostMethod.cpp\
 				PutMethod.cpp\
 				response_generator.cpp\
-				base64.cpp
+				base64.cpp \
+				DeleteMethod.cpp
 
 SRC_B		=	main.cpp\
 				ServConfig_bonus.cpp \
@@ -33,7 +34,8 @@ SRC_B		=	main.cpp\
 				PostMethod.cpp\
 				PutMethod.cpp\
 				response_generator.cpp\
-				base64.cpp
+				base64.cpp \
+				DeleteMethod.cpp
 
 BIN			=	./bin
 OBJ_M		=	$(addprefix $(BIN)/, $(SRC_M:cpp=o))
