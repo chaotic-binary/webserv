@@ -25,6 +25,7 @@ include_directories(include)
 add_executable(test_server
         src/Server.cpp
         src/Parser.cpp
+        src/DeleteMethod.cpp
        # src/ServConfig.cpp
         src/ServConfig_bonus.cpp
         src/Location.cpp
