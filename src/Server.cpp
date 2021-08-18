@@ -82,7 +82,7 @@ void Server::checkClients() {
 	for (it = _clients.begin(); it != _clients.end();) {
 		if (FD_ISSET((*it)->getFd(), &_readFds) &&
 			(*it)->GetStatus() == READY_TO_READ)
-			acted = acted || (*it)->receive();
+			acted = acted || (*it)->receive(); //Что такое актед = актед ??
 		else if (FD_ISSET((*it)->getFd(), &_writeFds))
 			acted = acted || (*it)->response();
 
