@@ -57,6 +57,7 @@ std::map<std::string, std::string> CgiGenerateEnv(const Request &request, const 
     std::map<std::string, std::string> env;
     env["CONTENT_LENGTH"] = std::to_string(request.getBody().size());
     env["CONTENT_TYPE"] = request.getHeader("content-type");
+//    env["Cookie"] = request.getHeader("Cookie");
     env["QUERY_STRING"] = request.GetQueryString();
     env["REQUEST_METHOD"] = ft::to_str(request.getMethod());
     env["SERVER_PORT"] = std::to_string(config.getPort());
@@ -79,6 +80,7 @@ std::map<std::string, std::string> CgiGenerateEnv(const Request &request, const 
     std::map<std::string, std::string>::const_iterator it = request.getHeaders().begin();
     for (; it != request.getHeaders().end(); it++)
         env[getHttpEnv(it->first)] = it->second;
+    std::cout << env["HTTP_Cookie"] << std::endl;
     return env;
 }
 
